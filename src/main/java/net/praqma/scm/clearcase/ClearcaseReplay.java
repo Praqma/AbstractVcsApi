@@ -9,9 +9,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
-import net.praqma.scm.AbstractCommit;
-import net.praqma.scm.AbstractReplay;
-import net.praqma.scm.ChangeSetElement;
+import net.praqma.scm.model.AbstractCommit;
+import net.praqma.scm.model.AbstractReplay;
+import net.praqma.scm.model.ChangeSetElement;
 
 public class ClearcaseReplay extends AbstractReplay {
 

@@ -1,4 +1,4 @@
-package net.praqma.scm;
+package net.praqma.scm.model;
 
 import java.io.File;
 

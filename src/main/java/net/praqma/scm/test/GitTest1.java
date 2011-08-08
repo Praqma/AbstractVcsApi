@@ -8,11 +8,11 @@ import java.util.List;
 import net.praqma.exceptions.OperationNotImplementedException;
 import net.praqma.exceptions.OperationNotSupportedException;
 import net.praqma.exceptions.UnableToPerformException;
-import net.praqma.scm.AbstractCommit;
-import net.praqma.scm.Repository;
 import net.praqma.scm.clearcase.ClearcaseReplay;
-import net.praqma.scm.git.GitBranch;
-import net.praqma.scm.git.GitSCM;
+import net.praqma.scm.model.AbstractCommit;
+import net.praqma.scm.model.Repository;
+import net.praqma.scm.model.git.GitBranch;
+import net.praqma.scm.model.git.GitSCM;
 
 public class GitTest1 {
 

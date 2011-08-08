@@ -1,4 +1,4 @@
-package net.praqma.scm.git;
+package net.praqma.scm.model.git;
 
 import java.io.File;
 import java.text.ParseException;
@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.praqma.scm.AbstractBranch;
-import net.praqma.scm.AbstractCommit;
-import net.praqma.scm.ChangeSetElement;
-import net.praqma.scm.git.GitSCM.PullImpl;
+import net.praqma.scm.model.AbstractBranch;
+import net.praqma.scm.model.AbstractCommit;
+import net.praqma.scm.model.ChangeSetElement;
+import net.praqma.scm.model.git.GitSCM.PullImpl;
 import net.praqma.scm.util.CommandLine;
 
 public class GitCommit extends AbstractCommit {
