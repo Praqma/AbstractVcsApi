@@ -8,20 +8,30 @@ import net.praqma.exceptions.OperationNotSupportedException;
 
 public abstract class AbstractSCM {
 
-	protected File localRepositoryPath;
 	protected AbstractBranch branch;
 	protected Repository parent;
 	
-	public AbstractSCM( Repository parent, File localRepositoryPath, AbstractBranch branch ) {
-		this.localRepositoryPath = localRepositoryPath;
-		this.branch = branch;
+	public AbstractSCM( ) {
+	}	
+	
+	public AbstractSCM( Repository parent ) {
 		this.parent = parent;
-		
-		/* Create path */
-		localRepositoryPath.mkdirs();
 	}
 	
-	public void initialize() throws OperationNotSupportedException {
+	public AbstractSCM( Repository parent, AbstractBranch branch ) {
+		this.branch = branch;
+		this.parent = parent;
+	}
+	
+	public void changeBranch( AbstractBranch branch ) {
+		this.branch = branch;
+	}
+	
+	public boolean branchExists( AbstractBranch branch ) throws OperationNotImplementedException {
+		throw new OperationNotImplementedException( "Branch exists" );
+	}
+	
+	public void initialize( AbstractBranch branch ) throws OperationNotSupportedException {
 		throw new OperationNotSupportedException( "Cannot initialize this kind of repository" );
 	}
 	
@@ -73,6 +83,10 @@ public abstract class AbstractSCM {
 	
 	
 	public List<AbstractCommit> getCommits() throws OperationNotImplementedException {
+		throw new OperationNotImplementedException( "getCommits" );
+	}
+	
+	public List<AbstractCommit> getCommits( boolean load ) throws OperationNotImplementedException {
 		throw new OperationNotImplementedException( "getCommits" );
 	}
 

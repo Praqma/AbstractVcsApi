@@ -2,6 +2,7 @@ package net.praqma.scm.git;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.praqma.scm.AbstractBranch;
@@ -12,25 +13,24 @@ import net.praqma.scm.util.CommandLine;
 
 public class GitSCM extends AbstractSCM {
 
-	public GitSCM( Repository parent, File localRepositoryPath, AbstractBranch branch ) {
-		super( parent, localRepositoryPath, branch );
-		
-		/*
-		String cmd = "git checkout -b " + branch.getName();
-		CommandLine.getInstance().run( cmd, localRepositoryPath );
-		*/
+	public GitSCM( Repository parent, AbstractBranch branch ) {
+		super( parent, branch );
 	}
 	
-	public static GitSCM create( File localRepositoryPath ) {
-		GitSCM git = new GitSCM( null, localRepositoryPath, new GitBranch( "master" ) );
-		git.initialize();
+	public static GitSCM create( GitBranch branch ) {
+		GitSCM git = new GitSCM( null, branch );
+		git.initialize( branch );
 		return git;
 	}
 	
 	@Override
-	public void initialize() {
+	public void initialize( AbstractBranch branch ) {
 		String cmd = "git init";
-		CommandLine.run( cmd, localRepositoryPath );
+		CommandLine.run( cmd, branch.getPath() );
+	}
+	
+	public void changeBranch( AbstractBranch branch ) {
+		super.changeBranch( branch );
 	}
 	
 	public void pull() {
@@ -57,7 +57,7 @@ public class GitSCM extends AbstractSCM {
 			}
 			
 			String cmd = "git pull " + this.parent;
-			CommandLine.run( cmd, localRepositoryPath );
+			CommandLine.run( cmd, branch.getPath() );
 			
 			return true;
 		}
@@ -65,14 +65,26 @@ public class GitSCM extends AbstractSCM {
 	
 	@Override
 	public List<AbstractCommit> getCommits() {
+		return getCommits(false);
+	}
+	
+	@Override
+	public List<AbstractCommit> getCommits( boolean load ) {
 		String cmd = "git rev-list --all";
-		List<String> cs = CommandLine.run( cmd, localRepositoryPath ).stdoutList;
+		List<String> cs = CommandLine.run( cmd, branch.getPath() ).stdoutList;
 		
 		List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
 		
 		for(String c : cs) {
-			commits.add( new GitCommit(c) );
+			GitCommit commit = new GitCommit(c, branch);
+			if( load ) {
+				commit.load();
+			}
+			
+			commits.add( commit );
 		}
+		
+		Collections.reverse( commits );
 		
 		return commits;
 	}

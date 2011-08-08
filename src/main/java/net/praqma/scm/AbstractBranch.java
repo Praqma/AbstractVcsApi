@@ -1,5 +1,6 @@
 package net.praqma.scm;
 
+import java.io.File;
 import java.util.List;
 
 import net.praqma.exceptions.OperationNotSupportedException;
@@ -7,16 +8,25 @@ import net.praqma.exceptions.OperationNotSupportedException;
 public abstract class AbstractBranch {
 	
 	protected String name;
+	protected File localRepositoryPath;
 	
-	public AbstractBranch( String name ) {
+	public AbstractBranch( File localRepositoryPath, String name ) {
 		this.name = name;
+		this.localRepositoryPath = localRepositoryPath;
+		
+		/* Create path */
+		localRepositoryPath.mkdirs();
 	}
 	
 	public String getName() {
 		return name;
 	}
 	
-	public List<AbstractCommit> getCommits() throws OperationNotSupportedException {
-		throw new OperationNotSupportedException( "Cannot get commits" );
+	public File getPath() {
+		return this.localRepositoryPath;
+	}
+	
+	public String toString() {
+		return name;
 	}
 }
