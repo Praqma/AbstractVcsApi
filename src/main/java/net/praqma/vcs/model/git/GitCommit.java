@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.ChangeSetElement;
@@ -16,6 +17,8 @@ import net.praqma.vcs.model.git.GitSCM.PullImpl;
 import net.praqma.vcs.util.CommandLine;
 
 public class GitCommit extends AbstractCommit {
+
+	private Logger logger = Logger.getLogger();
 	
 	public GitCommit( String key, AbstractBranch branch ) {
 		super(key, branch);
@@ -39,7 +42,7 @@ public class GitCommit extends AbstractCommit {
 		}
 
 		public boolean perform() {
-			System.out.println( "GIT: perform load" );
+			logger.debug( "GIT: perform load" );
 			
 			
 			String cmd = "git show -m --numstat --summary --pretty=format:\"%H%n%P%n%aN <%ae>%n%cN <%ce>%n%at%n%ct%n%s%nLISTINGCHANGES\" " + GitCommit.this.key;

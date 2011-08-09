@@ -22,6 +22,7 @@ import net.praqma.exceptions.UnableToPerformException;
 import net.praqma.exceptions.UnableToReplayException;
 import net.praqma.util.debug.PraqmaLogger;
 import net.praqma.util.debug.PraqmaLogger.Logger;
+import net.praqma.vcs.OpenVCS;
 import net.praqma.vcs.clearcase.ClearcaseReplay;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.Repository;
@@ -30,7 +31,11 @@ import net.praqma.vcs.model.git.GitSCM;
 
 public class GitTest2 {
 
+	static net.praqma.util.debug.Logger logger = net.praqma.util.debug.Logger.getLogger();
 	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, UnableToReplayException, UCMException {
+		
+		logger.toStdOut( true );
+		new OpenVCS();
 		
         File view = new File( args[0] );
         String vname = args[1];
@@ -39,7 +44,7 @@ public class GitTest2 {
 		File gitpath = new File( "c:\\temp\\git_tests\\repo1" );
 		
 		//Repository parent = new Repository( "git@github.com:Praqma/MonKit.git", "origin" );
-		Repository parent = new Repository( "file://C:/projects/monkit", "origin" );
+		Repository parent = new Repository( "file://C:/projects/monkit/branches", "origin" );
 		//GitSCM.create( new File( "c:\\temp\\git_tests\\repo1" ) );
 		
 		//GitSCM git = new GitSCM( parent, path, new GitBranch( "master" ) );
@@ -49,7 +54,7 @@ public class GitTest2 {
 		
 		List<AbstractCommit> commits = git.getCommits();
 		
-		System.out.println( commits.size() + " commits on branch " + branch );
+		logger.info( commits.size() + " commits on branch " + branch );
 		
 		commits.get( 0 ).load();
 		commits.get( 1 ).load();
@@ -57,7 +62,7 @@ public class GitTest2 {
 		commits.get( 3 ).load();
 		commits.get( 4 ).load();
 
-		System.out.println( "Commit #1: " + commits.get( 90 ) );
+		logger.info( "Commit #1: " + commits.get( 90 ) );
 		
 		
 		/* Do the ClearCase thing... */

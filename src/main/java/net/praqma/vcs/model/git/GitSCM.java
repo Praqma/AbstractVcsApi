@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractSCM;
@@ -12,6 +13,8 @@ import net.praqma.vcs.model.Repository;
 import net.praqma.vcs.util.CommandLine;
 
 public class GitSCM extends AbstractSCM {
+	
+	private Logger logger = Logger.getLogger();
 
 	public GitSCM( Repository parent, AbstractBranch branch ) {
 		super( parent, branch );
@@ -49,7 +52,7 @@ public class GitSCM extends AbstractSCM {
 		}
 
 		public boolean perform() {
-			System.out.println( "GIT: perform pull" );
+			logger.debug( "GIT: perform pull" );
 			
 			if( this.parent == null ) {
 				System.err.println( "GIT: Could not pull a null branch" );

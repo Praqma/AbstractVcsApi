@@ -5,12 +5,15 @@ import java.util.List;
 
 import net.praqma.exceptions.OperationNotImplementedException;
 import net.praqma.exceptions.OperationNotSupportedException;
+import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.extensions.PullListener;
 
 public abstract class AbstractSCM {
 
 	protected AbstractBranch branch;
 	protected Repository parent;
+	
+	private Logger logger = Logger.getLogger();
 	
 	public AbstractSCM( ) {
 	}	
@@ -69,17 +72,17 @@ public abstract class AbstractSCM {
 		}
 		
 		public boolean prePull() {
-			System.out.println( "Abstract: pre pull" );
+			logger.debug( "Abstract: pre pull" );
 			return true;
 		}
 		
 		public boolean perform() {
-			System.out.println( "Abstract: perform pull" );
+			logger.debug( "Abstract: perform pull" );
 			return true;
 		}
 		
 		public boolean postPull( boolean status ) {
-			System.out.println( "Abstract: post pull " + status );
+			logger.debug( "Abstract: post pull " + status );
 			return true;
 		}
 	}

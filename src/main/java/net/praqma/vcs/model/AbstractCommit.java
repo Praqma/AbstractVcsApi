@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import net.praqma.exceptions.OperationNotImplementedException;
+import net.praqma.util.debug.Logger;
 
 public abstract class AbstractCommit {
 	
@@ -18,6 +19,8 @@ public abstract class AbstractCommit {
 	
 	protected String committer;
 	protected Date committerDate;
+	
+	private Logger logger = Logger.getLogger();
 	
 	protected List<ChangeSetElement> changeSet = new ArrayList<ChangeSetElement>();
 	
@@ -45,17 +48,17 @@ public abstract class AbstractCommit {
 	
 	public abstract class Load {
 		public boolean preLoad() {
-			System.out.println( "Abstract: pre commit load" );
+			logger.debug( "Abstract: pre commit load" );
 			return true;
 		}
 		
 		public boolean perform() {
-			System.out.println( "Abstract: perform commit load" );
+			logger.debug( "Abstract: perform commit load" );
 			return true;
 		}
 		
 		public boolean postLoad( boolean status ) {
-			System.out.println( "Abstract: post commit load " + status );
+			logger.debug( "Abstract: post commit load " + status );
 			return true;
 		}
 	}
