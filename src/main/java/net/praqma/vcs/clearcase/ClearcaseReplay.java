@@ -1,4 +1,4 @@
-package net.praqma.scm.clearcase;
+package net.praqma.vcs.clearcase;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -17,9 +17,9 @@ import net.praqma.clearcase.ucm.entities.Component;
 import net.praqma.clearcase.ucm.entities.Version;
 import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.exceptions.UnableToReplayException;
-import net.praqma.scm.model.AbstractCommit;
-import net.praqma.scm.model.AbstractReplay;
-import net.praqma.scm.model.ChangeSetElement;
+import net.praqma.vcs.model.AbstractCommit;
+import net.praqma.vcs.model.AbstractReplay;
+import net.praqma.vcs.model.ChangeSetElement;
 
 public class ClearcaseReplay extends AbstractReplay {
 	

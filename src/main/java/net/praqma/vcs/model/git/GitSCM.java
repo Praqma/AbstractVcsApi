@@ -1,15 +1,15 @@
-package net.praqma.scm.model.git;
+package net.praqma.vcs.model.git;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.praqma.scm.model.AbstractBranch;
-import net.praqma.scm.model.AbstractCommit;
-import net.praqma.scm.model.AbstractSCM;
-import net.praqma.scm.model.Repository;
-import net.praqma.scm.util.CommandLine;
+import net.praqma.vcs.model.AbstractBranch;
+import net.praqma.vcs.model.AbstractCommit;
+import net.praqma.vcs.model.AbstractSCM;
+import net.praqma.vcs.model.Repository;
+import net.praqma.vcs.util.CommandLine;
 
 public class GitSCM extends AbstractSCM {
 

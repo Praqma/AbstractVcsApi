@@ -1,4 +1,4 @@
-package net.praqma.scm.util;
+package net.praqma.vcs.util;
 
 import java.io.File;
 

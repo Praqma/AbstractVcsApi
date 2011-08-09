@@ -1,4 +1,4 @@
-package net.praqma.scm.test;
+package net.praqma.vcs.test;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -8,10 +8,10 @@ import java.util.List;
 import net.praqma.exceptions.OperationNotImplementedException;
 import net.praqma.exceptions.OperationNotSupportedException;
 import net.praqma.exceptions.UnableToPerformException;
-import net.praqma.scm.model.AbstractCommit;
-import net.praqma.scm.model.Repository;
-import net.praqma.scm.model.git.GitBranch;
-import net.praqma.scm.model.git.GitSCM;
+import net.praqma.vcs.model.AbstractCommit;
+import net.praqma.vcs.model.Repository;
+import net.praqma.vcs.model.git.GitBranch;
+import net.praqma.vcs.model.git.GitSCM;
 
 public class GitTest1 {
 

@@ -1,10 +1,11 @@
-package net.praqma.scm.model;
+package net.praqma.vcs.model;
 
 import java.io.File;
 import java.util.List;
 
 import net.praqma.exceptions.OperationNotImplementedException;
 import net.praqma.exceptions.OperationNotSupportedException;
+import net.praqma.vcs.model.extensions.PullListener;
 
 public abstract class AbstractSCM {
 
@@ -45,6 +46,9 @@ public abstract class AbstractSCM {
 	
 	protected void doPull( Pull pull ) {
 
+		/* Run the pre pull listener */
+		PullListener.runPrePullListener();
+		
 		boolean status = pull.prePull();
 		
 		/* Only perform if pre step went good */
@@ -53,6 +57,9 @@ public abstract class AbstractSCM {
 		}
 		
 		pull.postPull( status );
+		
+		/* Run the post pull listener */
+		PullListener.runPostPullListener();
 	}
 	
 	protected abstract class Pull{

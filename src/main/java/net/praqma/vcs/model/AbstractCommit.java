@@ -1,4 +1,4 @@
-package net.praqma.scm.model;
+package net.praqma.vcs.model;
 
 import java.util.ArrayList;
 import java.util.Calendar;

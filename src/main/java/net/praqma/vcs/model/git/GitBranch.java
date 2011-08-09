@@ -1,8 +1,8 @@
-package net.praqma.scm.model.git;
+package net.praqma.vcs.model.git;
 
 import java.io.File;
 
-import net.praqma.scm.model.AbstractBranch;
+import net.praqma.vcs.model.AbstractBranch;
 
 public class GitBranch extends AbstractBranch{
 
