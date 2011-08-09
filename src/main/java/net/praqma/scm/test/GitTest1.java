@@ -8,7 +8,6 @@ import java.util.List;
 import net.praqma.exceptions.OperationNotImplementedException;
 import net.praqma.exceptions.OperationNotSupportedException;
 import net.praqma.exceptions.UnableToPerformException;
-import net.praqma.scm.clearcase.ClearcaseReplay;
 import net.praqma.scm.model.AbstractCommit;
 import net.praqma.scm.model.Repository;
 import net.praqma.scm.model.git.GitBranch;
@@ -38,10 +37,7 @@ public class GitTest1 {
 
 		System.out.println( "Commit #1: " + commits.get( 90 ) );
 		
-		ClearcaseReplay cr = new ClearcaseReplay( new File( "C:/temp/cc_test/test1" ) );
-		cr.replay( commits.get( 90 ) );
-		cr.replay( commits.get( 91 ) );
-		cr.replay( commits.get( 92 ) );
+
 	}
 
 }

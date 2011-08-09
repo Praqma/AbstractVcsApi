@@ -38,7 +38,8 @@ public class OpenSCM {
 		for(Class<Extension> e : extensionsList) {
 			System.out.println("EXT: " + e + " = " + extensionType);
 			//if( e.equals( extensionType ) ) {
-			if( extensionType.isAssignableFrom( e )) {
+
+			if( extensionType.isInstance( e )) {
 				r.add(  (T) e );
 			}
 		}
