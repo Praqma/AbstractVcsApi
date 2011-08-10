@@ -41,7 +41,7 @@ public abstract class AbstractVCS {
 	 * @param branch
 	 * @throws OperationNotSupportedException
 	 */
-	public void initialize( File location ) throws OperationNotSupportedException {
+	public void initialize() throws OperationNotSupportedException {
 		throw new OperationNotSupportedException( "Cannot initialize this kind of repository" );
 	}
 	
@@ -57,9 +57,8 @@ public abstract class AbstractVCS {
 	}
 	
 	protected abstract class Initialize {
-		File location;
-		public Initialize( File location ) {
-			this.location = location;
+
+		public Initialize() {
 		}
 		
 		public boolean setup() {

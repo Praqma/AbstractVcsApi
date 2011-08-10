@@ -30,12 +30,12 @@ public class ClearcaseVCS extends AbstractVCS {
 	private String dynView = "AVAbaseview";
 	private String bootstrapView = "AVAbootstrapview";
 
-	public ClearcaseVCS( File parent, ClearcaseBranch branch ) {
-		super( parent, branch );
+	public ClearcaseVCS( File location ) {
+		super( location );
 	}
 	
-	public static ClearcaseVCS create( ClearcaseBranch branch, String baseVobName, String componentName, int policies, File viewPath ) {
-		ClearcaseVCS cc = new ClearcaseVCS( null, branch );
+	public static ClearcaseVCS create( File location, ClearcaseBranch branch, String baseVobName, String componentName, int policies, File viewPath ) {
+		ClearcaseVCS cc = new ClearcaseVCS( location );
 		
 		cc.baseVobName = baseVobName;
 		cc.vobName = "\\" + baseVobName;
@@ -44,22 +44,21 @@ public class ClearcaseVCS extends AbstractVCS {
 		cc.policies = policies;
 		cc.viewPath = viewPath;
 		
-		cc.initialize( branch );
+		cc.initialize();
 		return cc;
 	}
 	
 	
 	@Override
-	public void initialize( AbstractBranch branch ) {
-		doInitialize( new InitializeImpl( branch ) );
+	public void initialize() {
+		doInitialize( new InitializeImpl() );
 	}
 	
 	public class InitializeImpl extends Initialize {
 		
 		int step = 0;
 				
-		public InitializeImpl( AbstractBranch branch ) {
-			super( branch );
+		public InitializeImpl() {
 		}
 		
 		public boolean setup() {

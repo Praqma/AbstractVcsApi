@@ -11,7 +11,6 @@ import net.praqma.exceptions.UnableToPerformException;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.Repository;
 import net.praqma.vcs.model.git.GitBranch;
-import net.praqma.vcs.model.git.GitVCS;
 
 public class GitTest1 {
 
@@ -24,10 +23,10 @@ public class GitTest1 {
 		
 		//GitSCM git = new GitSCM( parent, path, new GitBranch( "master" ) );
 		GitBranch branch = new GitBranch( path, "master" );
-		GitVCS git = GitVCS.create( branch );
-		git.pull(parent);
+		//GitVCS git = GitVCS.create( branch );
+		branch.pull();
 		
-		List<AbstractCommit> commits = git.getCommits();
+		List<AbstractCommit> commits = branch.getCommits();
 		
 		System.out.println( commits.size() + " commits on branch " + branch );
 		

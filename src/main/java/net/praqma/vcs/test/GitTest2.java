@@ -49,10 +49,10 @@ public class GitTest2 {
 		
 		//GitSCM git = new GitSCM( parent, path, new GitBranch( "master" ) );
 		GitBranch branch = new GitBranch( gitpath, "master" );
-		GitVCS git = GitVCS.create( branch );
-		git.pull(parent);
+		//GitVCS git = GitVCS.create( branch );
+		branch.pull();
 		
-		List<AbstractCommit> commits = git.getCommits();
+		List<AbstractCommit> commits = branch.getCommits();
 		
 		logger.info( commits.size() + " commits on branch " + branch );
 		
