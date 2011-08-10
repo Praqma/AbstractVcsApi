@@ -30,7 +30,7 @@ public class ClearcaseVCS extends AbstractVCS {
 	private String dynView = "AVAbaseview";
 	private String bootstrapView = "AVAbootstrapview";
 
-	public ClearcaseVCS( Repository parent, ClearcaseBranch branch ) {
+	public ClearcaseVCS( File parent, ClearcaseBranch branch ) {
 		super( parent, branch );
 	}
 	

@@ -6,7 +6,6 @@ import java.util.List;
 import net.praqma.exceptions.OperationNotImplementedException;
 import net.praqma.exceptions.UnableToReplayException;
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.AbstractVCS.Pull;
 import net.praqma.vcs.model.extensions.PullListener;
 
 public abstract class AbstractReplay {

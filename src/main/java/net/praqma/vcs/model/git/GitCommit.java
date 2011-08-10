@@ -1,9 +1,6 @@
 package net.praqma.vcs.model.git;
 
 import java.io.File;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -13,7 +10,6 @@ import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.ChangeSetElement;
-import net.praqma.vcs.model.git.GitVCS.PullImpl;
 import net.praqma.vcs.util.CommandLine;
 
 public class GitCommit extends AbstractCommit {

@@ -44,7 +44,7 @@ public class GitTest2 {
 		File gitpath = new File( "c:\\temp\\git_tests\\repo1" );
 		
 		//Repository parent = new Repository( "git@github.com:Praqma/MonKit.git", "origin" );
-		Repository parent = new Repository( "file://C:/projects/monkit/branches", "origin" );
+		File parent = new File( "file://C:/projects/monkit/branches", "origin" );
 		//GitSCM.create( new File( "c:\\temp\\git_tests\\repo1" ) );
 		
 		//GitSCM git = new GitSCM( parent, path, new GitBranch( "master" ) );
