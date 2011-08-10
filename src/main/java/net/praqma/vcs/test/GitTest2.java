@@ -23,9 +23,9 @@ import net.praqma.exceptions.UnableToReplayException;
 import net.praqma.util.debug.PraqmaLogger;
 import net.praqma.util.debug.PraqmaLogger.Logger;
 import net.praqma.vcs.OpenVCS;
-import net.praqma.vcs.clearcase.ClearcaseReplay;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.Repository;
+import net.praqma.vcs.model.clearcase.ClearcaseReplay;
 import net.praqma.vcs.model.git.GitBranch;
 import net.praqma.vcs.model.git.GitVCS;
 

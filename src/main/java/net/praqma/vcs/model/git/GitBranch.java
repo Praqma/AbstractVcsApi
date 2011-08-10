@@ -26,8 +26,8 @@ public class GitBranch extends AbstractBranch{
 		return gb;
 	}
 	
-	public void initialize() {
-		doInitialize( new InitializeImpl() );
+	public boolean initialize() {
+		return doInitialize( new InitializeImpl() );
 	}
 	
 	private class InitializeImpl extends Initialize {

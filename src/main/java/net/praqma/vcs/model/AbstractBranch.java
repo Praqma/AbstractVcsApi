@@ -16,6 +16,8 @@ public abstract class AbstractBranch {
 	
 	protected Logger logger = Logger.getLogger();
 	
+	public AbstractBranch() {}
+	
 	public AbstractBranch( File localRepositoryPath, String name ) {
 		this.name = name;
 		this.localRepositoryPath = localRepositoryPath;
@@ -39,11 +41,11 @@ public abstract class AbstractBranch {
 	 * @param branch
 	 * @throws OperationNotSupportedException
 	 */
-	public void initialize( AbstractBranch branch ) throws OperationNotSupportedException {
+	public boolean initialize() throws OperationNotSupportedException {
 		throw new OperationNotSupportedException( "Cannot initialize this kind of repository" );
 	}
 	
-	protected final void doInitialize( Initialize initialize ) {
+	protected final boolean doInitialize( Initialize initialize ) {
 		boolean status = initialize.setup();
 		
 		/* Only initialize if setup went good */
@@ -51,7 +53,7 @@ public abstract class AbstractBranch {
 			status = initialize.initialize();
 		}
 		
-		initialize.cleanup( status );
+		return initialize.cleanup( status );
 	}
 	
 	protected abstract class Initialize {

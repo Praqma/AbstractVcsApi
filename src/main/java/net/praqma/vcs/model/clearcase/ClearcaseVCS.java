@@ -1,4 +1,4 @@
-package net.praqma.vcs.clearcase;
+package net.praqma.vcs.model.clearcase;
 
 import java.io.File;
 
@@ -34,7 +34,7 @@ public class ClearcaseVCS extends AbstractVCS {
 		super( location );
 	}
 	
-	public static ClearcaseVCS create( File location, ClearcaseBranch branch, String baseVobName, String componentName, int policies, File viewPath ) {
+	public static ClearcaseVCS create( File location, String baseVobName, String componentName, int policies, File viewPath ) {
 		ClearcaseVCS cc = new ClearcaseVCS( location );
 		
 		cc.baseVobName = baseVobName;
@@ -91,6 +91,17 @@ public class ClearcaseVCS extends AbstractVCS {
 		        	dv.removeView();
 		        } catch( Exception e ) {
 		        	logger.error("Error while removing baseview: " + e.getMessage());
+		        	return false;
+		        }
+			}
+			
+			if( UCMView.ViewExists( bootstrapView ) ) {
+		        try {
+		        	logger.info("Removing bootstrap view");
+		        	DynamicView dv = new DynamicView(null,bootstrapView);
+		        	dv.removeView();
+		        } catch( Exception e ) {
+		        	logger.error("Error while removing bootstrap view: " + e.getMessage());
 		        	return false;
 		        }
 			}
@@ -239,6 +250,7 @@ public class ClearcaseVCS extends AbstractVCS {
 		
 		public boolean cleanup( boolean status ) {
 			if( !status ) {
+				logger.error( "Error while initializing, cleaing up" );
 				return setup();
 			}
 			

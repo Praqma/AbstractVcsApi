@@ -1,4 +1,4 @@
-package net.praqma.vcs.clearcase;
+package net.praqma.vcs.model.clearcase;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
