@@ -1,6 +1,5 @@
 package net.praqma.vcs.model.git;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,10 +25,22 @@ public class GitSCM extends AbstractSCM {
 		return git;
 	}
 	
+	
 	@Override
 	public void initialize( AbstractBranch branch ) {
-		String cmd = "git init";
-		CommandLine.run( cmd, branch.getPath() );
+		doInitialize( new InitializeImpl( branch ) );
+	}
+	
+	public class InitializeImpl extends Initialize {
+		public InitializeImpl( AbstractBranch branch ) {
+			super( branch );
+		}
+
+		public boolean initialize() {
+			String cmd = "git init";
+			CommandLine.run( cmd, branch.getPath() );
+			return true;
+		}
 	}
 	
 	public void changeBranch( AbstractBranch branch ) {

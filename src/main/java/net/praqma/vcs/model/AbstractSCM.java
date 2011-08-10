@@ -35,10 +35,53 @@ public abstract class AbstractSCM {
 		throw new OperationNotImplementedException( "Branch exists" );
 	}
 	
+	/**
+	 * Initialize the given branch
+	 * @param branch
+	 * @throws OperationNotSupportedException
+	 */
 	public void initialize( AbstractBranch branch ) throws OperationNotSupportedException {
 		throw new OperationNotSupportedException( "Cannot initialize this kind of repository" );
 	}
 	
+	protected final void doInitialize( Initialize initialize ) {
+		boolean status = initialize.setup();
+		
+		/* Only initialize if setup went good */
+		if( status ) {
+			status = initialize.initialize();
+		}
+		
+		initialize.cleanup( status );
+	}
+	
+	protected abstract class Initialize {
+		AbstractBranch branch;
+		public Initialize( AbstractBranch branch ) {
+			this.branch = branch;
+		}
+		
+		public boolean setup() {
+			logger.debug( "Abstract initialize setup" );
+			return true;
+		}
+		
+		public boolean initialize() {
+			logger.debug( "Abstract initialize" );
+			return true;
+		}
+		
+		public boolean cleanup( boolean status ) {
+			logger.debug( "Abstract initialize cleanup " + status );
+			return true;
+		}
+	}
+	
+	
+	/**
+	 * Pulls from the previously specified repository location
+	 * @throws OperationNotSupportedException
+	 */
 	public void pull() throws OperationNotSupportedException {
 		throw new OperationNotSupportedException( "Cannot pull from this kind of repository" );
 	}
@@ -47,7 +90,7 @@ public abstract class AbstractSCM {
 		throw new OperationNotSupportedException( "Cannot pull from this kind of repository" );
 	}
 	
-	protected void doPull( Pull pull ) {
+	protected final void doPull( Pull pull ) {
 
 		/* Run the pre pull listener */
 		PullListener.runPrePullListener();
@@ -90,7 +133,6 @@ public abstract class AbstractSCM {
 	public void changeBranch( File localRepositoryPath, AbstractBranch branch ) throws OperationNotSupportedException {
 		throw new OperationNotSupportedException( "Cannot change branch" );
 	}
-	
 	
 	public List<AbstractCommit> getCommits() throws OperationNotImplementedException {
 		throw new OperationNotImplementedException( "getCommits" );
