@@ -13,7 +13,7 @@ import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.ChangeSetElement;
-import net.praqma.vcs.model.git.GitSCM.PullImpl;
+import net.praqma.vcs.model.git.GitVCS.PullImpl;
 import net.praqma.vcs.util.CommandLine;
 
 public class GitCommit extends AbstractCommit {
