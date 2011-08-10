@@ -22,7 +22,13 @@ public class GitBranch extends AbstractBranch{
 
 	public static GitBranch create( File localRepository, String name, Repository parent ) {
 		GitBranch gb = new GitBranch( localRepository, name, parent );
-		
+		gb.initialize();
+		return gb;
+	}
+	
+	public static GitBranch get( File localRepository, String name, Repository parent ) {
+		GitBranch gb = new GitBranch( localRepository, name, parent );
+		gb.initialize();
 		return gb;
 	}
 	
@@ -48,7 +54,7 @@ public class GitBranch extends AbstractBranch{
 	public class PullImpl extends Pull {
 
 
-		public boolean perform() {
+		public boolean pull() {
 			logger.debug( "GIT: perform pull" );
 			
 			if( parent == null ) {
@@ -70,6 +76,8 @@ public class GitBranch extends AbstractBranch{
 	
 	@Override
 	public List<AbstractCommit> getCommits( boolean load ) {
+		logger.info( "Pulling git branch " + name );
+		
 		String cmd = "git rev-list --all";
 		List<String> cs = CommandLine.run( cmd, localRepositoryPath.getAbsoluteFile() ).stdoutList;
 		

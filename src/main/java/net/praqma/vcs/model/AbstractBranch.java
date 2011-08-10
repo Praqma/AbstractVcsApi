@@ -3,6 +3,7 @@ package net.praqma.vcs.model;
 import java.io.File;
 import java.util.List;
 
+import net.praqma.exceptions.ElementDoesNotExistException;
 import net.praqma.exceptions.OperationNotImplementedException;
 import net.praqma.exceptions.OperationNotSupportedException;
 import net.praqma.util.debug.Logger;
@@ -75,6 +76,15 @@ public abstract class AbstractBranch {
 			return true;
 		}
 	}
+
+
+	public boolean exists() throws OperationNotImplementedException {
+		throw new OperationNotImplementedException( "Branch exists" );
+	}
+	
+	public boolean get() throws OperationNotImplementedException, ElementDoesNotExistException {
+		throw new OperationNotImplementedException( "Get branch" );
+	}
 	
 	
 	/**
@@ -90,14 +100,14 @@ public abstract class AbstractBranch {
 		/* Run the pre pull listener */
 		PullListener.runPrePullListener();
 		
-		boolean status = pull.prePull();
+		boolean status = pull.setup();
 		
 		/* Only perform if pre step went good */
 		if( status ) {
-			status = pull.perform();
+			status = pull.pull();
 		}
 		
-		pull.postPull( status );
+		pull.cleanup( status );
 		
 		/* Run the post pull listener */
 		PullListener.runPostPullListener();
@@ -108,17 +118,17 @@ public abstract class AbstractBranch {
 		public Pull() {
 		}
 		
-		public boolean prePull() {
+		public boolean setup() {
 			logger.debug( "Abstract: pre pull" );
 			return true;
 		}
 		
-		public boolean perform() {
+		public boolean pull() {
 			logger.debug( "Abstract: perform pull" );
 			return true;
 		}
 		
-		public boolean postPull( boolean status ) {
+		public boolean cleanup( boolean status ) {
 			logger.debug( "Abstract: post pull " + status );
 			return true;
 		}

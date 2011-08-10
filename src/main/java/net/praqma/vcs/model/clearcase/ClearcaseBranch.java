@@ -2,12 +2,20 @@ package net.praqma.vcs.model.clearcase;
 
 import java.io.File;
 
+import net.praqma.clearcase.PVob;
 import net.praqma.clearcase.Vob;
 import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Stream;
+import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.clearcase.ucm.view.SnapshotView;
+import net.praqma.clearcase.ucm.view.UCMView;
+import net.praqma.clearcase.ucm.view.SnapshotView.COMP;
+import net.praqma.exceptions.ElementDoesNotExistException;
+import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
+import net.praqma.vcs.model.git.GitBranch.PullImpl;
+import net.praqma.vcs.util.CommandLine;
 
 public class ClearcaseBranch extends AbstractBranch{
 
@@ -16,24 +24,36 @@ public class ClearcaseBranch extends AbstractBranch{
 	private String viewtag;
 	private Stream parent;
 	
+	private Vob vob;
+	private PVob pvob;
+	
+	private Stream devStream;
 	private SnapshotView snapshot;
 	
-	public ClearcaseBranch( Vob vob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) {
+	private static Logger logger = Logger.getLogger();
+	
+	public ClearcaseBranch( Vob vob, PVob pvob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) {
 		this.viewroot = viewroot;
 		this.viewtag = viewtag;
 		this.baseline = baseline;
 		this.name = name;
 		this.parent = parent;
 		
+		this.vob = vob;
+		this.pvob = pvob;
+		
 		File view = new File( viewroot, vob.toString() );
 		this.localRepositoryPath = view;
 	}
 	
-	public static ClearcaseBranch create( Vob vob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) {
-		ClearcaseBranch branch = new ClearcaseBranch( vob, parent, baseline, viewroot, viewtag, name );
-		branch.initialize();
+	public static ClearcaseBranch create( Vob vob, PVob pvob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementDoesNotExistException {
+		ClearcaseBranch branch = new ClearcaseBranch( vob, pvob, parent, baseline, viewroot, viewtag, name );
+		//branch.initialize();
+		branch.get();
 		return branch;
 	}
+	
+	
 	
 	@Override
 	public boolean initialize() {
@@ -43,10 +63,10 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	private class InitializeImpl extends Initialize {
 		public boolean initialize() {
-			Stream devStream = null;
+
 			try {
 				logger.info( "Creating development stream" );
-				devStream = Stream.create( parent, name, false, baseline );
+				devStream = Stream.create( parent, name + "@" + pvob, false, baseline );
 			} catch (UCMException e) {
 				logger.error("Error while creating Development Stream: " + e.getMessage());
 				return false;
@@ -66,7 +86,76 @@ public class ClearcaseBranch extends AbstractBranch{
 		public boolean cleanup( boolean status ) {
 			return true;
 		}
+	}
+	
+	public boolean get() throws ElementDoesNotExistException {
+		//ClearcaseBranch branch = new ClearcaseBranch( vob, pvob, parent, baseline, viewroot, viewtag, name );
 		
+		boolean exists = true;
+		try{
+			Stream devStream = UCMEntity.getStream( name, pvob, false );
+		} catch( UCMException e ) {
+			logger.debug( "Stream did not exist" );
+			exists = false;
+		}
+		
+		if( !UCMView.ViewExists( viewtag ) ) {
+			logger.debug( "View did not exist" );
+			exists = false;
+		}
+		
+		if( !exists ) {
+			return initialize();
+		} else {
+			try {
+				snapshot = UCMView.GetSnapshotView(viewroot);
+			} catch (UCMException e) {
+				logger.error( "Could not get view: " + e.getMessage() );
+				throw new ElementDoesNotExistException( "Could not get clearcase view" );
+			}
+		}
+		
+		return true;
+	}
+	
+	
+	public void pull() {
+		doPull( new PullImpl() );
+	}
+	
+	public class PullImpl extends Pull {
+		public boolean setup() {
+			if( snapshot == null || devStream == null ) {
+				try {
+					get();
+				} catch (ElementDoesNotExistException e) {
+		        	logger.error("Error while getting stream: " + e.getMessage());
+		        	return false;
+				}
+			}
+			
+			return true;
+		}
+		
+		public boolean pull() {
+			try {
+				snapshot.Update( true, true, true, false, COMP.MODIFIABLE, null );
+			} catch (UCMException e) {
+	        	logger.error("Error while updating view: " + e.getMessage());
+	        	return false;
+			}
+			
+			return true;
+		}
+		
+		public boolean cleanup( boolean status ) {
+			/* TODO something useful */
+			return status;
+		}
+	}
+	
+	public SnapshotView getSnapshotView() {
+		return snapshot;
 	}
 
 }
