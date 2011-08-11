@@ -19,6 +19,7 @@ import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.exceptions.UnableToReplayException;
 import net.praqma.util.debug.Logger;
 import net.praqma.util.debug.Logger.LogLevel;
+import net.praqma.vcs.clearcase.listeners.ClearcaseReplayListener;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
 import net.praqma.vcs.model.ChangeSetElement;
@@ -119,8 +120,10 @@ public class ClearcaseReplay extends AbstractReplay {
 				success = false;
 			}
 			
+			String baselineName = ClearcaseReplayListener.runSelectBaselineName( commit );
+			
 			try {
-				Baseline.create( "OpenSCM_baseline_" + commit.getKey(), ccBranch.getComponent(), ccBranch.getDevelopmentPath(), true, true );
+				Baseline.create( baselineName, ccBranch.getComponent(), ccBranch.getDevelopmentPath(), true, true );
 			} catch (UCMException e1) {
 				logger.error( "ClearCase could not create baseline: " + e1.getMessage() );
 				success = false;
