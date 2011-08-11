@@ -96,6 +96,10 @@ public abstract class AbstractBranch {
 		throw new OperationNotSupportedException( "Cannot pull from this kind of repository" );
 	}
 	
+	public void pull( AbstractCommit commit ) throws OperationNotSupportedException {
+		throw new OperationNotSupportedException( "Cannot pull from this kind of repository" );
+	}
+	
 	protected final void doPull( Pull pull ) {
 
 		/* Run the pre pull listener */
