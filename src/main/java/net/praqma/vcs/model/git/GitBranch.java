@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.praqma.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.Repository;
@@ -12,7 +13,7 @@ import net.praqma.vcs.util.CommandLine;
 
 public class GitBranch extends AbstractBranch{
 
-	public GitBranch( File localRepositoryPath, String name ) {
+	public GitBranch( File localRepositoryPath, String name ) throws ElementNotCreatedException {
 		super( localRepositoryPath, name );
 	}
 	

@@ -10,12 +10,12 @@ import net.praqma.vcs.model.extensions.PullListener;
 
 public abstract class AbstractReplay {
 	
-	protected File path;
+	protected AbstractBranch branch;
 	
 	protected Logger logger = Logger.getLogger();
 	
-	public AbstractReplay( File path ) {
-		this.path = path;
+	public AbstractReplay( AbstractBranch branch ) {
+		this.branch = branch;
 	}
 	
 	public void perform( List<AbstractCommit> commits ) throws OperationNotImplementedException, UnableToReplayException {

@@ -11,6 +11,7 @@ import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.entities.UCM;
 import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.exceptions.ElementDoesNotExistException;
+import net.praqma.exceptions.ElementNotCreatedException;
 import net.praqma.util.debug.Logger;
 import net.praqma.util.debug.PraqmaLogger;
 import net.praqma.vcs.model.clearcase.ClearcaseBranch;
@@ -19,7 +20,7 @@ public class CCTest2 {
 	
 	static Logger logger = Logger.getLogger();
 
-	public static void main( String[] args ) throws UCMException, ElementDoesNotExistException {
+	public static void main( String[] args ) throws UCMException, ElementDoesNotExistException, ElementNotCreatedException {
 		
 		/* Do the ClearCase thing... */
 		UCM.setContext( UCM.ContextType.CLEARTOOL );
@@ -43,7 +44,8 @@ public class CCTest2 {
 		Stream parent = UCMEntity.getStream( "Development_int", pvob, true );
 		Baseline baseline = UCMEntity.getBaseline( "Structure_1_0", pvob, true );
 		
-		String name = vname + "_" + append + "@" + pvob;
+		//String name = vname + "_" + append + "@" + pvob;
+		String name = vname + "_" + append;
 
 		ClearcaseBranch branch = ClearcaseBranch.create( vob, pvob, parent, baseline, path, viewtag, name );
 		

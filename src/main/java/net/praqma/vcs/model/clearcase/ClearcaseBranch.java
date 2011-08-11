@@ -6,12 +6,15 @@ import net.praqma.clearcase.PVob;
 import net.praqma.clearcase.Vob;
 import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Baseline;
+import net.praqma.clearcase.ucm.entities.Component;
 import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.clearcase.ucm.view.UCMView;
 import net.praqma.clearcase.ucm.view.SnapshotView.COMP;
 import net.praqma.exceptions.ElementDoesNotExistException;
+import net.praqma.exceptions.ElementNotCreatedException;
+import net.praqma.exceptions.ElementNotCreatedException.FailureType;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.git.GitBranch.PullImpl;
@@ -20,6 +23,7 @@ import net.praqma.vcs.util.CommandLine;
 public class ClearcaseBranch extends AbstractBranch{
 
 	private File viewroot;
+	private File developmentPath;
 	private Baseline baseline;
 	private String viewtag;
 	private Stream parent;
@@ -30,9 +34,11 @@ public class ClearcaseBranch extends AbstractBranch{
 	private Stream devStream;
 	private SnapshotView snapshot;
 	
+	private Component component;
+	
 	private static Logger logger = Logger.getLogger();
 	
-	public ClearcaseBranch( Vob vob, PVob pvob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) {
+	public ClearcaseBranch( Vob vob, PVob pvob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementNotCreatedException {
 		this.viewroot = viewroot;
 		this.viewtag = viewtag;
 		this.baseline = baseline;
@@ -42,14 +48,33 @@ public class ClearcaseBranch extends AbstractBranch{
 		this.vob = vob;
 		this.pvob = pvob;
 		
+		try {
+			this.component = baseline.getComponent();
+		} catch (UCMException e) {
+			logger.error( "Could not create Clearcase branch: " + e.getMessage() );
+			throw new ElementNotCreatedException( "Could not create Clearcase branch: " + e.getMessage(), FailureType.DEPENDENCY );
+		}
+		
 		File view = new File( viewroot, vob.toString() );
 		this.localRepositoryPath = view;
 	}
-	
-	public static ClearcaseBranch create( Vob vob, PVob pvob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementDoesNotExistException {
+
+	/**
+	 * Create and initializes a Clearcase branch(stream) and a corresponding view(not updated).
+	 * @param vob {@link Vob}
+	 * @param pvob {@link PVob}
+	 * @param parent The parent {@link Stream} 
+	 * @param baseline The {@link Baseline} the branch is initialized from
+	 * @param viewroot The view root as a {@link File}
+	 * @param viewtag The view tag of the {@link SnapshotView}
+	 * @param name The name of the {@link Stream} given as a basename.
+	 * @return
+	 * @throws ElementNotCreatedException
+	 */
+	public static ClearcaseBranch create( Vob vob, PVob pvob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementNotCreatedException {
 		ClearcaseBranch branch = new ClearcaseBranch( vob, pvob, parent, baseline, viewroot, viewtag, name );
-		//branch.initialize();
-		branch.get();
+		branch.initialize();
+		//branch.get();
 		return branch;
 	}
 	
@@ -156,6 +181,26 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	public SnapshotView getSnapshotView() {
 		return snapshot;
+	}
+	
+	public PVob getPVob() {
+		return pvob;
+	}
+	
+	public Vob getVob() {
+		return vob;
+	}
+	
+	public Baseline getBaseline() {
+		return baseline;
+	}
+	
+	public File getDevelopmentPath() {
+		return this.developmentPath;
+	}
+	
+	public Component getComponent() {
+		return this.component;
 	}
 
 }

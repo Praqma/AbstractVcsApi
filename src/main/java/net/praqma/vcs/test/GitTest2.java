@@ -16,6 +16,7 @@ import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.clearcase.ucm.view.UCMView;
 import net.praqma.clearcase.util.Utilities;
+import net.praqma.exceptions.ElementNotCreatedException;
 import net.praqma.exceptions.OperationNotImplementedException;
 import net.praqma.exceptions.OperationNotSupportedException;
 import net.praqma.exceptions.UnableToPerformException;
@@ -32,7 +33,7 @@ import net.praqma.vcs.model.git.GitVCS;
 public class GitTest2 {
 
 	static net.praqma.util.debug.Logger logger = net.praqma.util.debug.Logger.getLogger();
-	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, UnableToReplayException, UCMException {
+	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, UnableToReplayException, UCMException, ElementNotCreatedException {
 		
 		logger.toStdOut( true );
 		new OpenVCS();
@@ -90,13 +91,14 @@ public class GitTest2 {
 		File devview = new File( view, vname + "/" + cname );
 		
 		
-		
+		/*
 		ClearcaseReplay cr = new ClearcaseReplay( devview, sview, component, pvob );
 		cr.replay( commits.get( 0 ) );
 		cr.replay( commits.get( 1 ) );
 		cr.replay( commits.get( 2 ) );
 		cr.replay( commits.get( 3 ) );
 		cr.replay( commits.get( 4 ) );
+		*/
 	}
 
 }

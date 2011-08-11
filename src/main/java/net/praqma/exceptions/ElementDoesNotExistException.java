@@ -4,6 +4,11 @@ public class ElementDoesNotExistException extends Exception {
 
 	private static final long serialVersionUID = 5511630514361323388L;
 	
+	public enum FailureType {
+		UNKNOWN,
+		
+	}
+	
 	public ElementDoesNotExistException() {
 		super();
 	}
@@ -11,4 +16,5 @@ public class ElementDoesNotExistException extends Exception {
 	public ElementDoesNotExistException(String s) {
 		super(s);
 	}
+	
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import net.praqma.exceptions.ElementDoesNotExistException;
+import net.praqma.exceptions.ElementNotCreatedException;
 import net.praqma.exceptions.OperationNotImplementedException;
 import net.praqma.exceptions.OperationNotSupportedException;
 import net.praqma.util.debug.Logger;
@@ -17,9 +18,9 @@ public abstract class AbstractBranch {
 	
 	protected Logger logger = Logger.getLogger();
 	
-	public AbstractBranch() {}
+	public AbstractBranch() throws ElementNotCreatedException {}
 	
-	public AbstractBranch( File localRepositoryPath, String name ) {
+	public AbstractBranch( File localRepositoryPath, String name ) throws ElementNotCreatedException {
 		this.name = name;
 		this.localRepositoryPath = localRepositoryPath;
 		

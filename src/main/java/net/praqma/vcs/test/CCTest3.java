@@ -18,6 +18,7 @@ import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.clearcase.ucm.view.UCMView;
 import net.praqma.clearcase.util.Utilities;
 import net.praqma.exceptions.ElementDoesNotExistException;
+import net.praqma.exceptions.ElementNotCreatedException;
 import net.praqma.exceptions.OperationNotImplementedException;
 import net.praqma.exceptions.OperationNotSupportedException;
 import net.praqma.exceptions.UnableToPerformException;
@@ -34,7 +35,7 @@ public class CCTest3 {
 
 	static net.praqma.util.debug.Logger logger = net.praqma.util.debug.Logger.getLogger();
 	
-	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, UnableToReplayException, UCMException, ElementDoesNotExistException {
+	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, UnableToReplayException, UCMException, ElementDoesNotExistException, ElementNotCreatedException {
 		
 		logger.toStdOut( true );
 		new OpenVCS();
@@ -97,7 +98,7 @@ public class CCTest3 {
 		
 		
 		
-		ClearcaseReplay cr = new ClearcaseReplay( devview, ccbranch.getSnapshotView(), component, pvob );
+		ClearcaseReplay cr = new ClearcaseReplay( ccbranch );
 		cr.replay( commits.get( 0 ) );
 		cr.replay( commits.get( 1 ) );
 		cr.replay( commits.get( 2 ) );

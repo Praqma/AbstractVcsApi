@@ -25,18 +25,14 @@ import net.praqma.vcs.model.ChangeSetElement;
 
 public class ClearcaseReplay extends AbstractReplay {
 	
-	private PVob pvob;
-	private SnapshotView view;
-	private Component component;
+	private ClearcaseBranch ccBranch;
 	
 	private Logger logger = Logger.getLogger();
 
-	public ClearcaseReplay( File path, SnapshotView view, Component component, PVob pvob ) {
-		super( path );
+	public ClearcaseReplay( ClearcaseBranch branch ) {
+		super( branch );
 		
-		this.pvob = pvob;
-		this.view = view;
-		this.component = component;
+		this.ccBranch = branch;
 	}
 
 	@Override
@@ -51,14 +47,14 @@ public class ClearcaseReplay extends AbstractReplay {
 
 		public boolean setup() {
 			try {
-				Activity activity = Activity.create( null, pvob, true, "CCReplay: " + commit.getKey(), path );
+				Activity activity = Activity.create( null, ccBranch.getPVob(), true, "CCReplay: " + commit.getKey(), ccBranch.getSnapshotView().GetViewRoot() );
 			} catch (UCMException e1) {
 				logger.error( "ClearCase Activity could not be created: " + e1.getMessage() );
 				return false;
 			}
 			
 			try {
-				Version.checkOut( path, path );
+				Version.checkOut( ccBranch.getDevelopmentPath(), ccBranch.getDevelopmentPath() );
 			} catch (UCMException e1) {
 				logger.error( "ClearCase could not checkout path: " + e1.getMessage() );
 				return false;
@@ -73,13 +69,13 @@ public class ClearcaseReplay extends AbstractReplay {
 			boolean success = true;
 			
 			for( ChangeSetElement cse : cs ) {
-				File file = new File( path, cse.getFile().getPath() );
+				File file = new File( ccBranch.getDevelopmentPath(), cse.getFile().getPath() );
 				logger.debug( "FILE: " + file );
 				
 				Version version = null;
 				if( !file.exists() ) {
 					try {
-						version = Version.create( file, view );
+						version = Version.create( file, ccBranch.getSnapshotView() );
 					} catch (UCMException e1) {
 						logger.error( "ClearCasecould not create version: " + e1.getMessage() );
 						success = false;						
@@ -87,7 +83,7 @@ public class ClearcaseReplay extends AbstractReplay {
 					}
 				} else {
 					try {
-						version = Version.getUnextendedVersion( file, path );
+						version = Version.getUnextendedVersion( file, ccBranch.getDevelopmentPath() );
 					} catch (UCMException e1) {
 						logger.error( "ClearCase could not get version: " + e1.getMessage() );
 						success = false;
@@ -117,14 +113,14 @@ public class ClearcaseReplay extends AbstractReplay {
 			boolean success = true;
 			
 			try {
-				Version.checkIn( path, path );
+				Version.checkIn( ccBranch.getDevelopmentPath(), ccBranch.getDevelopmentPath() );
 			} catch (UCMException e1) {
 				logger.error( "ClearCase could not checkin path: " + e1.getMessage() );
 				success = false;
 			}
 			
 			try {
-				Baseline.create( "OpenSCM_baseline_" + commit.getKey(), component, path, true, true );
+				Baseline.create( "OpenSCM_baseline_" + commit.getKey(), ccBranch.getComponent(), ccBranch.getDevelopmentPath(), true, true );
 			} catch (UCMException e1) {
 				logger.error( "ClearCase could not create baseline: " + e1.getMessage() );
 				success = false;

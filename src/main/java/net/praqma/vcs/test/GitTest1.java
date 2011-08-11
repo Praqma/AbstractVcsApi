@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import net.praqma.exceptions.ElementNotCreatedException;
 import net.praqma.exceptions.OperationNotImplementedException;
 import net.praqma.exceptions.OperationNotSupportedException;
 import net.praqma.exceptions.UnableToPerformException;
@@ -14,7 +15,7 @@ import net.praqma.vcs.model.git.GitBranch;
 
 public class GitTest1 {
 
-	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException {
+	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, ElementNotCreatedException {
 		File path = new File( "c:\\temp\\git_tests\\repo3" );
 		
 		//Repository parent = new Repository( "git@github.com:Praqma/MonKit.git", "origin" );
