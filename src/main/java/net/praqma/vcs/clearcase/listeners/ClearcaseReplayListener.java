@@ -5,11 +5,30 @@ import java.util.List;
 import net.praqma.vcs.Extension;
 import net.praqma.vcs.OpenVCS;
 import net.praqma.vcs.model.AbstractCommit;
+import net.praqma.vcs.model.AbstractReplay;
 
 public abstract class ClearcaseReplayListener implements Extension {
 
+	/**
+	 * Before initializing {@link ClearcaseReplay} object
+	 * @param replay
+	 */
+	public abstract void onReplay( AbstractReplay replay );
+	
+	/**
+	 * When baselining a commit
+	 * @param commit {@link AbstractCommit}
+	 * @return
+	 */
 	public abstract String onSelectBaselineName( AbstractCommit commit );
 
+	
+	public static void runReplay( AbstractReplay replay ) {
+		for (ClearcaseReplayListener l : all()) {
+			l.onReplay( replay );
+		}
+	}
+	
 	/**
 	 * Returns the {@link Baseline} basename from the first none-null extension implementation.
 	 * @param commit

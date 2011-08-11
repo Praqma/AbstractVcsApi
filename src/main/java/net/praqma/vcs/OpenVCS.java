@@ -7,6 +7,8 @@ public class OpenVCS {
 	
 	private static OpenVCS instance;
 	
+	private boolean verbose = true;
+	
 	private List<Extension> extensionsList = new ArrayList<Extension>();
 	
 	public OpenVCS() {

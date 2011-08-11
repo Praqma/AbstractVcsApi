@@ -4,21 +4,15 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
-import net.praqma.clearcase.PVob;
 import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Activity;
 import net.praqma.clearcase.ucm.entities.Baseline;
-import net.praqma.clearcase.ucm.entities.Component;
 import net.praqma.clearcase.ucm.entities.Version;
-import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.exceptions.UnableToReplayException;
 import net.praqma.util.debug.Logger;
-import net.praqma.util.debug.Logger.LogLevel;
 import net.praqma.vcs.clearcase.listeners.ClearcaseReplayListener;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
@@ -35,6 +29,11 @@ public class ClearcaseReplay extends AbstractReplay {
 		
 		this.ccBranch = branch;
 	}
+	
+	public void setBranch( ClearcaseBranch branch ) {
+		super.setBranch( branch );
+		this.ccBranch = branch;
+	}
 
 	@Override
 	public void replay( AbstractCommit commit ) throws UnableToReplayException {
@@ -48,7 +47,7 @@ public class ClearcaseReplay extends AbstractReplay {
 
 		public boolean setup() {
 			try {
-				Activity activity = Activity.create( null, ccBranch.getPVob(), true, "CCReplay: " + commit.getKey(), ccBranch.getSnapshotView().GetViewRoot() );
+				Activity.create( null, ccBranch.getPVob(), true, "CCReplay: " + commit.getKey(), ccBranch.getSnapshotView().GetViewRoot() );
 			} catch (UCMException e1) {
 				logger.error( "ClearCase Activity could not be created: " + e1.getMessage() );
 				return false;
@@ -109,14 +108,14 @@ public class ClearcaseReplay extends AbstractReplay {
 		}
 		
 		public boolean cleanup( boolean status ) {
-			logger.info( "Checking in...." );
+			logger.info( "Cleaning up Clearcase" );
 			
 			boolean success = true;
 			
 			try {
 				Version.checkIn( ccBranch.getDevelopmentPath(), ccBranch.getDevelopmentPath() );
 			} catch (UCMException e1) {
-				logger.error( "ClearCase could not checkin path: " + e1.getMessage() );
+				logger.error( "ClearCase could not checkin: " + e1.getMessage() );
 				success = false;
 			}
 			

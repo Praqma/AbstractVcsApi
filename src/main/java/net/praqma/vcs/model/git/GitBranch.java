@@ -10,6 +10,7 @@ import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.Repository;
 import net.praqma.vcs.util.CommandLine;
+import net.praqma.vcs.util.Utils;
 
 public class GitBranch extends AbstractBranch{
 
@@ -84,14 +85,18 @@ public class GitBranch extends AbstractBranch{
 		
 		List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
 		
-		for(String c : cs) {
-			GitCommit commit = new GitCommit(c, GitBranch.this);
+		//for(String c : cs) {
+		for( int i = 0 ; i < cs.size() ; i++ ) {
+			System.out.print( "\r" + Utils.getProgress( cs.size(), i ) );
+			GitCommit commit = new GitCommit(cs.get( i ), GitBranch.this);
 			if( load ) {
 				commit.load();
 			}
 			
 			commits.add( commit );
 		}
+		
+		System.out.println();
 		
 		Collections.reverse( commits );
 		
