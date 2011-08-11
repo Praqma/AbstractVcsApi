@@ -15,22 +15,28 @@ import net.praqma.exceptions.ElementDoesNotExistException;
 import net.praqma.exceptions.ElementNotCreatedException;
 import net.praqma.exceptions.UnableToReplayException;
 import net.praqma.util.debug.Logger;
+import net.praqma.util.debug.Logger.LogLevel;
+import net.praqma.vcs.OpenVCS;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.clearcase.ClearcaseBranch;
 import net.praqma.vcs.model.clearcase.ClearcaseReplay;
 import net.praqma.vcs.model.clearcase.ClearcaseVCS;
 import net.praqma.vcs.model.git.GitBranch;
+import net.praqma.vcs.util.Utils;
 
 public class GitToClearcase {
 	static Logger logger = Logger.getLogger();
 	
 	public static void main( String[] args ) throws UCMException, ElementNotCreatedException, ElementDoesNotExistException, UnableToReplayException {
 		
-		if( args.length < 5 ) {
+		if( args.length < 4 ) {
 			System.err.println( "Too few parameters" );
 			System.err.println( "Usage: GitToClearcase <vobname> <componentname> <viewroot> <append>" );
 			System.exit( 1 );
 		}
+		
+		new OpenVCS();
+		logger.setMinLogLevel( LogLevel.INFO );
 		
 		String vname = args[0];
 		String cname = args[1];
@@ -69,9 +75,10 @@ public class GitToClearcase {
 		logger.info( "Commit #1: " + commits.get( 0 ) );
 
 		for( int i = 0 ; i < commits.size() ; i++ ) {
+			System.out.print( "\r" + Utils.getProgress( commits.size(), i ) );
 			cr.replay( commits.get( i ) );
 		}
-		
+		System.out.println(" Done");
 		
 		/* For jenkins */
 		logger.info( "Creating special Jenkins project" );

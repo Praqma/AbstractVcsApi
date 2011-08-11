@@ -78,7 +78,7 @@ public class GitBranch extends AbstractBranch{
 	
 	@Override
 	public List<AbstractCommit> getCommits( boolean load ) {
-		logger.info( "Pulling git branch " + name );
+		logger.info( "Getting git commits for branch " + name );
 		
 		String cmd = "git rev-list --all";
 		List<String> cs = CommandLine.run( cmd, localRepositoryPath.getAbsoluteFile() ).stdoutList;
@@ -96,7 +96,7 @@ public class GitBranch extends AbstractBranch{
 			commits.add( commit );
 		}
 		
-		System.out.println();
+		System.out.println( " Done" );
 		
 		Collections.reverse( commits );
 		

@@ -55,6 +55,8 @@ public class ClearcaseBranch extends AbstractBranch{
 			throw new ElementNotCreatedException( "Could not create Clearcase branch: " + e.getMessage(), FailureType.DEPENDENCY );
 		}
 		
+		this.developmentPath = new File( viewroot, vob + "/" + this.component.getShortname() );
+		
 		File view = new File( viewroot, vob.toString() );
 		this.localRepositoryPath = view;
 	}

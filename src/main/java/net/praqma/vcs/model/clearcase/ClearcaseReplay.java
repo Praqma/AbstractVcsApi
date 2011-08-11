@@ -56,7 +56,7 @@ public class ClearcaseReplay extends AbstractReplay {
 			try {
 				Version.checkOut( ccBranch.getDevelopmentPath(), ccBranch.getDevelopmentPath() );
 			} catch (UCMException e1) {
-				logger.error( "ClearCase could not checkout path: " + e1.getMessage() );
+				logger.error( "ClearCase could not checkout path " + ccBranch.getDevelopmentPath() + ": " + e1.getMessage() );
 				return false;
 			}
 			
@@ -108,7 +108,7 @@ public class ClearcaseReplay extends AbstractReplay {
 		}
 		
 		public boolean cleanup( boolean status ) {
-			logger.info( "Cleaning up Clearcase" );
+			logger.debug( "Cleaning up Clearcase" );
 			
 			boolean success = true;
 			
