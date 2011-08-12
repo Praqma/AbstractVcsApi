@@ -13,6 +13,7 @@ import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.clearcase.ucm.view.DynamicView;
 import net.praqma.clearcase.ucm.view.UCMView;
 import net.praqma.util.debug.Logger;
+import net.praqma.util.structure.tree.Tree;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractVCS;
 import net.praqma.vcs.model.Repository;
@@ -20,15 +21,20 @@ import net.praqma.vcs.model.Repository;
 public class ClearcaseVCS extends AbstractVCS {
 	private Logger logger = Logger.getLogger();
 	
+	private String pvobName = "\\AVA_PVOB";
+	private String dynView = "AVAbaseview";
+	private String bootstrapView = "AVAbootstrapview";
+	
 	private String baseVobName;
 	private String vobName;
-	private String pvobName;
 	private String componentName;
 	private int policies = 0;
 	private File viewPath;
 	
-	private String dynView = "AVAbaseview";
-	private String bootstrapView = "AVAbootstrapview";
+	private PVob pvob;
+	private Vob vob;
+	
+
 
 	public ClearcaseVCS( File location ) {
 		super( location );
@@ -48,10 +54,25 @@ public class ClearcaseVCS extends AbstractVCS {
 		return cc;
 	}
 	
+	public static ClearcaseVCS create( File location, String baseVobName, Tree<String> componentNames, int policies, File viewPath ) {
+		ClearcaseVCS cc = new ClearcaseVCS( location );
+		
+		cc.baseVobName = baseVobName;
+		cc.vobName = "\\" + baseVobName;
+		cc.pvobName = cc.vobName + "_PVOB";
+		cc.componentName = componentNames.getRoot().getData();
+		cc.policies = policies;
+		cc.viewPath = viewPath;
+		
+		cc.initialize();
+		return cc;
+	}
+	
 	
 	@Override
 	public void initialize() {
 		doInitialize( new InitializeImpl() );
+		return new 
 	}
 	
 	public class InitializeImpl extends Initialize {
@@ -228,6 +249,7 @@ public class ClearcaseVCS extends AbstractVCS {
 				return false;
 			}
 			
+			/*
 			logger.info("Creating development project");
 			Project developmentProject;
 			try {
@@ -244,6 +266,7 @@ public class ClearcaseVCS extends AbstractVCS {
 				logger.error("Error while creating Development Integratiom Stream: " + e.getMessage());
 				return false;
 			}
+			*/
 			
 			return true;
 		}
@@ -256,5 +279,45 @@ public class ClearcaseVCS extends AbstractVCS {
 			
 			return true;
 		}
+	}
+	
+	
+	public boolean bootstrap() {
+		logger.info( "Bootstrapping PVOB " + this.pvobName );
+
+		pvob = PVob.get( this.pvobName );
+        if( pvob == null ) {
+        	logger.info("Creating PVOB");
+        	try {
+   				pvob = PVob.create(ClearcaseVCS.this.pvobName, null, "PVOB");
+        	} catch( UCMException e ) {
+        		logger.error("Error while creating PVOB: " + e.getMessage());
+        		return false;
+        	}
+        }
+        
+		if( UCMView.ViewExists( dynView ) ) {
+	        try {
+	        	logger.info("Removing baseview");
+	        	DynamicView dv = new DynamicView(null,dynView);
+	        	dv.removeView();
+	        } catch( Exception e ) {
+	        	logger.error("Error while removing baseview: " + e.getMessage());
+	        	return false;
+	        }
+		}
+		
+		if( UCMView.ViewExists( bootstrapView ) ) {
+	        try {
+	        	logger.info("Removing bootstrap view");
+	        	DynamicView dv = new DynamicView(null,bootstrapView);
+	        	dv.removeView();
+	        } catch( Exception e ) {
+	        	logger.error("Error while removing bootstrap view: " + e.getMessage());
+	        	return false;
+	        }
+		}
+		
+		return true;
 	}
 }

@@ -16,7 +16,7 @@ import net.praqma.exceptions.ElementNotCreatedException;
 import net.praqma.exceptions.UnableToReplayException;
 import net.praqma.util.debug.Logger;
 import net.praqma.util.debug.Logger.LogLevel;
-import net.praqma.vcs.OpenVCS;
+import net.praqma.vcs.AVA;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.clearcase.ClearcaseBranch;
 import net.praqma.vcs.model.clearcase.ClearcaseReplay;
@@ -35,7 +35,7 @@ public class GitToClearcase {
 			System.exit( 1 );
 		}
 		
-		new OpenVCS();
+		new AVA();
 		logger.setMinLogLevel( LogLevel.INFO );
 		
 		String vname = args[0];

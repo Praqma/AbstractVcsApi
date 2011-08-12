@@ -43,18 +43,29 @@ public class GitBranch extends AbstractBranch{
 			String cmd = "git branch " + name + " .";
 			CommandLine.run( cmd, localRepositoryPath.getAbsoluteFile() );
 			
+			/* Clone parent */
+			if( parent != null ) {
+				cmd = "git clone " + parent.getLocation() + " .";
+			}
+			
 			return true;
 		}
 		
 	}
 
 	public void pull() {
-		PullImpl pull = new PullImpl();
-		doPull( pull );
+		doPull( new PullImpl(null) );
+	}
+	
+	public void pull( AbstractCommit commit ) {
+		doPull( new PullImpl( commit ) );
 	}
 	
 	public class PullImpl extends Pull {
 
+		public PullImpl( AbstractCommit commit ) {
+			super( commit );
+		}
 
 		public boolean pull() {
 			logger.debug( "GIT: perform pull" );

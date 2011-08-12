@@ -3,7 +3,7 @@ package net.praqma.vcs.clearcase.listeners;
 import java.util.List;
 
 import net.praqma.vcs.Extension;
-import net.praqma.vcs.OpenVCS;
+import net.praqma.vcs.AVA;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
 
@@ -46,7 +46,7 @@ public abstract class ClearcaseReplayListener implements Extension {
 	}
 	
 	public static List<ClearcaseReplayListener> all() {
-		return OpenVCS.getInstance().getExtensions(ClearcaseReplayListener.class);
+		return AVA.getInstance().getExtensions(ClearcaseReplayListener.class);
 	}
 	
 }

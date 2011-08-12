@@ -3,7 +3,7 @@ package net.praqma.vcs.model.extensions;
 import java.util.List;
 
 import net.praqma.vcs.Extension;
-import net.praqma.vcs.OpenVCS;
+import net.praqma.vcs.AVA;
 
 public abstract class PullListener implements Extension {
 	
@@ -24,6 +24,6 @@ public abstract class PullListener implements Extension {
 	}
 	
 	public static List<PullListener> all() {
-		return OpenVCS.getInstance().getExtensions(PullListener.class);
+		return AVA.getInstance().getExtensions(PullListener.class);
 	}
 }

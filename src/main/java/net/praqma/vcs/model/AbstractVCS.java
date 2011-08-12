@@ -3,6 +3,7 @@ package net.praqma.vcs.model;
 import java.io.File;
 import java.util.List;
 
+import net.praqma.exceptions.ElementNotCreatedException;
 import net.praqma.exceptions.OperationNotImplementedException;
 import net.praqma.exceptions.OperationNotSupportedException;
 import net.praqma.util.debug.Logger;
@@ -41,7 +42,7 @@ public abstract class AbstractVCS {
 	 * @param branch
 	 * @throws OperationNotSupportedException
 	 */
-	public void initialize() throws OperationNotSupportedException {
+	public AbstractBranch initialize() throws ElementNotCreatedException, OperationNotSupportedException {
 		throw new OperationNotSupportedException( "Cannot initialize this kind of repository" );
 	}
 	

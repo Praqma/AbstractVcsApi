@@ -25,7 +25,7 @@ import net.praqma.exceptions.UnableToPerformException;
 import net.praqma.exceptions.UnableToReplayException;
 import net.praqma.util.debug.PraqmaLogger;
 import net.praqma.util.debug.PraqmaLogger.Logger;
-import net.praqma.vcs.OpenVCS;
+import net.praqma.vcs.AVA;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.clearcase.ClearcaseBranch;
 import net.praqma.vcs.model.clearcase.ClearcaseReplay;
@@ -38,7 +38,7 @@ public class CCTest3 {
 	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, UnableToReplayException, UCMException, ElementDoesNotExistException, ElementNotCreatedException {
 		
 		logger.toStdOut( true );
-		new OpenVCS();
+		new AVA();
 		
 		File gitpath = new File( "c:\\temp\\git_tests\\repo1" );
 		

@@ -92,13 +92,9 @@ public abstract class AbstractBranch {
 	 * Pulls from the previously specified repository location
 	 * @throws OperationNotSupportedException
 	 */
-	public void pull() throws OperationNotSupportedException {
-		throw new OperationNotSupportedException( "Cannot pull from this kind of repository" );
-	}
+	public abstract void pull();
 	
-	public void pull( AbstractCommit commit ) throws OperationNotSupportedException {
-		throw new OperationNotSupportedException( "Cannot pull from this kind of repository" );
-	}
+	public abstract void pull( AbstractCommit commit );
 	
 	protected final void doPull( Pull pull ) {
 
@@ -119,8 +115,9 @@ public abstract class AbstractBranch {
 	}
 	
 	protected abstract class Pull{
-		
-		public Pull() {
+		AbstractCommit commit;
+		public Pull( AbstractCommit commit ) {
+			this.commit = commit;
 		}
 		
 		public boolean setup() {

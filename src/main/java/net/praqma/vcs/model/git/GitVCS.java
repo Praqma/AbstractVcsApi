@@ -2,7 +2,9 @@ package net.praqma.vcs.model.git;
 
 import java.io.File;
 
+import net.praqma.exceptions.ElementNotCreatedException;
 import net.praqma.util.debug.Logger;
+import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractVCS;
 import net.praqma.vcs.util.CommandLine;
 
@@ -14,7 +16,7 @@ public class GitVCS extends AbstractVCS {
 		super( location );
 	}
 	
-	public static GitVCS create( File location) {
+	public static GitVCS create( File location) throws ElementNotCreatedException {
 		GitVCS git = new GitVCS( location );
 		git.initialize();
 		return git;
@@ -22,9 +24,11 @@ public class GitVCS extends AbstractVCS {
 	
 	
 	@Override
-	public void initialize() {
+	public AbstractBranch initialize() throws ElementNotCreatedException {
 		logger.info( "Initializing git repository add " + location );
 		doInitialize( new InitializeImpl() );
+		
+		return new GitBranch( location, "master" );
 	}
 	
 	public class InitializeImpl extends Initialize {

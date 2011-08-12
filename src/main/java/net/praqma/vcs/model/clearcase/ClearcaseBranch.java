@@ -17,6 +17,7 @@ import net.praqma.exceptions.ElementNotCreatedException;
 import net.praqma.exceptions.ElementNotCreatedException.FailureType;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
+import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.git.GitBranch.PullImpl;
 import net.praqma.vcs.util.CommandLine;
 
@@ -147,10 +148,18 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	
 	public void pull() {
-		doPull( new PullImpl() );
+		doPull( new PullImpl(null) );
+	}
+	
+	@Override
+	public void pull( AbstractCommit commit ) {
 	}
 	
 	public class PullImpl extends Pull {
+		public PullImpl( AbstractCommit commit ) {
+			super( commit );
+		}
+
 		public boolean setup() {
 			if( snapshot == null || devStream == null ) {
 				try {

@@ -23,7 +23,7 @@ import net.praqma.exceptions.UnableToPerformException;
 import net.praqma.exceptions.UnableToReplayException;
 import net.praqma.util.debug.PraqmaLogger;
 import net.praqma.util.debug.PraqmaLogger.Logger;
-import net.praqma.vcs.OpenVCS;
+import net.praqma.vcs.AVA;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.Repository;
 import net.praqma.vcs.model.clearcase.ClearcaseReplay;
@@ -36,7 +36,7 @@ public class GitTest2 {
 	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, UnableToReplayException, UCMException, ElementNotCreatedException {
 		
 		logger.toStdOut( true );
-		new OpenVCS();
+		new AVA();
 		
         File view = new File( args[0] );
         String vname = args[1];
