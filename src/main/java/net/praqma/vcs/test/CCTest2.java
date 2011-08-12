@@ -47,7 +47,7 @@ public class CCTest2 {
 		//String name = vname + "_" + append + "@" + pvob;
 		String name = vname + "_" + append;
 
-		ClearcaseBranch branch = ClearcaseBranch.create( vob, pvob, parent, baseline, path, viewtag, name );
+		//ClearcaseBranch branch = ClearcaseBranch.create( vob, pvob, parent, baseline, path, viewtag, name );
 		
 
 	}

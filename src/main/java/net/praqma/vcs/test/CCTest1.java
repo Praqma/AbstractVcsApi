@@ -26,10 +26,12 @@ public class CCTest1 {
 		//File bpath = new File( path, vname + "/" + cname );
 		
 		//ClearcaseBranch branch = new ClearcaseBranch( path, "master" );
+		/*
 		ClearcaseVCS cc = ClearcaseVCS.create( null, vname, cname, Project.POLICY_INTERPROJECT_DELIVER  | 
                                                                    Project.POLICY_CHSTREAM_UNRESTRICTED | 
                                                                    Project.POLICY_DELIVER_NCO_DEVSTR    |
                                                                    Project.POLICY_DELIVER_REQUIRE_REBASE, new File( "m:") );
+                                                                   */
 		
 
 	}

@@ -90,6 +90,7 @@ public class CCTest3 {
 		
 		String name = vname + "_" + append;
 		
+		/*
 		ClearcaseBranch ccbranch = new ClearcaseBranch( vob, pvob, parentStream, baseline, path, viewtag, name );
 		ccbranch.get();
 		ccbranch.pull();
@@ -104,6 +105,7 @@ public class CCTest3 {
 		cr.replay( commits.get( 2 ) );
 		cr.replay( commits.get( 3 ) );
 		cr.replay( commits.get( 4 ) );
+		*/
 	}
 
 }

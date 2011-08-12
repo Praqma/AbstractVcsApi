@@ -54,6 +54,7 @@ public class GitToClearcase {
 		
 		logger.toStdOut( true );
 		
+		/*
 		ClearcaseVCS cc = ClearcaseVCS.create( null, vname, cname, Project.POLICY_INTERPROJECT_DELIVER  | 
                                                                    Project.POLICY_CHSTREAM_UNRESTRICTED | 
                                                                    Project.POLICY_DELIVER_NCO_DEVSTR, new File( "m:") );
@@ -65,8 +66,6 @@ public class GitToClearcase {
 
 		ClearcaseReplay cr = new ClearcaseReplay( ccbranch );
 		
-		
-		/* Git */
 		GitBranch branch = new GitBranch( new File( "C:/projects/monkit/branches" ), "master" );
 		List<AbstractCommit> commits = branch.getCommits(true);
 		
@@ -79,6 +78,8 @@ public class GitToClearcase {
 			cr.replay( commits.get( i ) );
 		}
 		System.out.println(" Done");
+		
+		*/
 		
 		/* For jenkins */
 		logger.info( "Creating special Jenkins project" );

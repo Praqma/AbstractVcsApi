@@ -24,16 +24,15 @@ public class GitVCS extends AbstractVCS {
 	
 	
 	@Override
-	public AbstractBranch initialize() throws ElementNotCreatedException {
-		logger.info( "Initializing git repository add " + location );
+	public void initialize() throws ElementNotCreatedException {
+		logger.info( "Initializing git repository " + location );
 		doInitialize( new InitializeImpl() );
-		
-		return new GitBranch( location, "master" );
 	}
 	
 	public class InitializeImpl extends Initialize {
 		public boolean initialize() {
 			String cmd = "git init";
+			location.mkdirs();
 			CommandLine.run( cmd, location.getAbsoluteFile() );
 			return true;
 		}

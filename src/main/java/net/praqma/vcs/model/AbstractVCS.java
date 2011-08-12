@@ -42,7 +42,7 @@ public abstract class AbstractVCS {
 	 * @param branch
 	 * @throws OperationNotSupportedException
 	 */
-	public AbstractBranch initialize() throws ElementNotCreatedException, OperationNotSupportedException {
+	public void initialize() throws ElementNotCreatedException, OperationNotSupportedException {
 		throw new OperationNotSupportedException( "Cannot initialize this kind of repository" );
 	}
 	

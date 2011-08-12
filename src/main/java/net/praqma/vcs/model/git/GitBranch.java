@@ -40,12 +40,27 @@ public class GitBranch extends AbstractBranch{
 	
 	private class InitializeImpl extends Initialize {
 		public boolean initialize() {
+			/*
 			String cmd = "git branch " + name + " .";
-			CommandLine.run( cmd, localRepositoryPath.getAbsoluteFile() );
 			
-			/* Clone parent */
+			try {
+				CommandLine.run( cmd, localRepositoryPath.getAbsoluteFile() );
+			} catch( Exception e ) {
+				logger.warning( "Could not create the branch " + name );
+			}
+			*/
+			
+			/* Only do anything if a parent is given
+			 * Clone parent */
 			if( parent != null ) {
-				cmd = "git clone " + parent.getLocation() + " .";
+				CommandLine.run( "git clone " + parent.getLocation() + " ." );
+			} else {
+				/*
+				CommandLine.run( "git symbolic-ref HEAD refs/heads/" + name );
+				File index = new File( ".git/index" );
+				index.delete();
+				CommandLine.run( "git clean -fdx" );
+				*/
 			}
 			
 			return true;

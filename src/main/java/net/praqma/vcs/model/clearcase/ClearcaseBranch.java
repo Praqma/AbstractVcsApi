@@ -30,7 +30,7 @@ public class ClearcaseBranch extends AbstractBranch{
 	private Stream parent;
 	
 	private Vob vob;
-	private PVob pvob;
+	private ClearcaseVCS ccVCS;
 	
 	private Stream devStream;
 	private SnapshotView snapshot;
@@ -39,7 +39,7 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	private static Logger logger = Logger.getLogger();
 	
-	public ClearcaseBranch( Vob vob, PVob pvob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementNotCreatedException {
+	public ClearcaseBranch( ClearcaseVCS ccVCS, Vob vob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementNotCreatedException {
 		this.viewroot = viewroot;
 		this.viewtag = viewtag;
 		this.baseline = baseline;
@@ -47,7 +47,7 @@ public class ClearcaseBranch extends AbstractBranch{
 		this.parent = parent;
 		
 		this.vob = vob;
-		this.pvob = pvob;
+		this.ccVCS = ccVCS;
 		
 		try {
 			this.component = baseline.getComponent();
@@ -74,8 +74,8 @@ public class ClearcaseBranch extends AbstractBranch{
 	 * @return
 	 * @throws ElementNotCreatedException
 	 */
-	public static ClearcaseBranch create( Vob vob, PVob pvob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementNotCreatedException {
-		ClearcaseBranch branch = new ClearcaseBranch( vob, pvob, parent, baseline, viewroot, viewtag, name );
+	public static ClearcaseBranch create( ClearcaseVCS ccVCS, Vob vob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementNotCreatedException {
+		ClearcaseBranch branch = new ClearcaseBranch( ccVCS, vob, parent, baseline, viewroot, viewtag, name );
 		branch.initialize();
 		//branch.get();
 		return branch;
@@ -94,7 +94,7 @@ public class ClearcaseBranch extends AbstractBranch{
 
 			try {
 				logger.info( "Creating development stream" );
-				devStream = Stream.create( parent, name + "@" + pvob, false, baseline );
+				devStream = Stream.create( parent, name + "@" + ccVCS.getPVob(), false, baseline );
 			} catch (UCMException e) {
 				logger.error("Error while creating Development Stream: " + e.getMessage());
 				return false;
@@ -121,7 +121,7 @@ public class ClearcaseBranch extends AbstractBranch{
 		
 		boolean exists = true;
 		try{
-			Stream devStream = UCMEntity.getStream( name, pvob, false );
+			Stream devStream = UCMEntity.getStream( name, ccVCS.getPVob(), false );
 		} catch( UCMException e ) {
 			logger.debug( "Stream did not exist" );
 			exists = false;
@@ -195,7 +195,7 @@ public class ClearcaseBranch extends AbstractBranch{
 	}
 	
 	public PVob getPVob() {
-		return pvob;
+		return ccVCS.getPVob();
 	}
 	
 	public Vob getVob() {
