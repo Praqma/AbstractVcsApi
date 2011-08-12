@@ -11,13 +11,13 @@ public abstract class PullListener implements Extension {
 	
 	public abstract void onPostPull();
 
-	public static void runPrePullListener() {
+	public static void runPreCheckoutListener() {
 		for (PullListener l : all()) {
 			l.onPrePull();
 		}
 	}
 	
-	public static void runPostPullListener() {
+	public static void runPostCheckoutListener() {
 		for (PullListener l : all()) {
 			l.onPostPull();
 		}

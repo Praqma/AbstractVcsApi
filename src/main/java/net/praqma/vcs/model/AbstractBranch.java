@@ -92,31 +92,31 @@ public abstract class AbstractBranch {
 	 * Pulls from the previously specified repository location
 	 * @throws OperationNotSupportedException
 	 */
-	public abstract void pull();
+	public abstract void checkout();
 	
-	public abstract void pull( AbstractCommit commit );
+	public abstract void checkout( AbstractCommit commit );
 	
-	protected final void doPull( Pull pull ) {
+	protected final void doCheckout( Checkout checkout ) {
 
 		/* Run the pre pull listener */
-		PullListener.runPrePullListener();
+		PullListener.runPreCheckoutListener();
 		
-		boolean status = pull.setup();
+		boolean status = checkout.setup();
 		
 		/* Only perform if pre step went good */
 		if( status ) {
-			status = pull.pull();
+			status = checkout.checkout();
 		}
 		
-		pull.cleanup( status );
+		checkout.cleanup( status );
 		
 		/* Run the post pull listener */
-		PullListener.runPostPullListener();
+		PullListener.runPostCheckoutListener();
 	}
 	
-	protected abstract class Pull{
+	protected abstract class Checkout{
 		AbstractCommit commit;
-		public Pull( AbstractCommit commit ) {
+		public Checkout( AbstractCommit commit ) {
 			this.commit = commit;
 		}
 		
@@ -125,7 +125,7 @@ public abstract class AbstractBranch {
 			return true;
 		}
 		
-		public boolean pull() {
+		public boolean checkout() {
 			logger.debug( "Abstract: perform pull" );
 			return true;
 		}

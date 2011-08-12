@@ -51,7 +51,7 @@ public class GitTest2 {
 		//GitSCM git = new GitSCM( parent, path, new GitBranch( "master" ) );
 		GitBranch branch = new GitBranch( gitpath, "master" );
 		//GitVCS git = GitVCS.create( branch );
-		branch.pull();
+		branch.checkout();
 		
 		List<AbstractCommit> commits = branch.getCommits();
 		

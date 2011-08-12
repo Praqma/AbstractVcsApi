@@ -31,9 +31,13 @@ public class GitVCS extends AbstractVCS {
 	
 	public class InitializeImpl extends Initialize {
 		public boolean initialize() {
-			String cmd = "git init";
 			location.mkdirs();
-			CommandLine.run( cmd, location.getAbsoluteFile() );
+			try {
+				Git.initialize( location.getAbsoluteFile() );
+			} catch( GitException e ) {
+				logger.warning( "Could not initialize repository at " + location.getAbsolutePath() );
+				return false;
+			}
 			return true;
 		}
 	}

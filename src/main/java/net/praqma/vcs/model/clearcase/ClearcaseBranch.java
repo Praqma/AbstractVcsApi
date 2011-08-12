@@ -18,7 +18,7 @@ import net.praqma.exceptions.ElementNotCreatedException.FailureType;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.git.GitBranch.PullImpl;
+import net.praqma.vcs.model.git.GitBranch.CheckoutImpl;
 import net.praqma.vcs.util.CommandLine;
 
 public class ClearcaseBranch extends AbstractBranch{
@@ -147,16 +147,16 @@ public class ClearcaseBranch extends AbstractBranch{
 	}
 	
 	
-	public void pull() {
-		doPull( new PullImpl(null) );
+	public void checkout() {
+		doCheckout( new CheckoutImpl(null) );
 	}
 	
 	@Override
-	public void pull( AbstractCommit commit ) {
+	public void checkout( AbstractCommit commit ) {
 	}
 	
-	public class PullImpl extends Pull {
-		public PullImpl( AbstractCommit commit ) {
+	public class CheckoutImpl extends Checkout {
+		public CheckoutImpl( AbstractCommit commit ) {
 			super( commit );
 		}
 
@@ -173,7 +173,7 @@ public class ClearcaseBranch extends AbstractBranch{
 			return true;
 		}
 		
-		public boolean pull() {
+		public boolean checkout() {
 			try {
 				snapshot.Update( true, true, true, false, COMP.MODIFIABLE, null );
 			} catch (UCMException e) {

@@ -16,7 +16,7 @@ public class ExtentionTest {
 		logger.setMinLogLevel( LogLevel.INFO );
 		logger.log( "hej", LogLevel.DEBUG );
 		logger.log( "hej" );
-		PullListener.runPrePullListener();
+		PullListener.runPreCheckoutListener();
 	}
 	
 }

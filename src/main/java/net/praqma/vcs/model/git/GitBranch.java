@@ -68,30 +68,36 @@ public class GitBranch extends AbstractBranch{
 		
 	}
 
-	public void pull() {
-		doPull( new PullImpl(null) );
+	public void checkout() {
+		doCheckout( new CheckoutImpl(null) );
 	}
 	
-	public void pull( AbstractCommit commit ) {
-		doPull( new PullImpl( commit ) );
+	public void checkout( AbstractCommit commit ) {
+		doCheckout( new CheckoutImpl( commit ) );
 	}
 	
-	public class PullImpl extends Pull {
+	public class CheckoutImpl extends Checkout {
 
-		public PullImpl( AbstractCommit commit ) {
+		public CheckoutImpl( AbstractCommit commit ) {
 			super( commit );
 		}
 
-		public boolean pull() {
-			logger.debug( "GIT: perform pull" );
+		public boolean checkout() {
+			logger.debug( "GIT: perform checkout" );
 			
 			if( parent == null ) {
-				System.err.println( "GIT: Could not pull a null branch" );
+				System.err.println( "Cannot checkout null branch" );
+				logger.warning( "Cannot checkout null branch" );
 				return false;
 			}
 			
-			String cmd = "git pull " + parent;
-			CommandLine.run( cmd, localRepositoryPath );
+			try {
+				Git.pull( name, parent.getLocation(), localRepositoryPath );
+			} catch (GitException e) {
+				System.err.println( "Could not pull git branch" );
+				logger.warning( "Could not pull git branch" );
+				return false;
+			}
 			
 			return true;
 		}
