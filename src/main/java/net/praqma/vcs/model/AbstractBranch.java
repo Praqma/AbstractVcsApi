@@ -115,7 +115,7 @@ public abstract class AbstractBranch {
 	}
 	
 	protected abstract class Checkout{
-		AbstractCommit commit;
+		protected AbstractCommit commit;
 		public Checkout( AbstractCommit commit ) {
 			this.commit = commit;
 		}

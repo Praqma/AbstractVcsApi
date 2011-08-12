@@ -98,6 +98,18 @@ public class GitBranch extends AbstractBranch{
 				logger.warning( "Could not pull git branch" );
 				return false;
 			}
+
+			/* Checkout a specific commit */
+			if( commit != null ) {
+				try {
+					logger.info( "Checking out " + commit.getTitle() );
+					Git.checkoutCommit( commit.getKey(), localRepositoryPath );
+				} catch (GitException e) {
+					System.err.println( "Could not pull git branch" );
+					logger.warning( "Could not pull git branch" );
+					return false;
+				}
+			}
 			
 			return true;
 		}

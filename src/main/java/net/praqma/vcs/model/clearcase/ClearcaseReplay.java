@@ -17,6 +17,7 @@ import net.praqma.vcs.clearcase.listeners.ClearcaseReplayListener;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
 import net.praqma.vcs.model.ChangeSetElement;
+import net.praqma.vcs.model.ChangeSetElement.Status;
 
 public class ClearcaseReplay extends AbstractReplay {
 	
@@ -64,13 +65,13 @@ public class ClearcaseReplay extends AbstractReplay {
 		}
 		
 		public boolean replay() {
-			List<ChangeSetElement> cs = commit.getChangeSet();
+			List<ChangeSetElement> cs = commit.getChangeSet().asList();
 			
 			boolean success = true;
 			
 			for( ChangeSetElement cse : cs ) {
 				File file = new File( ccBranch.getDevelopmentPath(), cse.getFile().getPath() );
-				logger.debug( "FILE: " + file );
+				logger.debug( "File(" + cse.getStatus() + "): " + file );
 				
 				Version version = null;
 				if( !file.exists() ) {
@@ -91,16 +92,26 @@ public class ClearcaseReplay extends AbstractReplay {
 					}
 				}
 				
-				logger.debug( "Writing" );
-					
-				PrintStream ps;
-				try {
-					ps = new PrintStream( new BufferedOutputStream(new FileOutputStream(version.getVersion(), true) ) );
-					ps.println( commit.getKey() + " - " + commit.getAuthorDate() );
-					ps.close();
-				} catch (FileNotFoundException e) {
-					success = false;
-					logger.error( e );
+				if( cse.getStatus() != Status.DELETED) {
+					logger.debug( "Writing" );
+						
+					PrintStream ps;
+					try {
+						ps = new PrintStream( new BufferedOutputStream(new FileOutputStream(version.getVersion(), true) ) );
+						ps.println( commit.getKey() + " - " + commit.getAuthorDate() );
+						ps.close();
+					} catch (FileNotFoundException e) {
+						success = false;
+						logger.error( e );
+					}
+				} else {
+					try {
+						version.remove();
+					} catch (UCMException e1) {
+						logger.error( "ClearCase could not remove version: " + e1.getMessage() );
+						success = false;
+						continue;
+					}
 				}
 			}
 			

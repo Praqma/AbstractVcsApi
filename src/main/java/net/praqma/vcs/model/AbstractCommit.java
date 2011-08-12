@@ -22,7 +22,8 @@ public abstract class AbstractCommit {
 	
 	private Logger logger = Logger.getLogger();
 	
-	protected List<ChangeSetElement> changeSet = new ArrayList<ChangeSetElement>();
+	//protected List<ChangeSetElement> changeSet = new ArrayList<ChangeSetElement>();
+	protected ChangeSet changeSet = new ChangeSet();
 	
 	protected AbstractBranch branch;
 	
@@ -67,7 +68,7 @@ public abstract class AbstractCommit {
 		return branch;
 	}
 	
-	public List<ChangeSetElement> getChangeSet() {
+	public ChangeSet getChangeSet() {
 		return this.changeSet;
 	}
 	
@@ -77,6 +78,10 @@ public abstract class AbstractCommit {
 	
 	public Date getAuthorDate() {
 		return authorDate;
+	}
+	
+	public String getTitle() {
+		return title;
 	}
 	
 	public String toString() {
@@ -89,7 +94,7 @@ public abstract class AbstractCommit {
 		
 		sb.append( "Key: " + key + "\n" );
 		
-		for(ChangeSetElement cs : changeSet) {
+		for(ChangeSetElement cs : changeSet.asList()) {
 			sb.append( " * " + cs.getFile() + "\n" );
 		}
 		

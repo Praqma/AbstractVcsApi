@@ -10,6 +10,7 @@ import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.ChangeSetElement;
+import net.praqma.vcs.model.ChangeSetElement.Status;
 import net.praqma.vcs.util.CommandLine;
 
 public class GitCommit extends AbstractCommit {
@@ -30,6 +31,8 @@ public class GitCommit extends AbstractCommit {
 	}
 	
 	private static final Pattern rx_getChangeFile = Pattern.compile( "^\\s*(\\d+)\\s*(\\d+)\\s*(.*)$" );
+	private static final Pattern rx_getCreateFile = Pattern.compile( "^\\s*create\\s*mode\\s*\\d+\\s*(.*)$" );
+	private static final Pattern rx_getDeleteFile = Pattern.compile( "^\\s*delete\\s*mode\\s*\\d+\\s*(.*)$" );
 	
 	public class LoadImpl extends Load {
 		
@@ -59,7 +62,20 @@ public class GitCommit extends AbstractCommit {
 				for(int i = 8 ; i < result.size() ; i++) {
 					Matcher m = rx_getChangeFile.matcher( result.get( i ) );
 					if( m.find() ) {
-						GitCommit.this.changeSet.add( new ChangeSetElement( new File( m.group(3)) ) );
+						GitCommit.this.changeSet.put( m.group(3), new ChangeSetElement( new File( m.group(3) ), Status.CHANGED ) );
+						continue;
+					}
+					
+					Matcher m2 = rx_getCreateFile.matcher( result.get( i ) );
+					if( m2.find() ) {
+						GitCommit.this.changeSet.put( m.group(1), new ChangeSetElement( new File( m.group(1) ), Status.CREATED ) );
+						continue;
+					}
+					
+					Matcher m3 = rx_getDeleteFile.matcher( result.get( i ) );
+					if( m3.find() ) {
+						GitCommit.this.changeSet.put( m.group(1), new ChangeSetElement( new File( m.group(1) ), Status.DELETED ) );
+						continue;
 					}
 				}
 			}
