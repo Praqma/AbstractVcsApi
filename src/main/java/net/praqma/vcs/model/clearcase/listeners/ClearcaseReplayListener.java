@@ -1,4 +1,4 @@
-package net.praqma.vcs.clearcase.listeners;
+package net.praqma.vcs.model.clearcase.listeners;
 
 import java.util.List;
 
@@ -6,14 +6,15 @@ import net.praqma.vcs.Extension;
 import net.praqma.vcs.AVA;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
+import net.praqma.vcs.model.clearcase.ClearcaseReplay;
 
 public abstract class ClearcaseReplayListener implements Extension {
 
 	/**
-	 * Before initializing {@link ClearcaseReplay} object
+	 * Before initializing {@link AbstractReplay} object
 	 * @param replay
 	 */
-	public abstract void onReplay( AbstractReplay replay );
+	public abstract void onReplay( ClearcaseReplay replay, AbstractCommit commit );
 	
 	/**
 	 * When baselining a commit
@@ -23,9 +24,9 @@ public abstract class ClearcaseReplayListener implements Extension {
 	public abstract String onSelectBaselineName( AbstractCommit commit );
 
 	
-	public static void runReplay( AbstractReplay replay ) {
+	public static void runReplay( ClearcaseReplay replay, AbstractCommit commit ) {
 		for (ClearcaseReplayListener l : all()) {
-			l.onReplay( replay );
+			l.onReplay( replay, commit );
 		}
 	}
 	

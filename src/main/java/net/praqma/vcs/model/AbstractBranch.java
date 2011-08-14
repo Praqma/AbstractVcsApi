@@ -65,17 +65,14 @@ public abstract class AbstractBranch {
 		}
 		
 		public boolean setup() {
-			logger.debug( "Abstract initialize branch setup" );
 			return true;
 		}
 		
 		public boolean initialize() {
-			logger.debug( "Abstract initialize branch" );
 			return true;
 		}
 		
 		public boolean cleanup( boolean status ) {
-			logger.debug( "Abstract initialize branch cleanup " + status );
 			return true;
 		}
 	}
@@ -123,17 +120,14 @@ public abstract class AbstractBranch {
 		}
 		
 		public boolean setup() {
-			logger.debug( "Abstract: pre pull" );
 			return true;
 		}
 		
 		public boolean checkout() {
-			logger.debug( "Abstract: perform pull" );
 			return true;
 		}
 		
 		public boolean cleanup( boolean status ) {
-			logger.debug( "Abstract: post pull " + status );
 			return true;
 		}
 	}

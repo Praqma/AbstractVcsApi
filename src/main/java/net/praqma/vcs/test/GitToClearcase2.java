@@ -17,9 +17,11 @@ import net.praqma.util.debug.PraqmaLogger;
 import net.praqma.util.debug.PraqmaLogger.Logger;
 import net.praqma.vcs.AVA;
 import net.praqma.vcs.model.AbstractCommit;
+import net.praqma.vcs.model.AbstractReplay;
 import net.praqma.vcs.model.clearcase.ClearcaseBranch;
 import net.praqma.vcs.model.clearcase.ClearcaseReplay;
 import net.praqma.vcs.model.clearcase.ClearcaseVCS;
+import net.praqma.vcs.model.clearcase.listeners.ClearcaseReplayListener;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.UnableToReplayException;
@@ -38,7 +40,7 @@ public class GitToClearcase2 {
 		}
 		
 		new AVA();
-		logger.setMinLogLevel( LogLevel.INFO );
+		//logger.setMinLogLevel( LogLevel.INFO );
 		
 		String vname = args[0];
 		String append = args[2];
@@ -67,9 +69,15 @@ public class GitToClearcase2 {
 		
 		logger.info( "Clearcase initialized" );
 		
-		ClearcaseBranch ccbranch = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, append ), name + "_view", name + "_dev" );
+		/* Make number 1 stream */
+		final ClearcaseBranch ccbranch = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, append + "_1" ), name + "_1_view", name + "_1_dev" );
 		ccbranch.get();
 		ccbranch.checkout();
+
+		/* Make number 2 stream */
+		final ClearcaseBranch ccbranch2 = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, append + "_2" ), name + "_2_view", name + "_2_dev" );
+		ccbranch2.get();
+		ccbranch2.checkout();
 
 		ClearcaseReplay cr = new ClearcaseReplay( ccbranch );
 		
@@ -79,6 +87,25 @@ public class GitToClearcase2 {
 		logger.info( commits.size() + " commits on branch " + branch );
 		
 		logger.info( "Commit #1: " + commits.get( 0 ) );
+		
+		AVA.getInstance().registerExtension( "hej", new ClearcaseReplayListener() {
+
+			@Override
+			public void onReplay( ClearcaseReplay replay, AbstractCommit commit ) {
+				logger.debug( "Calling listener " + commit.getNumber() );
+				if( commit.getNumber() % 2 == 0 ) {
+					logger.debug( "Using branch 1" );
+					replay.setBranch( ccbranch );
+				} else {
+					logger.debug( "Using branch 2" );
+					replay.setBranch( ccbranch2 );
+				}
+			}
+
+			@Override
+			public String onSelectBaselineName( AbstractCommit commit ) {
+				return null;
+			}} );
 
 		for( int i = 0 ; i < commits.size() ; i++ ) {
 			System.out.print( "\r" + Utils.getProgress( commits.size(), i ) );

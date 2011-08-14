@@ -1,9 +1,6 @@
 package net.praqma.vcs.model;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
@@ -20,6 +17,8 @@ public abstract class AbstractCommit {
 	protected String committer;
 	protected Date committerDate;
 	
+	protected int number = -1;
+	
 	private Logger logger = Logger.getLogger();
 	
 	//protected List<ChangeSetElement> changeSet = new ArrayList<ChangeSetElement>();
@@ -30,6 +29,12 @@ public abstract class AbstractCommit {
 	public AbstractCommit( String key, AbstractBranch branch ) {
 		this.key = key;
 		this.branch = branch;
+	}
+	
+	public AbstractCommit( String key, AbstractBranch branch, int number ) {
+		this.key = key;
+		this.branch = branch;
+		this.number = number;
 	}
 	
 	public void load() throws OperationNotImplementedException {
@@ -49,17 +54,14 @@ public abstract class AbstractCommit {
 	
 	public abstract class Load {
 		public boolean preLoad() {
-			logger.debug( "Abstract: pre commit load" );
 			return true;
 		}
 		
 		public boolean perform() {
-			logger.debug( "Abstract: perform commit load" );
 			return true;
 		}
 		
 		public boolean postLoad( boolean status ) {
-			logger.debug( "Abstract: post commit load " + status );
 			return true;
 		}
 	}
@@ -82,6 +84,14 @@ public abstract class AbstractCommit {
 	
 	public String getTitle() {
 		return title;
+	}
+	
+	public void setNumber( int i ) {
+		this.number = i;
+	}
+	
+	public int getNumber() {
+		return this.number;
 	}
 	
 	public String toString() {

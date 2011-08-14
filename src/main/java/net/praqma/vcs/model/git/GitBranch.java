@@ -129,12 +129,14 @@ public class GitBranch extends AbstractBranch{
 		String cmd = "git rev-list --all";
 		List<String> cs = CommandLine.run( cmd, localRepositoryPath.getAbsoluteFile() ).stdoutList;
 		
+		Collections.reverse( cs );
+		
 		List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
 		
 		//for(String c : cs) {
 		for( int i = 0 ; i < cs.size() ; i++ ) {
 			System.out.print( "\r" + Utils.getProgress( cs.size(), i ) );
-			GitCommit commit = new GitCommit(cs.get( i ), GitBranch.this);
+			GitCommit commit = new GitCommit( cs.get( i ), GitBranch.this, i );
 			if( load ) {
 				commit.load();
 			}
@@ -143,8 +145,6 @@ public class GitBranch extends AbstractBranch{
 		}
 		
 		System.out.println( " Done" );
-		
-		Collections.reverse( commits );
 		
 		return commits;
 	}

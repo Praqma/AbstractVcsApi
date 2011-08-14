@@ -12,11 +12,11 @@ import net.praqma.clearcase.ucm.entities.Activity;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Version;
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.clearcase.listeners.ClearcaseReplayListener;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
 import net.praqma.vcs.model.ChangeSetElement;
 import net.praqma.vcs.model.ChangeSetElement.Status;
+import net.praqma.vcs.model.clearcase.listeners.ClearcaseReplayListener;
 import net.praqma.vcs.model.exceptions.UnableToReplayException;
 
 public class ClearcaseReplay extends AbstractReplay {
@@ -38,6 +38,7 @@ public class ClearcaseReplay extends AbstractReplay {
 
 	@Override
 	public void replay( AbstractCommit commit ) throws UnableToReplayException {
+		ClearcaseReplayListener.runReplay( this, commit );
 		doReplay( new ReplayImpl( commit ) );
 	}
 	
@@ -102,7 +103,7 @@ public class ClearcaseReplay extends AbstractReplay {
 						ps.close();
 					} catch (FileNotFoundException e) {
 						success = false;
-						logger.error( e );
+						logger.error( "Could not write to file(" + version.getVersion().getAbsolutePath() + "): " + e );
 					}
 				} else {
 					try {

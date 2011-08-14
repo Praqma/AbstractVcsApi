@@ -20,6 +20,10 @@ public class GitCommit extends AbstractCommit {
 	public GitCommit( String key, AbstractBranch branch ) {
 		super(key, branch);
 	}
+	
+	public GitCommit( String key, AbstractBranch branch, int number ) {
+		super( key, branch, number );
+	}
 
 	public static GitCommit create() {
 		return null;

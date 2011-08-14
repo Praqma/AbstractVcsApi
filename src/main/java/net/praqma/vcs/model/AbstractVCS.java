@@ -63,17 +63,14 @@ public abstract class AbstractVCS {
 		}
 		
 		public boolean setup() {
-			logger.debug( "Abstract initialize VCS setup" );
 			return true;
 		}
 		
 		public boolean initialize() {
-			logger.debug( "Abstract initialize VCS" );
 			return true;
 		}
 		
 		public boolean cleanup( boolean status ) {
-			logger.debug( "Abstract initialize VCS cleanup " + status );
 			return true;
 		}
 	}
