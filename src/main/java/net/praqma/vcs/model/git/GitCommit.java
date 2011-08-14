@@ -68,13 +68,13 @@ public class GitCommit extends AbstractCommit {
 					
 					Matcher m2 = rx_getCreateFile.matcher( result.get( i ) );
 					if( m2.find() ) {
-						GitCommit.this.changeSet.put( m.group(1), new ChangeSetElement( new File( m.group(1) ), Status.CREATED ) );
+						GitCommit.this.changeSet.put( m2.group(1), new ChangeSetElement( new File( m2.group(1) ), Status.CREATED ) );
 						continue;
 					}
 					
 					Matcher m3 = rx_getDeleteFile.matcher( result.get( i ) );
 					if( m3.find() ) {
-						GitCommit.this.changeSet.put( m.group(1), new ChangeSetElement( new File( m.group(1) ), Status.DELETED ) );
+						GitCommit.this.changeSet.put( m3.group(1), new ChangeSetElement( new File( m3.group(1) ), Status.DELETED ) );
 						continue;
 					}
 				}

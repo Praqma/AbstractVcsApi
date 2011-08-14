@@ -129,7 +129,7 @@ public class ClearcaseVCS extends AbstractVCS {
 			/* Create component */
 			Component c = null;
 			try {
-				File basepath = new File( ClearcaseVCS.viewPath, ClearcaseVCS.dynView );
+				File basepath = new File( ClearcaseVCS.viewPath, ClearcaseVCS.dynView + "/" + vob.getName() );
 				logger.debug( "Baseview path: " + basepath.getAbsolutePath() );
 				c = Component.create( ClearcaseVCS.this.baseName, pvob, ClearcaseVCS.this.baseName, "Main component", basepath );
 			} catch (UCMException e) {
@@ -253,6 +253,13 @@ public class ClearcaseVCS extends AbstractVCS {
 			} catch (Exception e) {
 				logger.error( "Error while creating baseview: " + e.getMessage() );
 				throw new ElementNotCreatedException( "Could not create base view: " + e.getMessage(), FailureType.INITIALIZATON );
+			}
+		} else {
+			try {
+				new DynamicView( null, dynView).startView();
+			} catch (UCMException e) {
+				logger.error( "Error while starting baseview: " + e.getMessage() );
+				throw new ElementNotCreatedException( "Could not starting base view: " + e.getMessage(), FailureType.INITIALIZATON );
 			}
 		}
 		
