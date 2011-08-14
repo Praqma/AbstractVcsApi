@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.git;
+package net.praqma.vcs.model.git.exceptions;
 
 public class GitException extends Exception {
 

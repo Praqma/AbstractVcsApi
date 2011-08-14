@@ -11,13 +11,13 @@ import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Activity;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Version;
-import net.praqma.exceptions.UnableToReplayException;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.clearcase.listeners.ClearcaseReplayListener;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
 import net.praqma.vcs.model.ChangeSetElement;
 import net.praqma.vcs.model.ChangeSetElement.Status;
+import net.praqma.vcs.model.exceptions.UnableToReplayException;
 
 public class ClearcaseReplay extends AbstractReplay {
 	

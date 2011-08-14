@@ -12,13 +12,13 @@ import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.clearcase.ucm.view.DynamicView;
 import net.praqma.clearcase.ucm.view.UCMView;
-import net.praqma.exceptions.ElementNotCreatedException;
-import net.praqma.exceptions.ElementNotCreatedException.FailureType;
 import net.praqma.util.debug.Logger;
 import net.praqma.util.structure.tree.Tree;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractVCS;
 import net.praqma.vcs.model.Repository;
+import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
+import net.praqma.vcs.model.exceptions.ElementNotCreatedException.FailureType;
 
 public class ClearcaseVCS extends AbstractVCS {
 	private static Logger logger = Logger.getLogger();

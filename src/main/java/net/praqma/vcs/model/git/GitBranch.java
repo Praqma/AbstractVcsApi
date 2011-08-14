@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import net.praqma.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.Repository;
+import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
+import net.praqma.vcs.model.git.api.Git;
+import net.praqma.vcs.model.git.exceptions.GitException;
 import net.praqma.vcs.util.CommandLine;
 import net.praqma.vcs.util.Utils;
 

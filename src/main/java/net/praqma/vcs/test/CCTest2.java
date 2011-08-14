@@ -10,11 +10,11 @@ import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.entities.UCM;
 import net.praqma.clearcase.ucm.entities.UCMEntity;
-import net.praqma.exceptions.ElementDoesNotExistException;
-import net.praqma.exceptions.ElementNotCreatedException;
 import net.praqma.util.debug.Logger;
 import net.praqma.util.debug.PraqmaLogger;
 import net.praqma.vcs.model.clearcase.ClearcaseBranch;
+import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
+import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 
 public class CCTest2 {
 	

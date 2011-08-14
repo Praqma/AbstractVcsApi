@@ -5,8 +5,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import net.praqma.exceptions.OperationNotImplementedException;
 import net.praqma.util.debug.Logger;
+import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
 
 public abstract class AbstractCommit {
 	

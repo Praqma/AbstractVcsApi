@@ -17,12 +17,6 @@ import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.clearcase.ucm.view.UCMView;
 import net.praqma.clearcase.util.Utilities;
-import net.praqma.exceptions.ElementDoesNotExistException;
-import net.praqma.exceptions.ElementNotCreatedException;
-import net.praqma.exceptions.OperationNotImplementedException;
-import net.praqma.exceptions.OperationNotSupportedException;
-import net.praqma.exceptions.UnableToPerformException;
-import net.praqma.exceptions.UnableToReplayException;
 import net.praqma.util.debug.PraqmaLogger;
 import net.praqma.util.debug.PraqmaLogger.Logger;
 import net.praqma.vcs.AVA;
@@ -30,6 +24,12 @@ import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.clearcase.ClearcaseBranch;
 import net.praqma.vcs.model.clearcase.ClearcaseReplay;
 import net.praqma.vcs.model.clearcase.ClearcaseVCS;
+import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
+import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
+import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
+import net.praqma.vcs.model.exceptions.OperationNotSupportedException;
+import net.praqma.vcs.model.exceptions.UnableToPerformException;
+import net.praqma.vcs.model.exceptions.UnableToReplayException;
 import net.praqma.vcs.model.git.GitBranch;
 
 public class CCTest4 {

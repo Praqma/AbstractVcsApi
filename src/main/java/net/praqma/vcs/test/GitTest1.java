@@ -5,12 +5,12 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import net.praqma.exceptions.ElementNotCreatedException;
-import net.praqma.exceptions.OperationNotImplementedException;
-import net.praqma.exceptions.OperationNotSupportedException;
-import net.praqma.exceptions.UnableToPerformException;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.Repository;
+import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
+import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
+import net.praqma.vcs.model.exceptions.OperationNotSupportedException;
+import net.praqma.vcs.model.exceptions.UnableToPerformException;
 import net.praqma.vcs.model.git.GitBranch;
 
 public class GitTest1 {

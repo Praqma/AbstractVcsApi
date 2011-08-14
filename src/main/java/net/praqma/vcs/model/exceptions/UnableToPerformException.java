@@ -1,4 +1,4 @@
-package net.praqma.exceptions;
+package net.praqma.vcs.model.exceptions;
 
 public class UnableToPerformException extends Exception {
 

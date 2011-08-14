@@ -3,10 +3,10 @@ package net.praqma.vcs.model;
 import java.io.File;
 import java.util.List;
 
-import net.praqma.exceptions.ElementNotCreatedException;
-import net.praqma.exceptions.OperationNotImplementedException;
-import net.praqma.exceptions.OperationNotSupportedException;
 import net.praqma.util.debug.Logger;
+import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
+import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
+import net.praqma.vcs.model.exceptions.OperationNotSupportedException;
 import net.praqma.vcs.model.extensions.PullListener;
 
 public abstract class AbstractVCS {

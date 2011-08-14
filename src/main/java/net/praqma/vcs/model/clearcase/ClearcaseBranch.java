@@ -12,12 +12,12 @@ import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.clearcase.ucm.view.UCMView;
 import net.praqma.clearcase.ucm.view.SnapshotView.COMP;
-import net.praqma.exceptions.ElementDoesNotExistException;
-import net.praqma.exceptions.ElementNotCreatedException;
-import net.praqma.exceptions.ElementNotCreatedException.FailureType;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
+import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
+import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
+import net.praqma.vcs.model.exceptions.ElementNotCreatedException.FailureType;
 import net.praqma.vcs.model.git.GitBranch.CheckoutImpl;
 import net.praqma.vcs.util.CommandLine;
 

@@ -1,8 +1,9 @@
-package net.praqma.vcs.model.git;
+package net.praqma.vcs.model.git.api;
 
 import java.io.File;
 
 import net.praqma.util.execute.AbnormalProcessTerminationException;
+import net.praqma.vcs.model.git.exceptions.GitException;
 import net.praqma.vcs.util.CommandLine;
 
 public class Git {
