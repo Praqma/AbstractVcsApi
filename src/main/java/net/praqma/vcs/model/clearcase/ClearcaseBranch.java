@@ -153,6 +153,7 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	@Override
 	public void checkout( AbstractCommit commit ) {
+		doCheckout( new CheckoutImpl(commit) );
 	}
 	
 	public class CheckoutImpl extends Checkout {

@@ -92,7 +92,7 @@ public class ClearcaseReplay extends AbstractReplay {
 					}
 				}
 				
-				if( cse.getStatus() != Status.DELETED) {
+				if( cse.getStatus() != Status.DELETED ) {
 					logger.debug( "Writing" );
 						
 					PrintStream ps;

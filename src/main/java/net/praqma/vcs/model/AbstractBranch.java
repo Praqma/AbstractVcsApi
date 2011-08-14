@@ -16,6 +16,8 @@ public abstract class AbstractBranch {
 	protected File localRepositoryPath;
 	protected Repository parent;
 	
+	protected AbstractCommit lastCommit;
+	
 	protected Logger logger = Logger.getLogger();
 	
 	public AbstractBranch() throws ElementNotCreatedException {}
@@ -144,6 +146,9 @@ public abstract class AbstractBranch {
 		throw new OperationNotImplementedException( "getCommits" );
 	}
 	
+	public AbstractCommit getLastCommit() {
+		return lastCommit;
+	}
 	
 	public String getName() {
 		return name;
