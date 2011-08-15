@@ -66,7 +66,7 @@ public class GitToClearcase3 {
 		ClearcaseVCS cc = ClearcaseVCS.create( null, vname, cname, projectName, streamName, 
 				                                           Project.POLICY_INTERPROJECT_DELIVER  | 
                                                            Project.POLICY_CHSTREAM_UNRESTRICTED | 
-                                                           Project.POLICY_DELIVER_NCO_DEVSTR, pvob, false );
+                                                           Project.POLICY_DELIVER_NCO_DEVSTR, pvob );
 		
 		
 		logger.info( "Clearcase initialized" );

@@ -27,11 +27,19 @@ public class GitVCS extends AbstractVCS {
 	
 	@Override
 	public void initialize() throws ElementNotCreatedException {
+		initialize(false);
+	}
+	
+	public void initialize( boolean get ) throws ElementNotCreatedException {
 		logger.info( "Initializing git repository " + location );
-		doInitialize( new InitializeImpl() );
+		doInitialize( new InitializeImpl(get) );
 	}
 	
 	public class InitializeImpl extends Initialize {
+		public InitializeImpl( boolean get ) {
+			super( get );
+		}
+
 		public boolean initialize() {
 			location.mkdirs();
 			try {
