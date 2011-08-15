@@ -126,7 +126,7 @@ public class GitBranch extends AbstractBranch{
 	public List<AbstractCommit> getCommits( boolean load ) {
 		logger.info( "Getting git commits for branch " + name );
 		
-		String cmd = "git rev-list --all";
+		String cmd = "git rev-list --no-merges --all";
 		List<String> cs = CommandLine.run( cmd, localRepositoryPath.getAbsoluteFile() ).stdoutList;
 		
 		Collections.reverse( cs );

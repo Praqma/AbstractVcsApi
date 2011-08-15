@@ -105,7 +105,7 @@ public abstract class AbstractCommit {
 		sb.append( "Key: " + key + "\n" );
 		
 		for(ChangeSetElement cs : changeSet.asList()) {
-			sb.append( " * " + cs.getFile() + "\n" );
+			sb.append( " * " + cs.getFile() + "(" + cs.getStatus() + ")\n" );
 		}
 		
 		return sb.toString();
