@@ -107,26 +107,29 @@ public class ClearcaseVCS extends AbstractVCS {
 		return cc;
 	}
 	
+	public ClearcaseVCS(  File location, String vobName, String componentName, String projectName, String streamName, int policies, PVob pvob ) {
+		super( location );
+		
+		this.baseName = componentName;
+		this.vobName = "\\" + vobName;
+		this.streamName = streamName;
+		this.projectName = projectName;
+		this.baselineName = componentName + "_Structure_1_0";
+		
+		this.policies = policies;
+
+		this.pvob = pvob;
+		
+	}
+	
 	public static ClearcaseVCS create( File location, String vobName, String componentName, String projectName, String streamName, int policies, PVob pvob ) throws ElementNotCreatedException {
 		ClearcaseVCS cc = new ClearcaseVCS( location );
 
-		cc.baseName = componentName;
-		cc.vobName = "\\" + vobName;
-		cc.streamName = streamName;
-		cc.projectName = projectName;
-		cc.baselineName = componentName + "_Structure_1_0";
-		
-		cc.policies = policies;
-
-		cc.pvob = pvob;
-		
 		if( cc.initialize() ) {
 			return cc;	
 		} else {
 			throw new ElementNotCreatedException( "Could not create repository", FailureType.INITIALIZATON );
 		}
-		
-		
 	}
 
 	@Override
@@ -286,7 +289,7 @@ public class ClearcaseVCS extends AbstractVCS {
 			} catch (UCMException e) {
 				if( get ) {
 					try {
-						logger.warning( "Could not integration stream: " + e.getMessage() );
+						logger.warning( "Could not create integration stream: " + e.getMessage() );
 						integrationStream = UCMEntity.getStream( ClearcaseVCS.this.streamName, pvob, false );
 					} catch (UCMException e1) {
 						logger.error( "Stream does not exist: " + e1.getMessage() );
@@ -300,7 +303,7 @@ public class ClearcaseVCS extends AbstractVCS {
 			
 			logger.info( "Creating integration view" );
 			DynamicView bview = null;
-			if( UCMView.ViewExists( ClearcaseVCS.this.baseName + "_" + bootView )) {
+			if( !UCMView.ViewExists( ClearcaseVCS.this.baseName + "_" + bootView )) {
 				try {
 					bview = DynamicView.create( null, ClearcaseVCS.this.baseName + "_" + bootView, integrationStream );
 				} catch (UCMException e) {
@@ -311,6 +314,7 @@ public class ClearcaseVCS extends AbstractVCS {
 				try {
 					logger.info( "View exists, trying to start view server" );
 					new DynamicView( null, ClearcaseVCS.this.baseName + "_" + bootView ).startView();
+					bview = new DynamicView( null, ClearcaseVCS.this.baseName + "_" + bootView );
 				} catch (UCMException e) {
 					logger.error( "Error while starting baseview: " + e.getMessage() );
 					return false;

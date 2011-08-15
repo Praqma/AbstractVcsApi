@@ -63,12 +63,12 @@ public class GitToClearcase3 {
 		//PVob pvob = new PVob( "\\AVA_PVOB" );
 
 		
-		ClearcaseVCS cc = ClearcaseVCS.create( null, vname, cname, projectName, streamName, 
+		ClearcaseVCS cc = new ClearcaseVCS( null, vname, cname, projectName, streamName, 
 				                                           Project.POLICY_INTERPROJECT_DELIVER  | 
                                                            Project.POLICY_CHSTREAM_UNRESTRICTED | 
                                                            Project.POLICY_DELIVER_NCO_DEVSTR, pvob );
 		
-		
+		cc.get();
 		logger.info( "Clearcase initialized" );
 		
 		/* Make number 1 stream */

@@ -45,9 +45,8 @@ public abstract class AbstractBranch {
 	 * @param branch
 	 * @throws OperationNotSupportedException
 	 */
-	public boolean initialize() throws OperationNotSupportedException {
-		throw new OperationNotSupportedException( "Cannot initialize this kind of repository" );
-	}
+	public abstract boolean initialize();
+	public abstract boolean initialize( boolean get );
 	
 	protected final boolean doInitialize( Initialize initialize ) {
 		boolean status = initialize.setup();
@@ -57,11 +56,13 @@ public abstract class AbstractBranch {
 			status = initialize.initialize();
 		}
 		
-		return initialize.cleanup( status );
+		return initialize.cleanup( status ) && status;
 	}
 	
 	protected abstract class Initialize {
-		public Initialize() {
+		protected boolean get = false;
+		public Initialize( boolean get ) {
+			this.get = get;
 		}
 		
 		public boolean setup() {

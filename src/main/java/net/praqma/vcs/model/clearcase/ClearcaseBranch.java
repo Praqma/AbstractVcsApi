@@ -83,27 +83,55 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	@Override
 	public boolean initialize() {
+		return initialize(false);
+	}
+	
+	public boolean initialize( boolean get ) {
 		logger.info( "Creating Clearcase branch/stream" );
-		return doInitialize( new InitializeImpl() );
+		return doInitialize( new InitializeImpl( get ) );
 	}
 	
 	private class InitializeImpl extends Initialize {
+		public InitializeImpl( boolean get ) {
+			super( get );
+		}
+
 		public boolean initialize() {
 
 			try {
 				logger.info( "Creating development stream" );
 				devStream = Stream.create( parent, name + "@" + ccVCS.getPVob(), false, baseline );
 			} catch (UCMException e) {
-				logger.error("Error while creating Development Stream: " + e.getMessage());
-				return false;
+				if( get ) {
+					try {
+						devStream = UCMEntity.getStream( name + "@" + ccVCS.getPVob(), ccVCS.getPVob(), false );
+						logger.info( "Stream already exists" );
+					} catch (UCMException e1) {
+						logger.error( "Could not find stream: " + e.getMessage() );
+						return false;
+					}
+				} else {
+					logger.error("Error while creating Development Stream: " + e.getMessage());
+					return false;
+				}
 			}
 			
 			try {
 				logger.info( "Creating development view" );
 				snapshot = SnapshotView.Create( devStream, viewroot, viewtag );
 			} catch (UCMException e) {
-				logger.error("Error while creating Snapshot View: " + e.getMessage());
-				return false;
+				if( get ) {
+					try {
+						snapshot = UCMView.GetSnapshotView(viewroot);
+						logger.info( "View already exists" );
+					} catch (UCMException e1) {
+						logger.error( "Could not find view: " + e.getMessage() );
+						return false;
+					}
+				} else {
+					logger.error("Error while creating Snapshot View: " + e.getMessage());
+					return false;
+				}
 			}
 			
 			return true;
@@ -128,6 +156,11 @@ public class ClearcaseBranch extends AbstractBranch{
 		if( !UCMView.ViewExists( viewtag ) ) {
 			logger.debug( "View did not exist" );
 			exists = false;
+		/* The view exists, but is it the correct path? */
+		} else {
+			if( !viewroot.exists() ) {
+				exists = false;
+			}
 		}
 		
 		if( !exists ) {

@@ -37,10 +37,18 @@ public class GitBranch extends AbstractBranch{
 	}
 	
 	public boolean initialize() {
-		return doInitialize( new InitializeImpl() );
+		return initialize(false);
+	}
+	
+	public boolean initialize( boolean get ) {
+		return doInitialize( new InitializeImpl( get ) );
 	}
 	
 	private class InitializeImpl extends Initialize {
+		public InitializeImpl( boolean get ) {
+			super( get );
+		}
+
 		public boolean initialize() {
 			/*
 			String cmd = "git branch " + name + " .";
