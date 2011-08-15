@@ -38,67 +38,17 @@ public class GitTest2 {
 		logger.toStdOut( true );
 		new AVA();
 		
-        File view = new File( args[0] );
-        String vname = args[1];
-        String cname = args[2];
+		File gitpath = new File( "C:/projects/open-scm/branches" );
 		
-		File gitpath = new File( "c:\\temp\\git_tests\\repo1" );
-		
-		//Repository parent = new Repository( "git@github.com:Praqma/MonKit.git", "origin" );
-		File parent = new File( "file://C:/projects/monkit/branches", "origin" );
-		//GitSCM.create( new File( "c:\\temp\\git_tests\\repo1" ) );
-		
-		//GitSCM git = new GitSCM( parent, path, new GitBranch( "master" ) );
 		GitBranch branch = new GitBranch( gitpath, "master" );
-		//GitVCS git = GitVCS.create( branch );
-		branch.checkout();
 		
-		List<AbstractCommit> commits = branch.getCommits();
+		List<AbstractCommit> commits = branch.getCommits(true);
 		
 		logger.info( commits.size() + " commits on branch " + branch );
 		
-		commits.get( 0 ).load();
-		commits.get( 1 ).load();
-		commits.get( 2 ).load();
-		commits.get( 3 ).load();
-		commits.get( 4 ).load();
 
-		logger.info( "Commit #1: " + commits.get( 90 ) );
+		logger.info( "Commit #1: " + commits.get( 0 ) );
 		
-		
-		/* Do the ClearCase thing... */
-		UCM.setContext( UCM.ContextType.CLEARTOOL );
-		
-		/* Setup the logger */
-        Logger logger = PraqmaLogger.getLogger(false);
-        logger.subscribeAll();
-        logger.setLocalLog( new File( "gittest.log") );
-        Cool.setLogger(logger);
-        
-        String viewtag = "OpenSCM_test";
-        PVob pvob = new PVob( "\\" + vname + "_PVOB" );
-		Stream intStream = UCMEntity.getStream( "Development_int", pvob, true );
-		Baseline baseline = UCMEntity.getBaseline( "Structure_1_0", pvob, true );
-		Component component = UCMEntity.getComponent( cname, pvob, true );
-		
-        SnapshotView sview = null;
-		if( !UCMView.ViewExists( viewtag ) ) {
-			sview = Utilities.CreateView("stream:OpenSCM_dev" + "@" + pvob, intStream, baseline, view, viewtag );
-		} else {
-			sview = UCMView.GetSnapshotView(view);	
-		}
-		
-		File devview = new File( view, vname + "/" + cname );
-		
-		
-		/*
-		ClearcaseReplay cr = new ClearcaseReplay( devview, sview, component, pvob );
-		cr.replay( commits.get( 0 ) );
-		cr.replay( commits.get( 1 ) );
-		cr.replay( commits.get( 2 ) );
-		cr.replay( commits.get( 3 ) );
-		cr.replay( commits.get( 4 ) );
-		*/
 	}
 
 }
