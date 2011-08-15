@@ -18,8 +18,6 @@ import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException.FailureType;
-import net.praqma.vcs.model.git.GitBranch.CheckoutImpl;
-import net.praqma.vcs.util.CommandLine;
 
 public class ClearcaseBranch extends AbstractBranch{
 
@@ -121,7 +119,7 @@ public class ClearcaseBranch extends AbstractBranch{
 		
 		boolean exists = true;
 		try{
-			Stream devStream = UCMEntity.getStream( name, ccVCS.getPVob(), false );
+			UCMEntity.getStream( name, ccVCS.getPVob(), false );
 		} catch( UCMException e ) {
 			logger.debug( "Stream did not exist" );
 			exists = false;

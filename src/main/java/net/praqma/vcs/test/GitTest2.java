@@ -16,6 +16,7 @@ import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.clearcase.ucm.view.UCMView;
 import net.praqma.clearcase.util.Utilities;
+import net.praqma.util.debug.Logger.LogLevel;
 import net.praqma.util.debug.PraqmaLogger;
 import net.praqma.util.debug.PraqmaLogger.Logger;
 import net.praqma.vcs.AVA;
@@ -36,19 +37,18 @@ public class GitTest2 {
 	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, UnableToReplayException, UCMException, ElementNotCreatedException {
 		
 		logger.toStdOut( true );
+		//logger.setMinLogLevel(LogLevel.INFO);
 		new AVA();
+
+		GitBranch branch = new GitBranch( new File( "c:/projects/monkit/branches" ), "master" );
 		
-		File gitpath = new File( "C:/projects/open-scm/branches" );
-		
-		GitBranch branch = new GitBranch( gitpath, "master" );
-		
-		List<AbstractCommit> commits = branch.getCommits(true);
+		List<AbstractCommit> commits = branch.getCommits( true );
 		
 		logger.info( commits.size() + " commits on branch " + branch );
 		
-
-		logger.info( "Commit #1: " + commits.get( 0 ) );
-		
+		for( AbstractCommit c : commits ) {
+			logger.info( "Commit #" + c.getNumber() + ":\n" + c );
+		}
 	}
 
 }

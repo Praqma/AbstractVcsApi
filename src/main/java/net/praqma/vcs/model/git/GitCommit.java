@@ -64,24 +64,30 @@ public class GitCommit extends AbstractCommit {
 				
 				/* Fetch change set */				
 				for(int i = 8 ; i < result.size() ; i++) {
+					
 					Matcher m = rx_getChangeFile.matcher( result.get( i ) );
 					if( m.find() ) {
+						logger.debug("Line(change): " + result.get( i ));
 						GitCommit.this.changeSet.put( m.group(3), new ChangeSetElement( new File( m.group(3) ), Status.CHANGED ) );
 						continue;
 					}
 					
 					Matcher m2 = rx_getCreateFile.matcher( result.get( i ) );
 					if( m2.find() ) {
+						logger.debug("Line(create): " + result.get( i ));
 						GitCommit.this.changeSet.put( m2.group(1), new ChangeSetElement( new File( m2.group(1) ), Status.CREATED ) );
 						continue;
 					}
 					
 					Matcher m3 = rx_getDeleteFile.matcher( result.get( i ) );
 					if( m3.find() ) {
+						logger.debug("Line(delete): " + result.get( i ));
 						GitCommit.this.changeSet.put( m3.group(1), new ChangeSetElement( new File( m3.group(1) ), Status.DELETED ) );
 						continue;
 					}
 				}
+				
+				result.clear();
 			}
 			
 			return true;
