@@ -48,6 +48,11 @@ public abstract class AbstractVCS {
 	
 	public abstract boolean get() throws ElementNotCreatedException;
 	
+	/**
+	 * Runs the implementation of {@link Initialize}.
+	 * @param initialize Instance of {@link Initialize} implementation.
+	 * @return True if both initialize - and clean up part returns true 
+	 */
 	protected final boolean doInitialize( Initialize initialize ) {
 		boolean status = initialize.setup();
 		
@@ -56,7 +61,7 @@ public abstract class AbstractVCS {
 			status = initialize.initialize();
 		}
 		
-		return initialize.cleanup( status );
+		return initialize.cleanup( status ) && status;
 	}
 	
 	protected abstract class Initialize {

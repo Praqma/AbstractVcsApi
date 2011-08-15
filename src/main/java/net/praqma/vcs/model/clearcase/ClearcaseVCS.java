@@ -120,9 +120,13 @@ public class ClearcaseVCS extends AbstractVCS {
 
 		cc.pvob = pvob;
 		
-		cc.initialize();
+		if( cc.initialize() ) {
+			return cc;	
+		} else {
+			throw new ElementNotCreatedException( "Could not create repository", FailureType.INITIALIZATON );
+		}
 		
-		return cc;
+		
 	}
 
 	@Override
@@ -222,6 +226,7 @@ public class ClearcaseVCS extends AbstractVCS {
 			}
 			logger.info( "Mounted Vob " + vob );
 
+			
 			/* Create component */
 			Component c = null;
 			try {
@@ -231,9 +236,6 @@ public class ClearcaseVCS extends AbstractVCS {
 				c = Component.create( ClearcaseVCS.this.baseName, pvob, ClearcaseVCS.this.baseName, "Main component", basepath );
 			} catch (UCMException e) {
 				if( get ) {
-					logger.error( "Error while creating Component: " + e.getMessage() );
-					return false;
-				} else {
 					logger.warning("Could not create Component, trying to continue: " + e.getMessage());
 					try {
 						c = UCMEntity.getComponent( ClearcaseVCS.this.baseName, pvob, false );
@@ -241,6 +243,9 @@ public class ClearcaseVCS extends AbstractVCS {
 						logger.error( "Component does not exist: " + e1.getMessage() );
 						return false;
 					}
+				} else {
+					logger.error( "Error while creating Component: " + e.getMessage() );
+					return false;
 				}
 			}
 			logger.debug( "Component=" + c );
@@ -262,9 +267,6 @@ public class ClearcaseVCS extends AbstractVCS {
 				mainlineproject = Project.create( ClearcaseVCS.this.projectName, null, pvob, policies, "Mainline project", c );
 			} catch (UCMException e) {
 				if( get ) {
-					logger.error( "Error while creating Mainline Project: " + e.getMessage() );
-					return false;
-				} else {
 					try {
 						logger.warning( "Could not create project: " + e.getMessage() );
 						mainlineproject = UCMEntity.getProject( ClearcaseVCS.this.projectName, pvob, false );
@@ -272,6 +274,9 @@ public class ClearcaseVCS extends AbstractVCS {
 						logger.error( "Project does not exist: " + e1.getMessage() );
 						return false;
 					}
+				} else {
+					logger.error( "Error while creating Mainline Project: " + e.getMessage() );
+					return false;
 				}
 			}
 
@@ -280,9 +285,6 @@ public class ClearcaseVCS extends AbstractVCS {
 				integrationStream = Stream.createIntegration( ClearcaseVCS.this.streamName, mainlineproject, initial );
 			} catch (UCMException e) {
 				if( get ) {
-					logger.error( "Error while creating Mainline Integration Stream: " + e.getMessage() );
-					return false;
-				} else {
 					try {
 						logger.warning( "Could not integration stream: " + e.getMessage() );
 						integrationStream = UCMEntity.getStream( ClearcaseVCS.this.streamName, pvob, false );
@@ -290,6 +292,9 @@ public class ClearcaseVCS extends AbstractVCS {
 						logger.error( "Stream does not exist: " + e1.getMessage() );
 						return false;
 					}
+				} else {
+					logger.error( "Error while creating Mainline Integration Stream: " + e.getMessage() );
+					return false;
 				}
 			}
 			
@@ -318,9 +323,6 @@ public class ClearcaseVCS extends AbstractVCS {
 				baseline = Baseline.create( ClearcaseVCS.this.baselineName, c, new File( viewPath, bview.GetViewtag() + "/" + vob.getName() ), false, true );
 			} catch (UCMException e) {
 				if( get ) {
-					logger.error( "Error while creating Structure Baseline: " + e.getMessage() );
-					return false;
-				} else {
 					try {
 						logger.warning( "Baseline exists: " + e.getMessage() );
 						baseline = UCMEntity.getBaseline( ClearcaseVCS.this.baselineName, pvob, false );
@@ -328,6 +330,9 @@ public class ClearcaseVCS extends AbstractVCS {
 						logger.error( "Baseline does not exist: " + e1.getMessage() );
 						return false;
 					}
+				} else {
+					logger.error( "Error while creating Structure Baseline: " + e.getMessage() );
+					return false;
 				}
 			}
 
