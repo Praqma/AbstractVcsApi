@@ -43,6 +43,8 @@ public class ClearcaseVCS extends AbstractVCS {
 
 	private String baseName;
 	private String vobName;
+	private String projectName;
+	private String streamName;
 	
 	/**
 	 * The policies for the repository
@@ -54,6 +56,8 @@ public class ClearcaseVCS extends AbstractVCS {
 	private PVob pvob;
 	
 	private Vob lastCreatedVob;
+	
+	private boolean dieOnFailure = true;
 
 	public ClearcaseVCS( File location ) {
 		super( location );
@@ -73,6 +77,45 @@ public class ClearcaseVCS extends AbstractVCS {
 
 		cc.baseName = baseName;
 		cc.vobName = "\\" + baseName;
+		cc.streamName = baseName + "_Mainline_int";
+		cc.projectName = baseName + "_Mainline";
+		
+		cc.policies = policies;
+
+		cc.pvob = pvob;
+		
+		cc.initialize();
+		
+		return cc;
+	}
+	
+	public static ClearcaseVCS create( File location, String vobName, String componentName, int policies, PVob pvob ) throws ElementNotCreatedException {
+		ClearcaseVCS cc = new ClearcaseVCS( location );
+
+		cc.baseName = componentName;
+		cc.vobName = "\\" + vobName;
+		cc.streamName = componentName + "_Mainline_int";
+		cc.projectName = componentName + "_Mainline";
+		
+		
+		cc.policies = policies;
+
+		cc.pvob = pvob;
+		
+		cc.initialize();
+		
+		return cc;
+	}
+	
+	public static ClearcaseVCS create( File location, String vobName, String componentName, String projectName, String streamName, int policies, PVob pvob ) throws ElementNotCreatedException {
+		ClearcaseVCS cc = new ClearcaseVCS( location );
+
+		cc.baseName = componentName;
+		cc.vobName = "\\" + vobName;
+		cc.streamName = streamName;
+		cc.projectName = projectName;
+		
+		
 		cc.policies = policies;
 
 		cc.pvob = pvob;
@@ -129,14 +172,20 @@ public class ClearcaseVCS extends AbstractVCS {
 		public boolean initialize() {
 
 			/* Create Vob */
-			logger.info( "Creating Vob " + ClearcaseVCS.this.vobName );
-
-			try {
-				vob = Vob.create( ClearcaseVCS.this.vobName, null, ClearcaseVCS.this.vobName + " Vob" );
-			} catch (UCMException e) {
-				logger.error( "Error while creating Vob: " + e.getMessage() );
-				return false;
+			/* Test existence before creation */
+			Vob tmpvob = Vob.get( ClearcaseVCS.this.vobName );
+			if( tmpvob == null ) {
+				try {
+					logger.info( "Creating Vob " + ClearcaseVCS.this.vobName );
+					vob = Vob.create( ClearcaseVCS.this.vobName, null, ClearcaseVCS.this.vobName + " Vob" );
+				} catch (UCMException e) {
+					logger.error( "Error while creating Vob: " + e.getMessage() );
+					return false;
+				}
+			} else {
+				logger.info("Vob already exists");
 			}
+			
 			logger.info( "Loading Vob " + vob );
 			try {
 				vob.load();
@@ -155,12 +204,17 @@ public class ClearcaseVCS extends AbstractVCS {
 			/* Create component */
 			Component c = null;
 			try {
+				logger.info("Creating Component " + ClearcaseVCS.this.baseName);
 				File basepath = new File( ClearcaseVCS.viewPath, ClearcaseVCS.dynView + "/" + vob.getName() );
 				logger.debug( "Baseview path: " + basepath.getAbsolutePath() );
 				c = Component.create( ClearcaseVCS.this.baseName, pvob, ClearcaseVCS.this.baseName, "Main component", basepath );
 			} catch (UCMException e) {
-				logger.error( "Error while creating Component: " + e.getMessage() );
-				return false;
+				if( dieOnFailure ) {
+					logger.error( "Error while creating Component: " + e.getMessage() );
+					return false;
+				} else {
+					logger.warning("Could not create Component, trying to continue: " + e.getMessage());
+				}
 			}
 			logger.debug( "Component=" + c );
 
@@ -178,7 +232,7 @@ public class ClearcaseVCS extends AbstractVCS {
 			logger.info( "Creating Mainline project" );
 			Project mainlineproject;
 			try {
-				mainlineproject = Project.create( ClearcaseVCS.this.baseName + "_Mainline", null, pvob, policies, "Mainline project", c );
+				mainlineproject = Project.create( ClearcaseVCS.this.projectName, null, pvob, policies, "Mainline project", c );
 			} catch (UCMException e) {
 				logger.error( "Error while creating Mainline Project: " + e.getMessage() );
 				return false;
@@ -186,15 +240,16 @@ public class ClearcaseVCS extends AbstractVCS {
 
 			logger.info( "Creating Mainline integration stream" );
 			try {
-				integrationStream = Stream.createIntegration( ClearcaseVCS.this.baseName + "_Mainline_int", mainlineproject, initial );
+				integrationStream = Stream.createIntegration( ClearcaseVCS.this.streamName, mainlineproject, initial );
 			} catch (UCMException e) {
 				logger.error( "Error while creating Mainline Integration Stream: " + e.getMessage() );
 				return false;
 			}
 			
 			logger.info( "Creating integration view" );
+			DynamicView bview = null;
 			try {
-				DynamicView.create( null, ClearcaseVCS.this.baseName + "_" + bootView, integrationStream );
+				bview = DynamicView.create( null, ClearcaseVCS.this.baseName + "_" + bootView, integrationStream );
 			} catch (UCMException e) {
 				logger.error( "Error while creating Integration view: " + e.getMessage() );
 				return false;
@@ -202,7 +257,8 @@ public class ClearcaseVCS extends AbstractVCS {
 
 			logger.info( "Creating Structure_1_0" );
 			try {
-				baseline = Baseline.create( ClearcaseVCS.this.baseName + "_Structure_1_0", c, new File( viewPath, ClearcaseVCS.this.baseName + "_" + bootView + "/" + ClearcaseVCS.this.baseName ), false, true );
+				//baseline = Baseline.create( ClearcaseVCS.this.baseName + "_Structure_1_0", c, new File( viewPath, ClearcaseVCS.this.baseName + "_" + bootView + "/" + ClearcaseVCS.this.baseName ), false, true );
+				baseline = Baseline.create( ClearcaseVCS.this.baseName + "_Structure_1_0", c, new File( viewPath, bview.GetViewtag() + "/" + vob.getName() ), false, true );
 			} catch (UCMException e) {
 				logger.error( "Error while creating Structure Baseline: " + e.getMessage() );
 				return false;
@@ -250,6 +306,10 @@ public class ClearcaseVCS extends AbstractVCS {
 	 */
 	public Baseline getInitialBaseline() {
 		return initialBaseline;
+	}
+	
+	public void setDieOnFailure( boolean die ) {
+		this.dieOnFailure = die;
 	}
 
 	/**
