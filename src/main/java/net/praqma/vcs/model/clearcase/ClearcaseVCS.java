@@ -45,6 +45,7 @@ public class ClearcaseVCS extends AbstractVCS {
 	private String vobName;
 	private String projectName;
 	private String streamName;
+	private String baselineName;
 	
 	/**
 	 * The policies for the repository
@@ -56,8 +57,6 @@ public class ClearcaseVCS extends AbstractVCS {
 	private PVob pvob;
 	
 	private Vob lastCreatedVob;
-	
-	private boolean dieOnFailure = true;
 
 	public ClearcaseVCS( File location ) {
 		super( location );
@@ -79,6 +78,7 @@ public class ClearcaseVCS extends AbstractVCS {
 		cc.vobName = "\\" + baseName;
 		cc.streamName = baseName + "_Mainline_int";
 		cc.projectName = baseName + "_Mainline";
+		cc.baselineName = baseName + "_Structure_1_0";
 		
 		cc.policies = policies;
 
@@ -96,7 +96,7 @@ public class ClearcaseVCS extends AbstractVCS {
 		cc.vobName = "\\" + vobName;
 		cc.streamName = componentName + "_Mainline_int";
 		cc.projectName = componentName + "_Mainline";
-		
+		cc.baselineName = componentName + "_Structure_1_0";
 		
 		cc.policies = policies;
 
@@ -114,7 +114,7 @@ public class ClearcaseVCS extends AbstractVCS {
 		cc.vobName = "\\" + vobName;
 		cc.streamName = streamName;
 		cc.projectName = projectName;
-		
+		cc.baselineName = componentName + "_Structure_1_0";
 		
 		cc.policies = policies;
 
@@ -124,33 +124,20 @@ public class ClearcaseVCS extends AbstractVCS {
 		
 		return cc;
 	}
-	
-	public static ClearcaseVCS create( File location, String vobName, String componentName, String projectName, String streamName, int policies, PVob pvob, boolean dieOnFailure ) throws ElementNotCreatedException {
-		ClearcaseVCS cc = new ClearcaseVCS( location );
 
-		cc.baseName = componentName;
-		cc.vobName = "\\" + vobName;
-		cc.streamName = streamName;
-		cc.projectName = projectName;
-		
-		
-		cc.policies = policies;
-
-		cc.pvob = pvob;
-		cc.dieOnFailure = dieOnFailure;
-		
-		cc.initialize();
-		
-		return cc;
-	}
 
 	/**
 	 * Initializes an instance of a {@link ClearcaseVCS}
 	 */
 	@Override
 	public void initialize() throws ElementNotCreatedException {
+		initialize( false );
+	}
+	
+	@Override
+	public void initialize( boolean get ) throws ElementNotCreatedException {
 		logger.info( "Initializing Clearcase Repository" );
-		InitializeImpl init = new InitializeImpl();
+		InitializeImpl init = new InitializeImpl(get);
 		doInitialize( init );
 		
 		lastCreatedVob = init.getVob();
@@ -162,7 +149,8 @@ public class ClearcaseVCS extends AbstractVCS {
 		private Baseline baseline;
 		private Vob vob;
 
-		public InitializeImpl() {
+		public InitializeImpl( boolean get ) {
+			super(get);
 		}
 
 		public boolean setup() {
@@ -231,7 +219,7 @@ public class ClearcaseVCS extends AbstractVCS {
 				logger.debug( "Baseview path: " + basepath.getAbsolutePath() );
 				c = Component.create( ClearcaseVCS.this.baseName, pvob, ClearcaseVCS.this.baseName, "Main component", basepath );
 			} catch (UCMException e) {
-				if( dieOnFailure ) {
+				if( get ) {
 					logger.error( "Error while creating Component: " + e.getMessage() );
 					return false;
 				} else {
@@ -262,16 +250,36 @@ public class ClearcaseVCS extends AbstractVCS {
 			try {
 				mainlineproject = Project.create( ClearcaseVCS.this.projectName, null, pvob, policies, "Mainline project", c );
 			} catch (UCMException e) {
-				logger.error( "Error while creating Mainline Project: " + e.getMessage() );
-				return false;
+				if( get ) {
+					logger.error( "Error while creating Mainline Project: " + e.getMessage() );
+					return false;
+				} else {
+					try {
+						logger.warning( "Could not create project: " + e.getMessage() );
+						mainlineproject = UCMEntity.getProject( ClearcaseVCS.this.projectName, pvob, false );
+					} catch (UCMException e1) {
+						logger.error( "Project does not exist: " + e1.getMessage() );
+						return false;
+					}
+				}
 			}
 
 			logger.info( "Creating Mainline integration stream" );
 			try {
 				integrationStream = Stream.createIntegration( ClearcaseVCS.this.streamName, mainlineproject, initial );
 			} catch (UCMException e) {
-				logger.error( "Error while creating Mainline Integration Stream: " + e.getMessage() );
-				return false;
+				if( get ) {
+					logger.error( "Error while creating Mainline Integration Stream: " + e.getMessage() );
+					return false;
+				} else {
+					try {
+						logger.warning( "Could not integration stream: " + e.getMessage() );
+						integrationStream = UCMEntity.getStream( ClearcaseVCS.this.streamName, pvob, false );
+					} catch (UCMException e1) {
+						logger.error( "Stream does not exist: " + e1.getMessage() );
+						return false;
+					}
+				}
 			}
 			
 			logger.info( "Creating integration view" );
@@ -296,10 +304,20 @@ public class ClearcaseVCS extends AbstractVCS {
 			logger.info( "Creating Structure_1_0" );
 			try {
 				//baseline = Baseline.create( ClearcaseVCS.this.baseName + "_Structure_1_0", c, new File( viewPath, ClearcaseVCS.this.baseName + "_" + bootView + "/" + ClearcaseVCS.this.baseName ), false, true );
-				baseline = Baseline.create( ClearcaseVCS.this.baseName + "_Structure_1_0", c, new File( viewPath, bview.GetViewtag() + "/" + vob.getName() ), false, true );
+				baseline = Baseline.create( ClearcaseVCS.this.baselineName, c, new File( viewPath, bview.GetViewtag() + "/" + vob.getName() ), false, true );
 			} catch (UCMException e) {
-				logger.error( "Error while creating Structure Baseline: " + e.getMessage() );
-				return false;
+				if( get ) {
+					logger.error( "Error while creating Structure Baseline: " + e.getMessage() );
+					return false;
+				} else {
+					try {
+						logger.warning( "Baseline exists: " + e.getMessage() );
+						baseline = UCMEntity.getBaseline( ClearcaseVCS.this.baselineName, pvob, false );
+					} catch (UCMException e1) {
+						logger.error( "Baseline does not exist: " + e1.getMessage() );
+						return false;
+					}
+				}
 			}
 
 			return true;
@@ -346,10 +364,6 @@ public class ClearcaseVCS extends AbstractVCS {
 		return initialBaseline;
 	}
 	
-	public void setDieOnFailure( boolean die ) {
-		this.dieOnFailure = die;
-	}
-
 	/**
 	 * Boot strap a project/repository given default values
 	 * @return The {@link PVob} of the project

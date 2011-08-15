@@ -42,9 +42,9 @@ public abstract class AbstractVCS {
 	 * @param branch
 	 * @throws OperationNotSupportedException
 	 */
-	public void initialize() throws ElementNotCreatedException, OperationNotSupportedException {
-		throw new OperationNotSupportedException( "Cannot initialize this kind of repository" );
-	}
+	public abstract void initialize() throws ElementNotCreatedException;
+	
+	public abstract void initialize( boolean get ) throws ElementNotCreatedException;
 	
 	protected final void doInitialize( Initialize initialize ) {
 		boolean status = initialize.setup();
@@ -59,7 +59,9 @@ public abstract class AbstractVCS {
 	
 	protected abstract class Initialize {
 
-		public Initialize() {
+		protected boolean get = false;
+		public Initialize( boolean get ) {
+			this.get = get;
 		}
 		
 		public boolean setup() {
