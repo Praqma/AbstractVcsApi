@@ -42,11 +42,13 @@ public abstract class AbstractVCS {
 	 * @param branch
 	 * @throws OperationNotSupportedException
 	 */
-	public abstract void initialize() throws ElementNotCreatedException;
+	public abstract boolean initialize() throws ElementNotCreatedException;
 	
-	public abstract void initialize( boolean get ) throws ElementNotCreatedException;
+	public abstract boolean initialize( boolean get ) throws ElementNotCreatedException;
 	
-	protected final void doInitialize( Initialize initialize ) {
+	public abstract boolean get() throws ElementNotCreatedException;
+	
+	protected final boolean doInitialize( Initialize initialize ) {
 		boolean status = initialize.setup();
 		
 		/* Only initialize if setup went good */
@@ -54,7 +56,7 @@ public abstract class AbstractVCS {
 			status = initialize.initialize();
 		}
 		
-		initialize.cleanup( status );
+		return initialize.cleanup( status );
 	}
 	
 	protected abstract class Initialize {

@@ -125,23 +125,34 @@ public class ClearcaseVCS extends AbstractVCS {
 		return cc;
 	}
 
+	@Override
+	public boolean get() throws ElementNotCreatedException {
+		/* TODO Actually check if Stream and view exists */
+		if( initialize( true ) ) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	/**
 	 * Initializes an instance of a {@link ClearcaseVCS}
 	 */
 	@Override
-	public void initialize() throws ElementNotCreatedException {
-		initialize( false );
+	public boolean initialize() throws ElementNotCreatedException {
+		return initialize( false );
 	}
 	
 	@Override
-	public void initialize( boolean get ) throws ElementNotCreatedException {
+	public boolean initialize( boolean get ) throws ElementNotCreatedException {
 		logger.info( "Initializing Clearcase Repository" );
 		InitializeImpl init = new InitializeImpl(get);
-		doInitialize( init );
+		boolean result = doInitialize( init );
 		
 		lastCreatedVob = init.getVob();
 		initialBaseline = init.getBaseline();
+		
+		return result;
 	}
 
 	public class InitializeImpl extends Initialize {
@@ -415,4 +426,5 @@ public class ClearcaseVCS extends AbstractVCS {
 
 		return pvob;
 	}
+
 }
