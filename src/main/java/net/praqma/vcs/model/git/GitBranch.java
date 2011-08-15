@@ -32,7 +32,7 @@ public class GitBranch extends AbstractBranch{
 	
 	public static GitBranch get( File localRepository, String name, Repository parent ) {
 		GitBranch gb = new GitBranch( localRepository, name, parent );
-		gb.initialize();
+		gb.initialize(true);
 		return gb;
 	}
 	

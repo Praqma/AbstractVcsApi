@@ -87,7 +87,7 @@ public class ClearcaseBranch extends AbstractBranch{
 	}
 	
 	public boolean initialize( boolean get ) {
-		logger.info( "Creating Clearcase branch/stream" );
+		logger.info( "Creating Clearcase branch/stream " + name );
 		return doInitialize( new InitializeImpl( get ) );
 	}
 	
@@ -99,12 +99,12 @@ public class ClearcaseBranch extends AbstractBranch{
 		public boolean initialize() {
 
 			try {
-				logger.info( "Creating development stream" );
+				logger.info( "Creating development stream"  );
 				devStream = Stream.create( parent, name + "@" + ccVCS.getPVob(), false, baseline );
 			} catch (UCMException e) {
 				if( get ) {
 					try {
-						devStream = UCMEntity.getStream( name + "@" + ccVCS.getPVob(), ccVCS.getPVob(), false );
+						devStream = UCMEntity.getStream( name, ccVCS.getPVob(), false );
 						logger.info( "Stream already exists" );
 					} catch (UCMException e1) {
 						logger.error( "Could not find stream: " + e.getMessage() );
@@ -118,15 +118,23 @@ public class ClearcaseBranch extends AbstractBranch{
 			
 			try {
 				logger.info( "Creating development view" );
+				viewroot.mkdirs();
 				snapshot = SnapshotView.Create( devStream, viewroot, viewtag );
 			} catch (UCMException e) {
 				if( get ) {
 					try {
 						snapshot = UCMView.GetSnapshotView(viewroot);
 						logger.info( "View already exists" );
-					} catch (UCMException e1) {
+					} catch (Exception e1) {
 						logger.error( "Could not find view: " + e.getMessage() );
-						return false;
+						/* try to generate new */
+						try {
+							snapshot = SnapshotView.Create( devStream, viewroot, viewtag + System.currentTimeMillis() );
+						} catch (UCMException e2) {
+							logger.error( "Could not generate new view: " + e2.getMessage() );
+							return false;
+						}
+						
 					}
 				} else {
 					logger.error("Error while creating Snapshot View: " + e.getMessage());
@@ -164,8 +172,10 @@ public class ClearcaseBranch extends AbstractBranch{
 		}
 		
 		if( !exists ) {
-			return initialize();
+			logger.debug( "Must initialize" );
+			return initialize(true);
 		} else {
+			logger.debug( "DONT initialize" );
 			try {
 				snapshot = UCMView.GetSnapshotView(viewroot);
 			} catch (UCMException e) {

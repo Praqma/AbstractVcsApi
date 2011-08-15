@@ -239,11 +239,11 @@ public class ClearcaseVCS extends AbstractVCS {
 				c = Component.create( ClearcaseVCS.this.baseName, pvob, ClearcaseVCS.this.baseName, "Main component", basepath );
 			} catch (UCMException e) {
 				if( get ) {
-					logger.warning("Could not create Component, trying to continue: " + e.getMessage());
 					try {
 						c = UCMEntity.getComponent( ClearcaseVCS.this.baseName, pvob, false );
+						logger.info( "Using existing component" );
 					} catch (UCMException e1) {
-						logger.error( "Component does not exist: " + e1.getMessage() );
+						logger.error( "Component does not exist and could not be created: " + e1.getMessage() );
 						return false;
 					}
 				} else {
@@ -271,10 +271,10 @@ public class ClearcaseVCS extends AbstractVCS {
 			} catch (UCMException e) {
 				if( get ) {
 					try {
-						logger.warning( "Could not create project: " + e.getMessage() );
 						mainlineproject = UCMEntity.getProject( ClearcaseVCS.this.projectName, pvob, false );
+						logger.info( "Using existing project" );
 					} catch (UCMException e1) {
-						logger.error( "Project does not exist: " + e1.getMessage() );
+						logger.error( "Project does not exist and could not be created: " + e1.getMessage() );
 						return false;
 					}
 				} else {
@@ -289,10 +289,10 @@ public class ClearcaseVCS extends AbstractVCS {
 			} catch (UCMException e) {
 				if( get ) {
 					try {
-						logger.warning( "Could not create integration stream: " + e.getMessage() );
 						integrationStream = UCMEntity.getStream( ClearcaseVCS.this.streamName, pvob, false );
+						logger.info( "Using existing stream" );
 					} catch (UCMException e1) {
-						logger.error( "Stream does not exist: " + e1.getMessage() );
+						logger.error( "Stream does not exist and could not be created: " + e1.getMessage() );
 						return false;
 					}
 				} else {
@@ -312,9 +312,9 @@ public class ClearcaseVCS extends AbstractVCS {
 				}
 			} else {
 				try {
-					logger.info( "View exists, trying to start view server" );
 					new DynamicView( null, ClearcaseVCS.this.baseName + "_" + bootView ).startView();
 					bview = new DynamicView( null, ClearcaseVCS.this.baseName + "_" + bootView );
+					logger.info( "Using existing view" );
 				} catch (UCMException e) {
 					logger.error( "Error while starting baseview: " + e.getMessage() );
 					return false;
@@ -328,10 +328,10 @@ public class ClearcaseVCS extends AbstractVCS {
 			} catch (UCMException e) {
 				if( get ) {
 					try {
-						logger.warning( "Baseline exists: " + e.getMessage() );
 						baseline = UCMEntity.getBaseline( ClearcaseVCS.this.baselineName, pvob, false );
+						logger.info( "Using existing baseline" );
 					} catch (UCMException e1) {
-						logger.error( "Baseline does not exist: " + e1.getMessage() );
+						logger.error( "Baseline does not exist and could not be created: " + e1.getMessage() );
 						return false;
 					}
 				} else {
