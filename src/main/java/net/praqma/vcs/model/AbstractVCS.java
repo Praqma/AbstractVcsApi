@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import net.praqma.util.debug.Logger;
+import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
 import net.praqma.vcs.model.exceptions.OperationNotSupportedException;
@@ -24,18 +25,7 @@ public abstract class AbstractVCS {
 		this.location = location;
 	}
 	
-	/*
-	public AbstractVCS( Repository parent, AbstractBranch branch ) {
-		this.branch = branch;
-		this.location = parent;
-	}
-	*/
-
-	/*
-	public boolean branchExists( AbstractBranch branch ) throws OperationNotImplementedException {
-		throw new OperationNotImplementedException( "Branch exists" );
-	}
-	*/
+	public abstract boolean exists();
 	
 	/**
 	 * Initialize the given branch
@@ -46,7 +36,8 @@ public abstract class AbstractVCS {
 	
 	public abstract boolean initialize( boolean get ) throws ElementNotCreatedException;
 	
-	public abstract boolean get() throws ElementNotCreatedException;
+	public abstract void get() throws ElementDoesNotExistException;
+	public abstract void get( boolean initialize ) throws ElementNotCreatedException, ElementDoesNotExistException;
 	
 	/**
 	 * Runs the implementation of {@link Initialize}.

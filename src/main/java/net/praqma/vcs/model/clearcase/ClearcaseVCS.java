@@ -14,6 +14,7 @@ import net.praqma.clearcase.ucm.view.DynamicView;
 import net.praqma.clearcase.ucm.view.UCMView;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractVCS;
+import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException.FailureType;
 
@@ -53,6 +54,7 @@ public class ClearcaseVCS extends AbstractVCS {
 	private int policies = 0;
 	private Stream integrationStream;
 	private Baseline initialBaseline;
+	private Project project;
 
 	private PVob pvob;
 	
@@ -131,14 +133,84 @@ public class ClearcaseVCS extends AbstractVCS {
 			throw new ElementNotCreatedException( "Could not create repository", FailureType.INITIALIZATON );
 		}
 	}
+	
+	public boolean exists() {
 
+		boolean result = true;
+		
+		try {
+			UCMEntity.getComponent( ClearcaseVCS.this.baseName, pvob, false );
+		} catch (UCMException e1) {
+			logger.debug( "Component does not exist" );
+			result = false;
+		}
+		
+		try {
+			UCMEntity.getProject( ClearcaseVCS.this.projectName, pvob, false );
+		} catch (UCMException e1) {
+			logger.debug( "Project does not exist" );
+			result = false;
+		}
+		
+		try {
+			UCMEntity.getStream( ClearcaseVCS.this.streamName, pvob, false );
+		} catch (UCMException e1) {
+			logger.debug( "Stream does not exist" );
+			result = false;
+		}
+		
+		try {
+			UCMEntity.getBaseline( ClearcaseVCS.this.baselineName, pvob, false );
+		} catch (UCMException e1) {
+			logger.debug( "Baseline does not exist" );
+			result = false;
+		}
+		
+		return result;
+	}
+
+	public void get() throws ElementDoesNotExistException {
+		try {
+			get( false );
+		} catch( ElementNotCreatedException e ) {
+			/* This should not happen */
+			/* TODO Should we throw DoesNotExist? */
+		}
+	}
+	
 	@Override
-	public boolean get() throws ElementNotCreatedException {
-		/* TODO Actually check if Stream and view exists */
-		if( initialize( true ) ) {
-			return true;
+	public void get( boolean initialize ) throws ElementNotCreatedException, ElementDoesNotExistException {
+		if( initialize ) {
+			if( !initialize( true ) ) {
+				throw new ElementNotCreatedException( "Could not create Clearcase VCS" );
+			}
 		} else {
-			return false;
+			boolean result = true;
+			
+			try {
+				this.project = UCMEntity.getProject( ClearcaseVCS.this.projectName, pvob, false );
+			} catch (UCMException e1) {
+				logger.error( "Project does not exist" );
+				result = false;
+			}
+			
+			try {
+				this.integrationStream = UCMEntity.getStream( ClearcaseVCS.this.streamName, pvob, false );
+			} catch (UCMException e1) {
+				logger.error( "Stream does not exist" );
+				result = false;
+			}
+			
+			try {
+				this.initialBaseline = UCMEntity.getBaseline( ClearcaseVCS.this.baselineName, pvob, false );
+			} catch (UCMException e1) {
+				logger.error( "Baseline does not exist" );
+				result = false;
+			}
+			
+			if( !result ) {
+				throw new ElementDoesNotExistException( "Clearcase VCS does not exist" );
+			}
 		}
 	}
 
@@ -172,20 +244,6 @@ public class ClearcaseVCS extends AbstractVCS {
 		}
 
 		public boolean setup() {
-			
-			/*
-			Vob v = Vob.get( ClearcaseVCS.this.vobName );
-			if( v != null ) {
-				logger.info( "Removing vob" );
-				try {
-					v.remove();
-				} catch (UCMException e) {
-					logger.error( "Error while removing vob: " + e.getMessage() );
-					return false;
-				}
-			}
-			*/
-
 			return true;
 		}
 		
@@ -265,13 +323,12 @@ public class ClearcaseVCS extends AbstractVCS {
 			}
 
 			logger.info( "Creating Mainline project" );
-			Project mainlineproject;
 			try {
-				mainlineproject = Project.create( ClearcaseVCS.this.projectName, null, pvob, policies, "Mainline project", c );
+				project = Project.create( ClearcaseVCS.this.projectName, null, pvob, policies, "Mainline project", c );
 			} catch (UCMException e) {
 				if( get ) {
 					try {
-						mainlineproject = UCMEntity.getProject( ClearcaseVCS.this.projectName, pvob, false );
+						project = UCMEntity.getProject( ClearcaseVCS.this.projectName, pvob, false );
 						logger.info( "Using existing project" );
 					} catch (UCMException e1) {
 						logger.error( "Project does not exist and could not be created: " + e1.getMessage() );
@@ -285,7 +342,7 @@ public class ClearcaseVCS extends AbstractVCS {
 
 			logger.info( "Creating Mainline integration stream" );
 			try {
-				integrationStream = Stream.createIntegration( ClearcaseVCS.this.streamName, mainlineproject, initial );
+				integrationStream = Stream.createIntegration( ClearcaseVCS.this.streamName, project, initial );
 			} catch (UCMException e) {
 				if( get ) {
 					try {
