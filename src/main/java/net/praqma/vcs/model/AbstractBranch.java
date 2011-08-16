@@ -85,33 +85,33 @@ public abstract class AbstractBranch implements Cleanable {
 	 * Pulls from the previously specified repository location
 	 * @throws OperationNotSupportedException
 	 */
-	public abstract void checkout();
+	public abstract void update();
 	
-	public abstract void checkout( AbstractCommit commit );
+	public abstract void update( AbstractCommit commit );
 	
-	protected final void doCheckout( Checkout checkout ) {
+	protected final void doUpdate( Update update ) {
 
 		/* Run the pre pull listener */
 		PullListener.runPreCheckoutListener();
 		
-		boolean status = checkout.setup();
+		boolean status = update.setup();
 		
 		/* Only perform if pre step went good */
 		if( status ) {
-			status = checkout.checkout();
+			status = update.update();
 		}
 		
 		/* Run the post pull listener */
 		PullListener.runPostCheckoutListener();
 	}
 	
-	protected abstract class Checkout extends AbstractConstructSequence{
+	protected abstract class Update extends AbstractConstructSequence{
 		protected AbstractCommit commit;
-		public Checkout( AbstractCommit commit ) {
+		public Update( AbstractCommit commit ) {
 			this.commit = commit;
 		}
 		
-		public boolean checkout() {
+		public boolean update() {
 			return true;
 		}
 	}

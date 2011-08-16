@@ -115,21 +115,21 @@ public class GitBranch extends AbstractBranch{
 		
 	}
 
-	public void checkout() {
-		doCheckout( new CheckoutImpl(null) );
+	public void update() {
+		doUpdate( new UpdateImpl(null) );
 	}
 	
-	public void checkout( AbstractCommit commit ) {
-		doCheckout( new CheckoutImpl( commit ) );
+	public void update( AbstractCommit commit ) {
+		doUpdate( new UpdateImpl( commit ) );
 	}
 	
-	public class CheckoutImpl extends Checkout {
+	public class UpdateImpl extends Update {
 
-		public CheckoutImpl( AbstractCommit commit ) {
+		public UpdateImpl( AbstractCommit commit ) {
 			super( commit );
 		}
 
-		public boolean checkout() {
+		public boolean update() {
 			logger.debug( "GIT: perform checkout" );
 			
 			if( parent == null ) {

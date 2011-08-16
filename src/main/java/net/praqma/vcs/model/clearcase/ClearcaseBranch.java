@@ -235,17 +235,17 @@ public class ClearcaseBranch extends AbstractBranch{
 	}
 	
 	
-	public void checkout() {
-		doCheckout( new CheckoutImpl(null) );
+	public void update() {
+		doUpdate( new UpdateImpl(null) );
 	}
 	
 	@Override
-	public void checkout( AbstractCommit commit ) {
-		doCheckout( new CheckoutImpl(commit) );
+	public void update( AbstractCommit commit ) {
+		doUpdate( new UpdateImpl(commit) );
 	}
 	
-	public class CheckoutImpl extends Checkout {
-		public CheckoutImpl( AbstractCommit commit ) {
+	public class UpdateImpl extends Update {
+		public UpdateImpl( AbstractCommit commit ) {
 			super( commit );
 		}
 
@@ -262,7 +262,7 @@ public class ClearcaseBranch extends AbstractBranch{
 			return true;
 		}
 		
-		public boolean checkout() {
+		public boolean update() {
 			try {
 				snapshot.Update( true, true, true, false, COMP.MODIFIABLE, null );
 			} catch (UCMException e) {
