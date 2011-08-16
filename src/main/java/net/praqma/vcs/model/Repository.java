@@ -13,6 +13,10 @@ public class Repository {
 		return location;
 	}
 	
+	public String getName() {
+		return name;
+	}
+	
 	public String toString() {
 		return location;
 	}

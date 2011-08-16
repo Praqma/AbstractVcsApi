@@ -3,24 +3,48 @@ package net.praqma.vcs.model.git.api;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.praqma.util.execute.AbnormalProcessTerminationException;
+import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.git.exceptions.GitException;
 import net.praqma.vcs.util.CommandLine;
 
 public class Git {
 	
-	public static void addRemote( String name, String location, File viewContext ) throws GitException {
+	private static final Pattern rx_remoteExists = Pattern.compile( "^.*?remote \\w+ already exists.*?$" );
+	
+	public static void addRemote( String name, String location, File viewContext ) throws GitException, ElementAlreadyExistsException {
 		try {
 			CommandLine.run( "git remote add " + name + " " + location, viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
+			Matcher m = rx_remoteExists.matcher( e.getMessage() );
+			if( m.find() ) {
+				throw new ElementAlreadyExistsException( "Remote " + name + " already exists" );
+			}
 			throw new GitException( "Could add remote: " + e.getMessage() );
 		}
 	}
 	
 	public static boolean branchExists( String branchName, File viewContext ) throws GitException {
 		return repositoryExists( viewContext ) && listBranches(viewContext).contains( branchName );
+	}
+	
+	public static void changeBranch( String branchName, File viewContext ) throws GitException {
+		try {
+			CommandLine.run( "git checkout " + branchName, viewContext );
+		} catch( AbnormalProcessTerminationException e ) {
+			throw new GitException( "Could not change to branch " + branchName + ": " + e.getMessage() );
+		}	
+	}
+	
+	public static void checkoutRemoteBranch( String branchName, String remoteBranchName, File viewContext ) throws GitException {
+		try {
+			CommandLine.run( "git checkout -b " + branchName + " " + remoteBranchName, viewContext );
+		} catch( AbnormalProcessTerminationException e ) {
+			throw new GitException( "Could not checkout remote branch " + branchName + ": " + e.getMessage() );
+		}	
 	}
 	
 	public static void checkoutCommit( String key, File viewContext ) throws GitException {
@@ -30,6 +54,20 @@ public class Git {
 			throw new GitException( "Could not checkout commit: " + e.getMessage() );
 		}
 	}
+	
+	public static void clone( String parentLocation, File viewContext ) throws GitException {
+		try {
+			CommandLine.run( "git clone " + parentLocation + " .", viewContext );
+		} catch( AbnormalProcessTerminationException e ) {
+			throw new GitException( "Could not clone " + parentLocation + ": " + e.getMessage() );
+		}
+	}
+	
+	public static void getCommits() {
+		
+	}
+	
+	//private static final Pattern rx_repoExists = Pattern.compile( "^.*?remote \\w+ already exists.*?$" );
 	
 	public static void initialize( File viewContext ) throws GitException {
 		try {
@@ -63,7 +101,7 @@ public class Git {
 	 * @param viewContext
 	 * @throws GitException 
 	 */
-	public static void pull( String branch, String location, File viewContext ) throws GitException {
+	public static void pull( String location, String branch, File viewContext ) throws GitException {
 		try {
 			CommandLine.run( "git pull " + location + " " + branch, viewContext );
 		} catch( AbnormalProcessTerminationException e ) {

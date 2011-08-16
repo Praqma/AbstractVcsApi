@@ -1,14 +1,12 @@
 package net.praqma.vcs.model;
 
 import java.io.File;
-import java.util.List;
 
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
+import net.praqma.vcs.model.exceptions.ElementException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
 import net.praqma.vcs.model.exceptions.OperationNotSupportedException;
-import net.praqma.vcs.model.extensions.PullListener;
 
 public abstract class AbstractVCS {
 
@@ -32,12 +30,12 @@ public abstract class AbstractVCS {
 	 * @param branch
 	 * @throws OperationNotSupportedException
 	 */
-	public abstract void initialize() throws ElementNotCreatedException;
+	public abstract void initialize() throws ElementException;
 	
-	public abstract void initialize( boolean get ) throws ElementNotCreatedException;
+	public abstract void initialize( boolean get ) throws ElementException;
 	
-	public abstract void get() throws ElementDoesNotExistException;
-	public abstract void get( boolean initialize ) throws ElementNotCreatedException, ElementDoesNotExistException;
+	public abstract void get() throws ElementException;
+	public abstract void get( boolean initialize ) throws ElementException;
 	
 	/**
 	 * Runs the implementation of {@link Initialize}.
@@ -55,22 +53,14 @@ public abstract class AbstractVCS {
 		return initialize.cleanup( status ) && status;
 	}
 	
-	protected abstract class Initialize {
+	protected abstract class Initialize extends AbstractConstructSequence {
 
 		protected boolean get = false;
 		public Initialize( boolean get ) {
 			this.get = get;
 		}
 		
-		public boolean setup() {
-			return true;
-		}
-		
 		public boolean initialize() {
-			return true;
-		}
-		
-		public boolean cleanup( boolean status ) {
 			return true;
 		}
 	}

@@ -1,10 +1,12 @@
 package net.praqma.vcs.model;
 
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
+import net.praqma.vcs.model.exceptions.ElementException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
 import net.praqma.vcs.model.exceptions.OperationNotSupportedException;
@@ -45,8 +47,8 @@ public abstract class AbstractBranch {
 	 * @param branch
 	 * @throws OperationNotSupportedException
 	 */
-	public abstract void initialize() throws ElementNotCreatedException;
-	public abstract void initialize( boolean get ) throws ElementNotCreatedException;
+	public abstract void initialize() throws ElementException;
+	public abstract void initialize( boolean get ) throws ElementException;
 	
 	protected final boolean doInitialize( Initialize initialize ) {
 		boolean status = initialize.setup();
@@ -59,21 +61,13 @@ public abstract class AbstractBranch {
 		return initialize.cleanup( status ) && status;
 	}
 	
-	protected abstract class Initialize {
+	protected abstract class Initialize extends AbstractConstructSequence {
 		protected boolean get = false;
 		public Initialize( boolean get ) {
 			this.get = get;
 		}
 		
-		public boolean setup() {
-			return true;
-		}
-		
 		public boolean initialize() {
-			return true;
-		}
-		
-		public boolean cleanup( boolean status ) {
 			return true;
 		}
 	}
@@ -81,8 +75,8 @@ public abstract class AbstractBranch {
 
 	public abstract boolean exists();
 	
-	public abstract void get() throws ElementDoesNotExistException;
-	public abstract void get( boolean initialize ) throws ElementNotCreatedException, ElementDoesNotExistException;
+	public abstract void get() throws ElementException;
+	public abstract void get( boolean initialize ) throws ElementException;
 	
 	
 	/**
@@ -111,32 +105,20 @@ public abstract class AbstractBranch {
 		PullListener.runPostCheckoutListener();
 	}
 	
-	protected abstract class Checkout{
+	protected abstract class Checkout extends AbstractConstructSequence{
 		protected AbstractCommit commit;
 		public Checkout( AbstractCommit commit ) {
 			this.commit = commit;
 		}
 		
-		public boolean setup() {
-			return true;
-		}
-		
 		public boolean checkout() {
 			return true;
 		}
-		
-		public boolean cleanup( boolean status ) {
-			return true;
-		}
 	}
 	
-	public List<AbstractCommit> getCommits() throws OperationNotImplementedException {
-		throw new OperationNotImplementedException( "getCommits" );
-	}
-	
-	public List<AbstractCommit> getCommits( boolean load ) throws OperationNotImplementedException {
-		throw new OperationNotImplementedException( "getCommits" );
-	}
+	public abstract List<AbstractCommit> getCommits();
+	public abstract List<AbstractCommit> getCommits( boolean load );
+	public abstract List<AbstractCommit> getCommits( boolean load, Date offset );
 	
 	public AbstractCommit getLastCommit() {
 		return lastCommit;

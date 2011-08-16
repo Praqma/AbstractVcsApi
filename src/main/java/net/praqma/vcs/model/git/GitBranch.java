@@ -2,13 +2,15 @@ package net.praqma.vcs.model.git;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.Repository;
+import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
+import net.praqma.vcs.model.exceptions.ElementException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.git.api.Git;
 import net.praqma.vcs.model.git.exceptions.GitException;
@@ -25,29 +27,27 @@ public class GitBranch extends AbstractBranch{
 		super( localRepositoryPath, name, parent );
 	}
 
-	public static GitBranch create( File localRepository, String name, Repository parent ) throws ElementNotCreatedException {
+	
+	
+	public static GitBranch create( File localRepository, String name, Repository parent ) throws ElementException {
 		GitBranch gb = new GitBranch( localRepository, name, parent );
 		gb.initialize();
 		return gb;
 	}
 	
-	public static GitBranch get( File localRepository, String name, Repository parent ) throws ElementNotCreatedException {
-		GitBranch gb = new GitBranch( localRepository, name, parent );
-		gb.initialize(true);
-		return gb;
-	}
-	
-	public void initialize() throws ElementNotCreatedException {
+	public void initialize() throws ElementException {
 		initialize(false);
 	}
 	
-	public void initialize( boolean get ) throws ElementNotCreatedException {
-		if( !doInitialize( new InitializeImpl( get ) ) ) {
-			throw new ElementNotCreatedException( "Could not create Git branch" );
+	public void initialize( boolean get ) throws ElementException {
+		InitializeImpl init = new InitializeImpl( get );
+		if( !doInitialize( init ) ) {
+			//throw new ElementNotCreatedException( "Could not create Git branch" );
+			throw init.getException();
 		}
 	}
 	
-	public void get() throws ElementDoesNotExistException {
+	public void get() throws ElementException {
 		try {
 			get(false);
 		} catch (ElementNotCreatedException e) {
@@ -56,7 +56,7 @@ public class GitBranch extends AbstractBranch{
 		}
 	}
 	
-	public void get( boolean initialize ) throws ElementNotCreatedException, ElementDoesNotExistException {
+	public void get( boolean initialize ) throws ElementException {
 		if( initialize ) {
 			initialize(true);
 		} else {
@@ -81,20 +81,23 @@ public class GitBranch extends AbstractBranch{
 		}
 
 		public boolean initialize() {
-			/*
-			String cmd = "git branch " + name + " .";
-			
-			try {
-				CommandLine.run( cmd, localRepositoryPath.getAbsoluteFile() );
-			} catch( Exception e ) {
-				logger.warning( "Could not create the branch " + name );
-			}
-			*/
-			
+
 			/* Only do anything if a parent is given
 			 * Clone parent */
 			if( parent != null ) {
-				CommandLine.run( "git clone " + parent.getLocation() + " ." );
+				try {
+					//Git.clone( parent.getLocation(), localRepositoryPath );
+					Git.addRemote( parent.getName(), parent.getLocation(), localRepositoryPath );
+					Git.pull( parent.getName(), "master", localRepositoryPath );
+					//Git.checkoutRemoteBranch( name, parent.getName() + "/" + name, localRepositoryPath );
+				} catch( GitException e ) {
+					logger.warning( "Could not initialize Git branch " + name + " from remote " + parent.getName() + ": " + e.getMessage() );
+					this.setException( new ElementNotCreatedException( "Could not initialize Git branch" ) );
+					return false;
+				} catch (ElementAlreadyExistsException e) {
+					this.setException( e );
+					return false;
+				}
 			} else {
 				/*
 				CommandLine.run( "git symbolic-ref HEAD refs/heads/" + name );
@@ -163,12 +166,17 @@ public class GitBranch extends AbstractBranch{
 	
 	@Override
 	public List<AbstractCommit> getCommits( boolean load ) {
+		return getCommits( load, null );
+	}
+	
+	@Override
+	public List<AbstractCommit> getCommits( boolean load, Date offset ) {
 		logger.info( "Getting git commits for branch " + name );
 		
-		String cmd = "git rev-list --no-merges --all";
+		String cmd = "git rev-list --no-merges --reverse --all";
 		List<String> cs = CommandLine.run( cmd, localRepositoryPath.getAbsoluteFile() ).stdoutList;
 		
-		Collections.reverse( cs );
+		//Collections.reverse( cs );
 		
 		List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
 		

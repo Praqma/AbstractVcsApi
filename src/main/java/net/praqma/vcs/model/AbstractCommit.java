@@ -37,9 +37,7 @@ public abstract class AbstractCommit {
 		this.number = number;
 	}
 	
-	public void load() throws OperationNotImplementedException {
-		throw new OperationNotImplementedException( "load" );
-	}
+	public abstract void load();
 	
 	protected void doLoad( Load load ) {
 		boolean status = load.preLoad();

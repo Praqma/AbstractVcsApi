@@ -1,6 +1,9 @@
 package net.praqma.vcs.model.clearcase;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import net.praqma.clearcase.PVob;
 import net.praqma.clearcase.Vob;
@@ -18,7 +21,13 @@ import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException.FailureType;
+import net.praqma.vcs.util.Utils;
 
+/**
+ * An implementation of {@link AbstractBranch} for Clearcase, where {@link Baseline}'s are used as commit separator.
+ * @author wolfgang
+ *
+ */
 public class ClearcaseBranch extends AbstractBranch{
 
 	private File viewroot;
@@ -264,6 +273,49 @@ public class ClearcaseBranch extends AbstractBranch{
 			return status;
 		}
 	}
+	
+	
+
+	@Override
+	public List<AbstractCommit> getCommits() {
+		return getCommits( false, null );
+	}
+	
+	@Override
+	public List<AbstractCommit> getCommits( boolean load ) {
+		return getCommits( load, null );
+	}
+
+	@Override
+	public List<AbstractCommit> getCommits( boolean load, Date offset ) {
+		
+		List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
+		
+		try {
+			List<Baseline> baselines = this.devStream.getBaselines( getComponent(), null );
+			
+			/* TODO Clear out baselines before offset */
+			if( offset != null ) {
+				
+			}
+			
+			for( int i = 0 ; i < baselines.size() ; i++ ) {
+				System.out.print( "\r" + Utils.getProgress( baselines.size(), i ) );
+				ClearcaseCommit commit = new ClearcaseCommit( baselines.get( i ).getFullyQualifiedName(), ClearcaseBranch.this, i );
+				if( load ) {
+					commit.load();
+				}
+				commits.add( commit );
+			}
+		} catch (UCMException e) {
+			logger.error( "Could not list baselines: " + e.getMessage() );
+		}
+		
+		System.out.println( " Done" );
+		
+		return commits;
+	}
+	
 	
 	public SnapshotView getSnapshotView() {
 		return snapshot;
