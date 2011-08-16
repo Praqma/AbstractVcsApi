@@ -18,6 +18,8 @@ import net.praqma.vcs.util.CommandLine;
 import net.praqma.vcs.util.Utils;
 
 public class GitBranch extends AbstractBranch{
+	
+	private String defaultMasterBranch = "master";
 
 	public GitBranch( File localRepositoryPath, String name ) throws ElementNotCreatedException {
 		super( localRepositoryPath, name );
@@ -90,8 +92,11 @@ public class GitBranch extends AbstractBranch{
 				try {
 					//Git.clone( parent.getLocation(), localRepositoryPath );
 					Git.addRemote( parent.getName(), parent.getLocation(), localRepositoryPath );
-					Git.pull( parent.getName(), "master", localRepositoryPath );
-					//Git.checkoutRemoteBranch( name, parent.getName() + "/" + name, localRepositoryPath );
+					/* Retrieve master branch */
+					Git.pull( parent.getName(), defaultMasterBranch, localRepositoryPath );
+					if( !name.equals( defaultMasterBranch )) {
+						Git.checkoutRemoteBranch( name, parent.getName() + "/" + name, localRepositoryPath );
+					}
 				} catch( GitException e ) {
 					logger.warning( "Could not initialize Git branch " + name + " from remote " + parent.getName() + ": " + e.getMessage() );
 					throw new ElementNotCreatedException( "Could not initialize Git branch" );
@@ -128,13 +133,13 @@ public class GitBranch extends AbstractBranch{
 			logger.debug( "GIT: perform checkout" );
 			
 			if( parent == null ) {
-				System.err.println( "Cannot checkout null branch" );
-				logger.warning( "Cannot checkout null branch" );
+				logger.info( "No parent given, nothing to check out" );
 				return false;
 			}
 			
 			try {
-				Git.pull( name, parent.getLocation(), localRepositoryPath );
+				Git.pull( parent.getLocation(), name, localRepositoryPath );
+				//Git.checkoutRemoteBranch( name, parent.getName() + "/" + name, localRepositoryPath );
 			} catch (GitException e) {
 				System.err.println( "Could not pull git branch" );
 				logger.warning( "Could not pull git branch" );

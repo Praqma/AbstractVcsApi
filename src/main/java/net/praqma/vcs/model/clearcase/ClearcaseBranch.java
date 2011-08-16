@@ -157,10 +157,6 @@ public class ClearcaseBranch extends AbstractBranch{
 			
 			return true;
 		}
-		
-		public boolean cleanup( boolean status ) {
-			return true;
-		}
 	}
 	
 	public boolean exists() {

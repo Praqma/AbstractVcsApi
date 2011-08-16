@@ -10,13 +10,17 @@ import net.praqma.vcs.model.git.GitVCS;
 public class GitInitialize {
 
 	public static void main( String[] args ) throws ElementException {
-		File rpath = new File( "c:/temp/git_tests/VCS-test2" );
+		File rpath = new File( "c:/temp/git_tests/VCS-test3" );
 		GitVCS git = new GitVCS( rpath );
 		git.initialize();
 		
 		Repository parent = new Repository( "git://github.com/Praqma/MonKit.git", "origin" );
 		GitBranch branch = new GitBranch( rpath, "master", parent );
-		branch.initialize( true );
+		try {
+			branch.initialize( true );
+		} catch( Exception e ) {
+			e.printStackTrace();
+		}
 
 	}
 
