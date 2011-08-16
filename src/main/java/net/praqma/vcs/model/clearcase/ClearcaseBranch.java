@@ -82,13 +82,15 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	
 	@Override
-	public boolean initialize() {
-		return initialize(false);
+	public void initialize() throws ElementNotCreatedException {
+		initialize(false);
 	}
 	
-	public boolean initialize( boolean get ) {
+	public void initialize( boolean get ) throws ElementNotCreatedException {
 		logger.info( "Creating Clearcase branch/stream " + name );
-		return doInitialize( new InitializeImpl( get ) );
+		if( !doInitialize( new InitializeImpl( get ) ) ) {
+			throw new ElementNotCreatedException( "Could not create Clearcase branch" );
+		}
 	}
 	
 	private class InitializeImpl extends Initialize {
@@ -150,12 +152,45 @@ public class ClearcaseBranch extends AbstractBranch{
 		}
 	}
 	
-	public boolean get() throws ElementDoesNotExistException {
-		//ClearcaseBranch branch = new ClearcaseBranch( vob, pvob, parent, baseline, viewroot, viewtag, name );
+	public boolean exists() {
+		boolean result = true;
+		
+		try {
+			UCMEntity.getStream( name, ccVCS.getPVob(), false );
+		} catch (UCMException e1) {
+			logger.error( "Stream does not exist" );
+		}
+
+
+		if( !UCMView.ViewExists( viewtag )) {
+			logger.debug( "View tag does not exist" );
+			result = false;
+		} else {
+			try {
+				UCMView.GetSnapshotView(viewroot);
+			} catch (Exception e1) {
+				logger.debug( "View root does not exist" );
+				result = false;			
+			}
+		}
+		
+		return result;
+	}
+	
+	public void get() throws ElementDoesNotExistException {
+		try {
+			get(false);
+		} catch (ElementNotCreatedException e) {
+			/* This should not happen */
+			/* TODO Should we throw DoesNotExist? */
+		}
+	}
+	
+	public void get( boolean initialize ) throws ElementDoesNotExistException, ElementNotCreatedException {
 		
 		boolean exists = true;
 		try{
-			UCMEntity.getStream( name, ccVCS.getPVob(), false );
+			this.devStream = UCMEntity.getStream( name, ccVCS.getPVob(), false );
 		} catch( UCMException e ) {
 			logger.debug( "Stream did not exist" );
 			exists = false;
@@ -164,16 +199,16 @@ public class ClearcaseBranch extends AbstractBranch{
 		if( !UCMView.ViewExists( viewtag ) ) {
 			logger.debug( "View did not exist" );
 			exists = false;
-		/* The view exists, but is it the correct path? */
+		/* The view exists, but is the path correct? */
 		} else {
 			if( !viewroot.exists() ) {
 				exists = false;
 			}
 		}
 		
-		if( !exists ) {
+		if( !exists && initialize ) {
 			logger.debug( "Must initialize" );
-			return initialize(true);
+			initialize(true);
 		} else {
 			logger.debug( "DONT initialize" );
 			try {
@@ -183,8 +218,6 @@ public class ClearcaseBranch extends AbstractBranch{
 				throw new ElementDoesNotExistException( "Could not get clearcase view" );
 			}
 		}
-		
-		return true;
 	}
 	
 	

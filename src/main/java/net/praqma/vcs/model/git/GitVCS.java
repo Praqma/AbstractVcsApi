@@ -24,7 +24,7 @@ public class GitVCS extends AbstractVCS {
 	}
 	
 	public boolean exists() {
-		return new File( location, ".git" ).exists();
+		return Git.repositoryExists( location );
 	}
 	
 	

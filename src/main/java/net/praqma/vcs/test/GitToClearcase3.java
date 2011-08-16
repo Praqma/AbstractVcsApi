@@ -73,16 +73,20 @@ public class GitToClearcase3 {
 		
 		/* Make number 1 stream */
 		final ClearcaseBranch ccbranch = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, cname + "_1" ), cname + "_1_view", cname + "_1_dev" );
-		if( !ccbranch.get() ) {
-			System.err.println("Unable to get branch 1");
+		try {
+			ccbranch.get();
+		} catch( Exception e ) {
+			System.err.println("Unable to get branch 1: " + e.getMessage());
 			System.exit( 1 );
 		}
 		ccbranch.checkout();
 
 		/* Make number 2 stream */
 		final ClearcaseBranch ccbranch2 = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, cname + "_2" ), cname + "_2_view", cname + "_2_dev" );
-		if( !ccbranch2.get() ) {
-			System.err.println("Unable to get branch 2");
+		try {
+			ccbranch2.get();
+		} catch( Exception e ) {
+			System.err.println("Unable to get branch 1: " + e.getMessage());
 			System.exit( 1 );
 		}
 		ccbranch2.checkout();

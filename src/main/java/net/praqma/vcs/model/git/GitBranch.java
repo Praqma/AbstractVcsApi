@@ -8,6 +8,7 @@ import java.util.List;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.Repository;
+import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.git.api.Git;
 import net.praqma.vcs.model.git.exceptions.GitException;
@@ -24,24 +25,54 @@ public class GitBranch extends AbstractBranch{
 		super( localRepositoryPath, name, parent );
 	}
 
-	public static GitBranch create( File localRepository, String name, Repository parent ) {
+	public static GitBranch create( File localRepository, String name, Repository parent ) throws ElementNotCreatedException {
 		GitBranch gb = new GitBranch( localRepository, name, parent );
 		gb.initialize();
 		return gb;
 	}
 	
-	public static GitBranch get( File localRepository, String name, Repository parent ) {
+	public static GitBranch get( File localRepository, String name, Repository parent ) throws ElementNotCreatedException {
 		GitBranch gb = new GitBranch( localRepository, name, parent );
 		gb.initialize(true);
 		return gb;
 	}
 	
-	public boolean initialize() {
-		return initialize(false);
+	public void initialize() throws ElementNotCreatedException {
+		initialize(false);
 	}
 	
-	public boolean initialize( boolean get ) {
-		return doInitialize( new InitializeImpl( get ) );
+	public void initialize( boolean get ) throws ElementNotCreatedException {
+		if( !doInitialize( new InitializeImpl( get ) ) ) {
+			throw new ElementNotCreatedException( "Could not create Git branch" );
+		}
+	}
+	
+	public void get() throws ElementDoesNotExistException {
+		try {
+			get(false);
+		} catch (ElementNotCreatedException e) {
+			/* This should not happen */
+			/* TODO Should we throw DoesNotExist? */
+		}
+	}
+	
+	public void get( boolean initialize ) throws ElementNotCreatedException, ElementDoesNotExistException {
+		if( initialize ) {
+			initialize(true);
+		} else {
+			if( !exists() ) {
+				throw new ElementDoesNotExistException( name + " at " + localRepositoryPath + " does not exist" );
+			}
+		}
+	}
+	
+	public boolean exists() {
+		try {
+			return Git.branchExists( this.name, localRepositoryPath );
+		} catch (GitException e) {
+			logger.warning( "Branch " + name + " at " + localRepositoryPath + " could not be queried: " + e.getMessage() );
+			return false;
+		}
 	}
 	
 	private class InitializeImpl extends Initialize {

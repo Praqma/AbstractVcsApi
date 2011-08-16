@@ -45,8 +45,8 @@ public abstract class AbstractBranch {
 	 * @param branch
 	 * @throws OperationNotSupportedException
 	 */
-	public abstract boolean initialize();
-	public abstract boolean initialize( boolean get );
+	public abstract void initialize() throws ElementNotCreatedException;
+	public abstract void initialize( boolean get ) throws ElementNotCreatedException;
 	
 	protected final boolean doInitialize( Initialize initialize ) {
 		boolean status = initialize.setup();
@@ -79,13 +79,10 @@ public abstract class AbstractBranch {
 	}
 
 
-	public boolean exists() throws OperationNotImplementedException {
-		throw new OperationNotImplementedException( "Branch exists" );
-	}
+	public abstract boolean exists();
 	
-	public boolean get() throws OperationNotImplementedException, ElementDoesNotExistException {
-		throw new OperationNotImplementedException( "Get branch" );
-	}
+	public abstract void get() throws ElementDoesNotExistException;
+	public abstract void get( boolean initialize ) throws ElementNotCreatedException, ElementDoesNotExistException;
 	
 	
 	/**
