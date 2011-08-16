@@ -127,11 +127,8 @@ public class ClearcaseVCS extends AbstractVCS {
 	public static ClearcaseVCS create( File location, String vobName, String componentName, String projectName, String streamName, int policies, PVob pvob ) throws ElementNotCreatedException {
 		ClearcaseVCS cc = new ClearcaseVCS( location );
 
-		if( cc.initialize() ) {
-			return cc;	
-		} else {
-			throw new ElementNotCreatedException( "Could not create repository", FailureType.INITIALIZATON );
-		}
+		cc.initialize();
+		return cc;
 	}
 	
 	public boolean exists() {
@@ -181,9 +178,7 @@ public class ClearcaseVCS extends AbstractVCS {
 	@Override
 	public void get( boolean initialize ) throws ElementNotCreatedException, ElementDoesNotExistException {
 		if( initialize ) {
-			if( !initialize( true ) ) {
-				throw new ElementNotCreatedException( "Could not create Clearcase VCS" );
-			}
+			initialize( true );
 		} else {
 			boolean result = true;
 			
@@ -218,20 +213,21 @@ public class ClearcaseVCS extends AbstractVCS {
 	 * Initializes an instance of a {@link ClearcaseVCS}
 	 */
 	@Override
-	public boolean initialize() throws ElementNotCreatedException {
-		return initialize( false );
+	public void initialize() throws ElementNotCreatedException {
+		initialize( false );
 	}
 	
 	@Override
-	public boolean initialize( boolean get ) throws ElementNotCreatedException {
+	public void initialize( boolean get ) throws ElementNotCreatedException {
 		logger.info( "Initializing Clearcase Repository" );
 		InitializeImpl init = new InitializeImpl(get);
-		boolean result = doInitialize( init );
+		
+		if( !doInitialize( init ) ) {
+			throw new ElementNotCreatedException( "Could not create Clearcase VCS", FailureType.INITIALIZATON );
+		}
 		
 		lastCreatedVob = init.getVob();
 		initialBaseline = init.getBaseline();
-		
-		return result;
 	}
 
 	public class InitializeImpl extends Initialize {

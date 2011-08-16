@@ -32,9 +32,9 @@ public abstract class AbstractVCS {
 	 * @param branch
 	 * @throws OperationNotSupportedException
 	 */
-	public abstract boolean initialize() throws ElementNotCreatedException;
+	public abstract void initialize() throws ElementNotCreatedException;
 	
-	public abstract boolean initialize( boolean get ) throws ElementNotCreatedException;
+	public abstract void initialize( boolean get ) throws ElementNotCreatedException;
 	
 	public abstract void get() throws ElementDoesNotExistException;
 	public abstract void get( boolean initialize ) throws ElementNotCreatedException, ElementDoesNotExistException;
@@ -73,11 +73,6 @@ public abstract class AbstractVCS {
 		public boolean cleanup( boolean status ) {
 			return true;
 		}
-	}
-	
-	
-	public void changeBranch( File localRepositoryPath, AbstractBranch branch ) throws OperationNotSupportedException {
-		throw new OperationNotSupportedException( "Cannot change branch" );
 	}
 
 }

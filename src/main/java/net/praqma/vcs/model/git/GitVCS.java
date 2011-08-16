@@ -6,6 +6,7 @@ import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractVCS;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
+import net.praqma.vcs.model.exceptions.ElementNotCreatedException.FailureType;
 import net.praqma.vcs.model.git.api.Git;
 import net.praqma.vcs.model.git.exceptions.GitException;
 
@@ -29,13 +30,15 @@ public class GitVCS extends AbstractVCS {
 	
 	
 	@Override
-	public boolean initialize() throws ElementNotCreatedException {
-		return initialize(false);
+	public void initialize() throws ElementNotCreatedException {
+		initialize(false);
 	}
 	
-	public boolean initialize( boolean get ) throws ElementNotCreatedException {
+	public void initialize( boolean get ) throws ElementNotCreatedException {
 		logger.info( "Initializing git repository " + location );
-		return doInitialize( new InitializeImpl(get) );
+		if( !doInitialize( new InitializeImpl(get) ) ) {
+			throw new ElementNotCreatedException( "Could not create Git repository", FailureType.INITIALIZATON );
+		}
 	}
 	
 	public class InitializeImpl extends Initialize {
