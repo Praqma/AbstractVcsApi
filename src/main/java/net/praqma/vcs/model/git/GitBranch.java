@@ -86,37 +86,36 @@ public class GitBranch extends AbstractBranch{
 
 		public boolean initialize() throws ElementNotCreatedException, ElementAlreadyExistsException {
 
-			/* Only do anything if a parent is given
-			 * Clone parent */
+			/* Only do anything if a parent is given */
 			if( parent != null ) {
+				
+				
 				try { /* to add remote */
 					Git.addRemote( parent.getName(), parent.getLocation(), localRepositoryPath );
 				} catch (ElementAlreadyExistsException e1) {
-					logger.debug( e1.getMessage() );
+					if( get ) {
+						throw e1;
+					} else {
+						logger.debug( e1.getMessage() );
+					}
 				} catch (GitException e) {
 					throw new ElementNotCreatedException( "Could not initialize Git branch" );
 				}
 				
 				try {
-					//Git.clone( parent.getLocation(), localRepositoryPath );
-					
-					/* Retrieve master branch */
-					//Git.pull( parent.getName(), defaultMasterBranch, localRepositoryPath );
 					Git.fetch( localRepositoryPath );
 					Git.checkoutRemoteBranch( name, parent.getName() + "/" + name, localRepositoryPath );
-					
-					
-					/*
-					if( !name.equals( defaultMasterBranch )) {
-						Git.checkoutRemoteBranch( name, parent.getName() + "/" + name, localRepositoryPath );
-					}
-					*/
 				} catch( GitException e ) {
 					logger.warning( "Could not initialize Git branch " + name + " from remote " + parent.getName() + ": " + e.getMessage() );
 					throw new ElementNotCreatedException( "Could not initialize Git branch: " + e.getMessage() );
 				} catch (ElementAlreadyExistsException e) {
-					logger.debug( e.getMessage() );
+					if( get ) {
+						throw e;
+					} else {
+						logger.debug( e.getMessage() );
+					}
 				}
+				
 			} else {
 				/*
 				CommandLine.run( "git symbolic-ref HEAD refs/heads/" + name );

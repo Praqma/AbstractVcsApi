@@ -17,7 +17,7 @@ public class GitInitialize {
 		//Repository parent = new Repository( "git://github.com/Praqma/MonKit.git", "origin" );
 		Repository parent = new Repository( "file://c:/projects/pucm/branches", "origin" );
 		GitBranch branch = new GitBranch( rpath, "master", parent );
-		branch.initialize( true );
+		branch.get( true );
 	}
 
 }
