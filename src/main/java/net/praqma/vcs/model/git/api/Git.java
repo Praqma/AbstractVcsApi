@@ -39,10 +39,16 @@ public class Git {
 		}	
 	}
 	
-	public static void checkoutRemoteBranch( String branchName, String remoteBranchName, File viewContext ) throws GitException {
+	private static final Pattern rx_branchExists = Pattern.compile( "^.*?branch \\w+ already exists.*?$" );
+	
+	public static void checkoutRemoteBranch( String branchName, String remoteBranchName, File viewContext ) throws GitException, ElementAlreadyExistsException {
 		try {
 			CommandLine.run( "git checkout -b " + branchName + " " + remoteBranchName, viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
+			Matcher m = rx_branchExists.matcher( e.getMessage() );
+			if( m.find() ) {
+				throw new ElementAlreadyExistsException( "Branch " + branchName + " already exists" );
+			}
 			throw new GitException( "Could not checkout remote branch " + branchName + ": " + e.getMessage() );
 		}	
 	}
@@ -61,6 +67,14 @@ public class Git {
 		} catch( AbnormalProcessTerminationException e ) {
 			throw new GitException( "Could not clone " + parentLocation + ": " + e.getMessage() );
 		}
+	}
+	
+	public static void fetch( File viewContext ) throws GitException {
+		try {
+			CommandLine.run( "git fetch", viewContext );
+		} catch( AbnormalProcessTerminationException e ) {
+			throw new GitException( "Could not fetch: " + e.getMessage() );
+		}		
 	}
 	
 	public static void getCommits() {
