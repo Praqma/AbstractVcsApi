@@ -301,7 +301,7 @@ public class ClearcaseBranch extends AbstractBranch{
 			
 			for( int i = 0 ; i < baselines.size() ; i++ ) {
 				System.out.print( "\r" + Utils.getProgress( baselines.size(), i ) );
-				ClearcaseCommit commit = new ClearcaseCommit( baselines.get( i ).getFullyQualifiedName(), ClearcaseBranch.this, i );
+				ClearcaseCommit commit = new ClearcaseCommit( baselines.get( i ), ClearcaseBranch.this, i );
 				if( load ) {
 					commit.load();
 				}
