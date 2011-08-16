@@ -18,9 +18,10 @@ import net.praqma.clearcase.ucm.view.SnapshotView.COMP;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
+import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
+import net.praqma.vcs.model.exceptions.ElementException.FailureType;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.exceptions.ElementNotCreatedException.FailureType;
 import net.praqma.vcs.util.Utils;
 
 /**
@@ -80,8 +81,9 @@ public class ClearcaseBranch extends AbstractBranch{
 	 * @param name The name of the {@link Stream} given as a basename.
 	 * @return
 	 * @throws ElementNotCreatedException
+	 * @throws ElementAlreadyExistsException 
 	 */
-	public static ClearcaseBranch create( ClearcaseVCS ccVCS, Vob vob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementNotCreatedException {
+	public static ClearcaseBranch create( ClearcaseVCS ccVCS, Vob vob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementNotCreatedException, ElementAlreadyExistsException {
 		ClearcaseBranch branch = new ClearcaseBranch( ccVCS, vob, parent, baseline, viewroot, viewtag, name );
 		branch.initialize();
 		//branch.get();
@@ -91,11 +93,11 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	
 	@Override
-	public void initialize() throws ElementNotCreatedException {
+	public void initialize() throws ElementNotCreatedException, ElementAlreadyExistsException {
 		initialize(false);
 	}
 	
-	public void initialize( boolean get ) throws ElementNotCreatedException {
+	public void initialize( boolean get ) throws ElementNotCreatedException, ElementAlreadyExistsException {
 		logger.info( "Creating Clearcase branch/stream " + name );
 		if( !doInitialize( new InitializeImpl( get ) ) ) {
 			throw new ElementNotCreatedException( "Could not create Clearcase branch" );
@@ -192,6 +194,7 @@ public class ClearcaseBranch extends AbstractBranch{
 		} catch (ElementNotCreatedException e) {
 			/* This should not happen */
 			/* TODO Should we throw DoesNotExist? */
+			logger.fatal( "This shouldn't be possible..." );
 		}
 	}
 	
@@ -217,7 +220,13 @@ public class ClearcaseBranch extends AbstractBranch{
 		
 		if( !exists && initialize ) {
 			logger.debug( "Must initialize" );
-			initialize(true);
+			try {
+				initialize(true);
+			} catch (ElementAlreadyExistsException e) {
+				/* This should not happen */
+				/* TODO Should we throw ElementAlreadyExistsException? */
+				logger.fatal( "This shouldn't be possible..." );
+			}
 		} else {
 			logger.debug( "DONT initialize" );
 			try {
@@ -266,11 +275,6 @@ public class ClearcaseBranch extends AbstractBranch{
 			}
 			
 			return true;
-		}
-		
-		public boolean cleanup( boolean status ) {
-			/* TODO something useful */
-			return status;
 		}
 	}
 	
@@ -339,6 +343,11 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	public Component getComponent() {
 		return this.component;
+	}
+
+	@Override
+	public boolean cleanup() {
+		return true;
 	}
 
 }

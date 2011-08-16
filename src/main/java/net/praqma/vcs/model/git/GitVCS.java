@@ -18,7 +18,7 @@ public class GitVCS extends AbstractVCS {
 		super( location );
 	}
 	
-	public static GitVCS create( File location) throws ElementException {
+	public static GitVCS create( File location) throws ElementNotCreatedException, ElementDoesNotExistException {
 		GitVCS git = new GitVCS( location );
 		git.initialize();
 		return git;
@@ -30,16 +30,14 @@ public class GitVCS extends AbstractVCS {
 	
 	
 	@Override
-	public void initialize() throws ElementException {
+	public void initialize() throws ElementNotCreatedException, ElementDoesNotExistException {
 		initialize(false);
 	}
 	
-	public void initialize( boolean get ) throws ElementException {
+	public void initialize( boolean get ) throws ElementNotCreatedException, ElementDoesNotExistException {
 		logger.info( "Initializing git repository " + location );
 		InitializeImpl init = new InitializeImpl(get);
-		if( !doInitialize( init ) ) {
-			throw init.getException();
-		}
+		doInitialize( init );
 	}
 	
 	public class InitializeImpl extends Initialize {
@@ -47,20 +45,19 @@ public class GitVCS extends AbstractVCS {
 			super( get );
 		}
 
-		public boolean initialize() {
+		public boolean initialize() throws ElementNotCreatedException {
 			location.mkdirs();
 			try {
 				Git.initialize( location.getAbsoluteFile() );
 			} catch( GitException e ) {
 				logger.warning( "Could not initialize repository at " + location.getAbsolutePath() );
-				this.setException( new ElementNotCreatedException( "Could not initialize Git repository: " + e.getMessage() ) );
-				return false;
+				throw new ElementNotCreatedException( "Could not initialize Git repository: " + e.getMessage() );
 			}
 			return true;
 		}
 	}
 	
-	public void get() throws ElementException {
+	public void get() throws ElementDoesNotExistException {
 		try {
 			get(false);
 		} catch( ElementNotCreatedException e ) {
@@ -70,7 +67,7 @@ public class GitVCS extends AbstractVCS {
 	}
 
 	@Override
-	public void get( boolean initialize ) throws ElementException {
+	public void get( boolean initialize ) throws ElementNotCreatedException, ElementDoesNotExistException {
 		if( initialize ) {
 			initialize(true);
 		} else {
@@ -78,6 +75,11 @@ public class GitVCS extends AbstractVCS {
 				throw new ElementDoesNotExistException( "Git repository at " + location + " does not exist" );
 			}
 		}
+	}
+
+	@Override
+	public boolean cleanup() {
+		return true;
 	}
 	
 }

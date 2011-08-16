@@ -4,11 +4,11 @@ import java.io.File;
 
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.OperationNotSupportedException;
+import net.praqma.vcs.model.interfaces.Cleanable;
 
-public abstract class AbstractVCS {
+public abstract class AbstractVCS implements Cleanable {
 
 	protected File location;
 	
@@ -28,21 +28,25 @@ public abstract class AbstractVCS {
 	/**
 	 * Initialize the given branch
 	 * @param branch
+	 * @throws ElementNotCreatedException 
+	 * @throws ElementDoesNotExistException 
 	 * @throws OperationNotSupportedException
 	 */
-	public abstract void initialize() throws ElementException;
+	public abstract void initialize() throws ElementNotCreatedException, ElementDoesNotExistException;
 	
-	public abstract void initialize( boolean get ) throws ElementException;
+	public abstract void initialize( boolean get ) throws ElementNotCreatedException, ElementDoesNotExistException;
 	
-	public abstract void get() throws ElementException;
-	public abstract void get( boolean initialize ) throws ElementException;
+	public abstract void get() throws ElementDoesNotExistException;
+	public abstract void get( boolean initialize ) throws ElementNotCreatedException, ElementDoesNotExistException;
 	
 	/**
 	 * Runs the implementation of {@link Initialize}.
 	 * @param initialize Instance of {@link Initialize} implementation.
 	 * @return True if both initialize - and clean up part returns true 
+	 * @throws ElementNotCreatedException 
+	 * @throws ElementDoesNotExistException 
 	 */
-	protected final boolean doInitialize( Initialize initialize ) {
+	protected final boolean doInitialize( Initialize initialize ) throws ElementNotCreatedException, ElementDoesNotExistException {
 		boolean status = initialize.setup();
 		
 		/* Only initialize if setup went good */
@@ -50,7 +54,7 @@ public abstract class AbstractVCS {
 			status = initialize.initialize();
 		}
 		
-		return initialize.cleanup( status ) && status;
+		return status;
 	}
 	
 	protected abstract class Initialize extends AbstractConstructSequence {
@@ -60,7 +64,7 @@ public abstract class AbstractVCS {
 			this.get = get;
 		}
 		
-		public boolean initialize() {
+		public boolean initialize() throws ElementNotCreatedException, ElementDoesNotExistException {
 			return true;
 		}
 	}

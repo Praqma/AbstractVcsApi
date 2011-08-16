@@ -15,8 +15,9 @@ import net.praqma.clearcase.ucm.view.UCMView;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractVCS;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
+import net.praqma.vcs.model.exceptions.ElementException;
+import net.praqma.vcs.model.exceptions.ElementException.FailureType;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.exceptions.ElementNotCreatedException.FailureType;
 
 /**
  * This is a Clearcase implementation of the abstract VCS.
@@ -72,8 +73,9 @@ public class ClearcaseVCS extends AbstractVCS {
 	 * @param pvob The {@link PVob}
 	 * @return {@link ClearcaseVCS}
 	 * @throws ElementNotCreatedException
+	 * @throws ElementDoesNotExistException 
 	 */
-	public static ClearcaseVCS create( File location, String baseName, int policies, PVob pvob ) throws ElementNotCreatedException {
+	public static ClearcaseVCS create( File location, String baseName, int policies, PVob pvob ) throws ElementNotCreatedException, ElementDoesNotExistException {
 		ClearcaseVCS cc = new ClearcaseVCS( location );
 
 		cc.baseName = baseName;
@@ -91,7 +93,7 @@ public class ClearcaseVCS extends AbstractVCS {
 		return cc;
 	}
 	
-	public static ClearcaseVCS create( File location, String vobName, String componentName, int policies, PVob pvob ) throws ElementNotCreatedException {
+	public static ClearcaseVCS create( File location, String vobName, String componentName, int policies, PVob pvob ) throws ElementNotCreatedException, ElementDoesNotExistException {
 		ClearcaseVCS cc = new ClearcaseVCS( location );
 
 		cc.baseName = componentName;
@@ -124,7 +126,7 @@ public class ClearcaseVCS extends AbstractVCS {
 		
 	}
 	
-	public static ClearcaseVCS create( File location, String vobName, String componentName, String projectName, String streamName, int policies, PVob pvob ) throws ElementNotCreatedException {
+	public static ClearcaseVCS create( File location, String vobName, String componentName, String projectName, String streamName, int policies, PVob pvob ) throws ElementNotCreatedException, ElementDoesNotExistException {
 		ClearcaseVCS cc = new ClearcaseVCS( location );
 
 		cc.initialize();
@@ -179,52 +181,46 @@ public class ClearcaseVCS extends AbstractVCS {
 	public void get( boolean initialize ) throws ElementNotCreatedException, ElementDoesNotExistException {
 		if( initialize ) {
 			initialize( true );
-		} else {
-			boolean result = true;
-			
+		} else {			
 			try {
 				this.project = UCMEntity.getProject( ClearcaseVCS.this.projectName, pvob, false );
 			} catch (UCMException e1) {
 				logger.error( "Project does not exist" );
-				result = false;
+				throw new ElementDoesNotExistException( "Project does not exist" );
 			}
 			
 			try {
 				this.integrationStream = UCMEntity.getStream( ClearcaseVCS.this.streamName, pvob, false );
 			} catch (UCMException e1) {
 				logger.error( "Stream does not exist" );
-				result = false;
+				throw new ElementDoesNotExistException( "Stream does not exist" );
 			}
 			
 			try {
 				this.initialBaseline = UCMEntity.getBaseline( ClearcaseVCS.this.baselineName, pvob, false );
 			} catch (UCMException e1) {
 				logger.error( "Baseline does not exist" );
-				result = false;
-			}
-			
-			if( !result ) {
-				throw new ElementDoesNotExistException( "Clearcase VCS does not exist" );
+				throw new ElementDoesNotExistException( "Baseline does not exist" );
 			}
 		}
 	}
 
 	/**
 	 * Initializes an instance of a {@link ClearcaseVCS}
+	 * @throws ElementNotCreatedException 
+	 * @throws ElementDoesNotExistException 
 	 */
 	@Override
-	public void initialize() throws ElementNotCreatedException {
+	public void initialize() throws ElementNotCreatedException, ElementDoesNotExistException {
 		initialize( false );
 	}
 	
 	@Override
-	public void initialize( boolean get ) throws ElementNotCreatedException {
+	public void initialize( boolean get ) throws ElementNotCreatedException, ElementDoesNotExistException {
 		logger.info( "Initializing Clearcase Repository" );
 		InitializeImpl init = new InitializeImpl(get);
 		
-		if( !doInitialize( init ) ) {
-			throw new ElementNotCreatedException( "Could not create Clearcase VCS", FailureType.INITIALIZATON );
-		}
+		doInitialize( init );
 		
 		lastCreatedVob = init.getVob();
 		initialBaseline = init.getBaseline();
@@ -251,7 +247,7 @@ public class ClearcaseVCS extends AbstractVCS {
 			return vob;
 		}
 
-		public boolean initialize() {
+		public boolean initialize() throws ElementNotCreatedException, ElementDoesNotExistException {
 
 			/* Create Vob */
 			/* Test existence before creation */
@@ -262,7 +258,7 @@ public class ClearcaseVCS extends AbstractVCS {
 					vob = Vob.create( ClearcaseVCS.this.vobName, null, ClearcaseVCS.this.vobName + " Vob" );
 				} catch (UCMException e) {
 					logger.error( "Error while creating Vob: " + e.getMessage() );
-					return false;
+					throw new ElementNotCreatedException( "Error while creating vob: " + e.getMessage() );
 				}
 			} else {
 				logger.info("Vob already exists");
@@ -272,14 +268,15 @@ public class ClearcaseVCS extends AbstractVCS {
 			try {
 				vob.load();
 			} catch (UCMException e) {
-				logger.error( "Error while creating PVob: " + e.getMessage() );
-				return false;
+				logger.error( "Error while loading vob: " + e.getMessage() );
+				throw new ElementNotCreatedException( "Error while loading vob: " + e.getMessage() );
 			}
+			
 			try {
 				vob.mount();
 			} catch (UCMException e) {
 				logger.error( "Error while mounting Vob: " + e.getMessage() );
-				return false;
+				throw new ElementNotCreatedException( "Error while mounting vob: " + e.getMessage() );
 			}
 			logger.info( "Mounted Vob " + vob );
 
@@ -298,11 +295,11 @@ public class ClearcaseVCS extends AbstractVCS {
 						logger.info( "Using existing component" );
 					} catch (UCMException e1) {
 						logger.error( "Component does not exist and could not be created: " + e1.getMessage() );
-						return false;
+						throw new ElementDoesNotExistException( "Component does not exist and could not be created: " + e1.getMessage() );
 					}
 				} else {
 					logger.error( "Error while creating Component: " + e.getMessage() );
-					return false;
+					throw new ElementNotCreatedException( "Error while creating Component " + ClearcaseVCS.this.baseName + ": " + e.getMessage() );
 				}
 			}
 			logger.debug( "Component=" + c );
@@ -314,8 +311,8 @@ public class ClearcaseVCS extends AbstractVCS {
 			try {
 				initial = UCMEntity.getBaseline( ClearcaseVCS.this.baseName + "_INITIAL", pvob, true );
 			} catch (UCMException e) {
-				logger.error( "Error while creating Structure Baseline: " + e.getMessage() );
-				return false;
+				logger.error( "Error while loading INITIAL Baseline: " + e.getMessage() );
+				throw new ElementDoesNotExistException( "Error while loading baseline INITIAL: " + e.getMessage() );
 			}
 
 			logger.info( "Creating Mainline project" );
@@ -328,11 +325,11 @@ public class ClearcaseVCS extends AbstractVCS {
 						logger.info( "Using existing project" );
 					} catch (UCMException e1) {
 						logger.error( "Project does not exist and could not be created: " + e1.getMessage() );
-						return false;
+						throw new ElementDoesNotExistException( "Project does not exist and could not be created: " + e1.getMessage() );
 					}
 				} else {
 					logger.error( "Error while creating Mainline Project: " + e.getMessage() );
-					return false;
+					throw new ElementNotCreatedException( "Error while creating Project " + ClearcaseVCS.this.projectName + ": " + e.getMessage() );
 				}
 			}
 
@@ -346,22 +343,22 @@ public class ClearcaseVCS extends AbstractVCS {
 						logger.info( "Using existing stream" );
 					} catch (UCMException e1) {
 						logger.error( "Stream does not exist and could not be created: " + e1.getMessage() );
-						return false;
+						throw new ElementDoesNotExistException( "Stream does not exist and could not be created: " + e1.getMessage() );
 					}
 				} else {
 					logger.error( "Error while creating Mainline Integration Stream: " + e.getMessage() );
-					return false;
+					throw new ElementNotCreatedException( "Error while creating Component" + ClearcaseVCS.this.streamName + ": " + e.getMessage() );
 				}
 			}
 			
-			logger.info( "Creating integration view" );
+			logger.info( "Creating base view" );
 			DynamicView bview = null;
 			if( !UCMView.ViewExists( ClearcaseVCS.this.baseName + "_" + bootView )) {
 				try {
 					bview = DynamicView.create( null, ClearcaseVCS.this.baseName + "_" + bootView, integrationStream );
 				} catch (UCMException e) {
-					logger.error( "Error while creating Integration view: " + e.getMessage() );
-					return false;
+					logger.error( "Error while creating base view: " + e.getMessage() );
+					throw new ElementNotCreatedException( "Error while creating base view " + ClearcaseVCS.this.baseName + "_" + bootView + ": " + e.getMessage() );
 				}
 			} else {
 				try {
@@ -370,7 +367,7 @@ public class ClearcaseVCS extends AbstractVCS {
 					logger.info( "Using existing view" );
 				} catch (UCMException e) {
 					logger.error( "Error while starting baseview: " + e.getMessage() );
-					return false;
+					throw new ElementNotCreatedException( "Error while creating view " + ClearcaseVCS.this.baseName + ": " + e.getMessage() );
 				}
 			}
 
@@ -385,11 +382,11 @@ public class ClearcaseVCS extends AbstractVCS {
 						logger.info( "Using existing baseline" );
 					} catch (UCMException e1) {
 						logger.error( "Baseline does not exist and could not be created: " + e1.getMessage() );
-						return false;
+						throw new ElementDoesNotExistException( "Baseline does not exist and could not be created: " + e1.getMessage() );
 					}
 				} else {
 					logger.error( "Error while creating Structure Baseline: " + e.getMessage() );
-					return false;
+					throw new ElementNotCreatedException( "Error while creating Baseline " + ClearcaseVCS.this.baselineName + ": " + e.getMessage() );
 				}
 			}
 
@@ -487,6 +484,12 @@ public class ClearcaseVCS extends AbstractVCS {
 		}
 
 		return pvob;
+	}
+	
+	
+	@Override
+	public boolean cleanup() {
+		return true;
 	}
 
 }

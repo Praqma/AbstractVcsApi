@@ -5,14 +5,14 @@ import java.util.Date;
 import java.util.List;
 
 import net.praqma.util.debug.Logger;
+import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
 import net.praqma.vcs.model.exceptions.OperationNotSupportedException;
 import net.praqma.vcs.model.extensions.PullListener;
+import net.praqma.vcs.model.interfaces.Cleanable;
 
-public abstract class AbstractBranch {
+public abstract class AbstractBranch implements Cleanable {
 	
 	protected String name;
 	protected File localRepositoryPath;
@@ -45,12 +45,14 @@ public abstract class AbstractBranch {
 	/**
 	 * Initialize the given branch
 	 * @param branch
+	 * @throws ElementAlreadyExistsException 
+	 * @throws ElementNotCreatedException 
 	 * @throws OperationNotSupportedException
 	 */
-	public abstract void initialize() throws ElementException;
-	public abstract void initialize( boolean get ) throws ElementException;
+	public abstract void initialize() throws ElementNotCreatedException, ElementAlreadyExistsException;
+	public abstract void initialize( boolean get ) throws ElementNotCreatedException, ElementAlreadyExistsException;
 	
-	protected final boolean doInitialize( Initialize initialize ) {
+	protected final boolean doInitialize( Initialize initialize ) throws ElementNotCreatedException, ElementAlreadyExistsException {
 		boolean status = initialize.setup();
 		
 		/* Only initialize if setup went good */
@@ -58,7 +60,7 @@ public abstract class AbstractBranch {
 			status = initialize.initialize();
 		}
 		
-		return initialize.cleanup( status ) && status;
+		return status;
 	}
 	
 	protected abstract class Initialize extends AbstractConstructSequence {
@@ -67,7 +69,7 @@ public abstract class AbstractBranch {
 			this.get = get;
 		}
 		
-		public boolean initialize() {
+		public boolean initialize() throws ElementNotCreatedException, ElementAlreadyExistsException {
 			return true;
 		}
 	}
@@ -75,8 +77,8 @@ public abstract class AbstractBranch {
 
 	public abstract boolean exists();
 	
-	public abstract void get() throws ElementException;
-	public abstract void get( boolean initialize ) throws ElementException;
+	public abstract void get() throws ElementDoesNotExistException;
+	public abstract void get( boolean initialize ) throws ElementNotCreatedException, ElementDoesNotExistException;
 	
 	
 	/**
@@ -98,8 +100,6 @@ public abstract class AbstractBranch {
 		if( status ) {
 			status = checkout.checkout();
 		}
-		
-		checkout.cleanup( status );
 		
 		/* Run the post pull listener */
 		PullListener.runPostCheckoutListener();

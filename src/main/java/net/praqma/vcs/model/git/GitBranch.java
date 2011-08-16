@@ -10,10 +10,10 @@ import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.Repository;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.git.api.Git;
 import net.praqma.vcs.model.git.exceptions.GitException;
+import net.praqma.vcs.model.interfaces.Cleanable;
 import net.praqma.vcs.util.CommandLine;
 import net.praqma.vcs.util.Utils;
 
@@ -29,25 +29,22 @@ public class GitBranch extends AbstractBranch{
 
 	
 	
-	public static GitBranch create( File localRepository, String name, Repository parent ) throws ElementException {
+	public static GitBranch create( File localRepository, String name, Repository parent ) throws ElementNotCreatedException, ElementAlreadyExistsException {
 		GitBranch gb = new GitBranch( localRepository, name, parent );
 		gb.initialize();
 		return gb;
 	}
 	
-	public void initialize() throws ElementException {
+	public void initialize() throws ElementNotCreatedException, ElementAlreadyExistsException {
 		initialize(false);
 	}
 	
-	public void initialize( boolean get ) throws ElementException {
+	public void initialize( boolean get ) throws ElementNotCreatedException, ElementAlreadyExistsException {
 		InitializeImpl init = new InitializeImpl( get );
-		if( !doInitialize( init ) ) {
-			//throw new ElementNotCreatedException( "Could not create Git branch" );
-			throw init.getException();
-		}
+		doInitialize( init );
 	}
 	
-	public void get() throws ElementException {
+	public void get() throws ElementDoesNotExistException {
 		try {
 			get(false);
 		} catch (ElementNotCreatedException e) {
@@ -56,9 +53,14 @@ public class GitBranch extends AbstractBranch{
 		}
 	}
 	
-	public void get( boolean initialize ) throws ElementException {
+	public void get( boolean initialize ) throws ElementNotCreatedException, ElementDoesNotExistException {
 		if( initialize ) {
-			initialize(true);
+			try{
+				initialize(true);
+			} catch( ElementAlreadyExistsException e ) {
+				/* This should not happen */
+				/* TODO Should we throw DoesNotExist? */
+			}
 		} else {
 			if( !exists() ) {
 				throw new ElementDoesNotExistException( name + " at " + localRepositoryPath + " does not exist" );
@@ -80,7 +82,7 @@ public class GitBranch extends AbstractBranch{
 			super( get );
 		}
 
-		public boolean initialize() {
+		public boolean initialize() throws ElementNotCreatedException, ElementAlreadyExistsException {
 
 			/* Only do anything if a parent is given
 			 * Clone parent */
@@ -92,11 +94,7 @@ public class GitBranch extends AbstractBranch{
 					//Git.checkoutRemoteBranch( name, parent.getName() + "/" + name, localRepositoryPath );
 				} catch( GitException e ) {
 					logger.warning( "Could not initialize Git branch " + name + " from remote " + parent.getName() + ": " + e.getMessage() );
-					this.setException( new ElementNotCreatedException( "Could not initialize Git branch" ) );
-					return false;
-				} catch (ElementAlreadyExistsException e) {
-					this.setException( e );
-					return false;
+					throw new ElementNotCreatedException( "Could not initialize Git branch" );
 				}
 			} else {
 				/*
@@ -194,5 +192,10 @@ public class GitBranch extends AbstractBranch{
 		System.out.println( " Done" );
 		
 		return commits;
+	}
+
+	@Override
+	public boolean cleanup() {
+		return true;
 	}
 }
