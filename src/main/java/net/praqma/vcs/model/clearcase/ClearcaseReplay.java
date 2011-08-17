@@ -75,17 +75,21 @@ public class ClearcaseReplay extends AbstractReplay {
 				logger.debug( "File(" + cse.getStatus() + "): " + file );
 				
 				Version version = null;
+				
+				/* TODO Determine whether the version exists or not */
 				if( !file.exists() ) {
 					try {
 						version = Version.create( file, ccBranch.getSnapshotView() );
 					} catch (UCMException e1) {
-						logger.error( "ClearCasecould not create version: " + e1.getMessage() );
+						logger.error( "ClearCase could not create version: " + e1.getMessage() );
 						success = false;						
 						continue;
 					}
 				} else {
 					try {
 						version = Version.getUnextendedVersion( file, ccBranch.getDevelopmentPath() );
+						version.setView( ccBranch.getSnapshotView() );
+						version.checkOut();
 					} catch (UCMException e1) {
 						logger.error( "ClearCase could not get version: " + e1.getMessage() );
 						success = false;
@@ -106,10 +110,11 @@ public class ClearcaseReplay extends AbstractReplay {
 						logger.error( "Could not write to file(" + version.getVersion().getAbsolutePath() + "): " + e );
 					}
 				} else {
+					/* Delete */
 					try {
-						version.remove();
+						version.removeName( true );
 					} catch (UCMException e1) {
-						logger.error( "ClearCase could not remove version: " + e1.getMessage() );
+						logger.error( "ClearCase could not remove name: " + e1.getMessage() );
 						success = false;
 						continue;
 					}
@@ -125,9 +130,12 @@ public class ClearcaseReplay extends AbstractReplay {
 			boolean success = true;
 			
 			try {
-				Version.checkIn( ccBranch.getDevelopmentPath(), ccBranch.getDevelopmentPath() );
-			} catch (UCMException e1) {
-				logger.error( "ClearCase could not checkin: " + e1.getMessage() );
+				List<File> files = Version.getUncheckedIn( ccBranch.getDevelopmentPath() );
+				for( File f : files ) {
+					Version.checkIn( f, ccBranch.getDevelopmentPath() );
+				}
+			} catch (UCMException e) {
+				logger.error( e.getMessage() );
 				success = false;
 			}
 			

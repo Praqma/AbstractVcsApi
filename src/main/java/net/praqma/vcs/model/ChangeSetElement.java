@@ -4,11 +4,13 @@ import java.io.File;
 
 public class ChangeSetElement {
 	private File file;
+	private File renameFrom;
 	
 	public enum Status {
 		CREATED,
 		CHANGED,
-		DELETED
+		DELETED,
+		RENAMED
 	}
 	
 	private Status status;
@@ -25,6 +27,14 @@ public class ChangeSetElement {
 	
 	public File getFile() {
 		return file;
+	}
+	
+	public void setRenameFromFile( File file ) {
+		this.renameFrom = file;
+	}
+	
+	public File getRenameFromFile() {
+		return this.renameFrom;
 	}
 	
 	public Status getStatus() {

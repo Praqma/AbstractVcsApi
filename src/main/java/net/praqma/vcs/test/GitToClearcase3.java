@@ -58,6 +58,7 @@ public class GitToClearcase3 {
         Cool.setLogger(logger2);
         		
 		logger.toStdOut( true );
+		logger.setMinLogLevel( LogLevel.INFO );
 		
 		PVob pvob = ClearcaseVCS.bootstrap();
 		//PVob pvob = new PVob( "\\AVA_PVOB" );
@@ -68,13 +69,13 @@ public class GitToClearcase3 {
                                                            Project.POLICY_CHSTREAM_UNRESTRICTED | 
                                                            Project.POLICY_DELIVER_NCO_DEVSTR, pvob );
 		
-		cc.get();
+		cc.get(true);
 		logger.info( "Clearcase initialized" );
 		
 		/* Make number 1 stream */
-		final ClearcaseBranch ccbranch = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, cname + "_1" ), cname + "_1_view", cname + "_1_dev" );
+		final ClearcaseBranch ccbranch = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_1" ), projectName + "_1_view", projectName + "_1_dev" );
 		try {
-			ccbranch.get();
+			ccbranch.get(true);
 		} catch( Exception e ) {
 			System.err.println("Unable to get branch 1: " + e.getMessage());
 			System.exit( 1 );
@@ -82,9 +83,9 @@ public class GitToClearcase3 {
 		ccbranch.update();
 
 		/* Make number 2 stream */
-		final ClearcaseBranch ccbranch2 = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, cname + "_2" ), cname + "_2_view", cname + "_2_dev" );
+		final ClearcaseBranch ccbranch2 = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_2" ), projectName + "_2_view", projectName + "_2_dev" );
 		try {
-			ccbranch2.get();
+			ccbranch2.get(true);
 		} catch( Exception e ) {
 			System.err.println("Unable to get branch 1: " + e.getMessage());
 			System.exit( 1 );
@@ -93,7 +94,8 @@ public class GitToClearcase3 {
 
 		ClearcaseReplay cr = new ClearcaseReplay( ccbranch );
 		
-		GitBranch branch = new GitBranch( new File( "C:/projects/monkit/branches" ), "master" );
+		//GitBranch branch = new GitBranch( new File( "C:/projects/monkit/branches" ), "master" );
+		GitBranch branch = new GitBranch( new File( "C:/projects/other/ccbridgetest" ), "master" );
 		List<AbstractCommit> commits = branch.getCommits(true);
 		
 		logger.info( commits.size() + " commits on branch " + branch );
@@ -119,9 +121,12 @@ public class GitToClearcase3 {
 				return null;
 			}} );
 
+		int ml = 50;
 		for( int i = 0 ; i < commits.size() ; i++ ) {
+		//for( int i = 0 ; i < 5 ; i++ ) {
+			String t = commits.get( i ).getTitle().substring( 0, Math.min(commits.get( i ).getTitle().length(), ml) );
 			System.out.print( "\r" + Utils.getProgress( commits.size(), i ) );
-			System.out.print( " - " + commits.get( i ).getTitle() );
+			System.out.print( " - " + t + new String( new char[ml - t.length()] ).replace( "\0", " " ) );
 			//branch.checkout( commits.get( i ) );
 			cr.replay( commits.get( i ) );
 		}

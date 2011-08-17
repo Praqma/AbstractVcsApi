@@ -35,8 +35,10 @@ public class GitCommit extends AbstractCommit {
 	}
 	
 	private static final Pattern rx_getChangeFile = Pattern.compile( "^\\s*(\\d+)\\s*(\\d+)\\s*(.*)$" );
+	private static final Pattern rx_renameFile = Pattern.compile( "^(.*?)\\{(.*?)\\}(.*?)$" );
 	private static final Pattern rx_getCreateFile = Pattern.compile( "^\\s*create\\s*mode\\s*\\d+\\s*(.*)$" );
 	private static final Pattern rx_getDeleteFile = Pattern.compile( "^\\s*delete\\s*mode\\s*\\d+\\s*(.*)$" );
+	private static final Pattern rx_getRenameFile = Pattern.compile( "^\\s*rename\\s*mode\\s*\\d+\\s*(.*)$" );
 	
 	public class LoadImpl extends Load {
 		
@@ -48,7 +50,7 @@ public class GitCommit extends AbstractCommit {
 			logger.debug( "GIT: perform load" );
 			
 			
-			String cmd = "git show -m --numstat --summary --pretty=format:\"%H%n%P%n%aN <%ae>%n%cN <%ce>%n%at%n%ct%n%s%nLISTINGCHANGES\" " + GitCommit.this.key;
+			String cmd = "git show -M --numstat --summary --pretty=format:\"%H%n%P%n%aN <%ae>%n%cN <%ce>%n%at%n%ct%n%s%nLISTINGCHANGES\" " + GitCommit.this.key;
 			List<String> result = CommandLine.run( cmd, branch.getPath() ).stdoutList;
 			
 			if( result.size() < 8 ) {
@@ -83,6 +85,21 @@ public class GitCommit extends AbstractCommit {
 					if( m3.find() ) {
 						logger.debug("Line(delete): " + result.get( i ));
 						GitCommit.this.changeSet.put( m3.group(1), new ChangeSetElement( new File( m3.group(1) ), Status.DELETED ) );
+						continue;
+					}
+					
+					Matcher m4 = rx_getRenameFile.matcher( result.get( i ) );
+					if( m4.find() ) {
+						logger.debug("Line(rename): " + result.get( i ));
+						Matcher m5 = rx_renameFile.matcher( m4.group( 1 ) );
+						if( m5.find() ) {
+							String[] names = m5.group(2).split( "=>" );
+							String newFilename = m5.group(1) + names[1] + m5.group(3);
+							String oldFilename = m5.group(1) + names[1] + m5.group(3);
+							ChangeSetElement cse = new ChangeSetElement( new File( newFilename ), Status.RENAMED );
+							GitCommit.this.changeSet.put( m3.group(1), cse );
+						}
+						//GitCommit.this.changeSet.put( m3.group(1), new ChangeSetElement( new File( m3.group(1) ), Status.DELETED ) );
 						continue;
 					}
 				}
