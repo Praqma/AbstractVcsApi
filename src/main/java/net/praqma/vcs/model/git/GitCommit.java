@@ -70,7 +70,12 @@ public class GitCommit extends AbstractCommit {
 					Matcher m = rx_getChangeFile.matcher( result.get( i ) );
 					if( m.find() ) {
 						logger.debug("Line(change): " + result.get( i ));
-						GitCommit.this.changeSet.put( m.group(3), new ChangeSetElement( new File( m.group(3) ), Status.CHANGED ) );
+						ChangeSetElement cse = findRename(m.group(3));
+						if( cse != null ) {
+							GitCommit.this.changeSet.put( cse.getFile().toString(), cse );
+						} else {
+							GitCommit.this.changeSet.put( m.group(3), new ChangeSetElement( new File( m.group(3) ), Status.CHANGED ) );
+						}
 						continue;
 					}
 					
@@ -94,9 +99,10 @@ public class GitCommit extends AbstractCommit {
 						Matcher m5 = rx_renameFile.matcher( m4.group( 1 ) );
 						if( m5.find() ) {
 							String[] names = m5.group(2).split( "=>" );
-							String newFilename = m5.group(1) + names[1] + m5.group(3);
-							String oldFilename = m5.group(1) + names[1] + m5.group(3);
+							String newFilename = m5.group(1) + names[1].trim() + m5.group(3);
+							String oldFilename = m5.group(1) + names[1].trim() + m5.group(3);
 							ChangeSetElement cse = new ChangeSetElement( new File( newFilename ), Status.RENAMED );
+							cse.setRenameFromFile( new File( oldFilename ) );
 							GitCommit.this.changeSet.put( m3.group(1), cse );
 						}
 						//GitCommit.this.changeSet.put( m3.group(1), new ChangeSetElement( new File( m3.group(1) ), Status.DELETED ) );
@@ -109,5 +115,21 @@ public class GitCommit extends AbstractCommit {
 			
 			return true;
 		}
+	}
+	
+	private ChangeSetElement findRename( String line ) {
+		logger.debug("Line: " + line);
+		Matcher m = rx_renameFile.matcher( line );
+		if( m.find() ) {
+			String[] names = m.group(2).split( "=>" );
+			String newFilename = m.group(1) + names[1].trim() + m.group(3);
+			String oldFilename = m.group(1) + names[1].trim() + m.group(3);
+			ChangeSetElement cse = new ChangeSetElement( new File( newFilename ), Status.RENAMED );
+			cse.setRenameFromFile( new File( oldFilename ) );
+		
+			return cse;
+		}
+
+		return null;
 	}
 }

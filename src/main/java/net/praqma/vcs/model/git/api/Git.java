@@ -6,13 +6,15 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.praqma.util.debug.Logger;
 import net.praqma.util.execute.AbnormalProcessTerminationException;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.git.exceptions.GitException;
 import net.praqma.vcs.util.CommandLine;
 
 public class Git {
-	
+
+	private static Logger logger = Logger.getLogger();
 	private static final Pattern rx_remoteExists = Pattern.compile( "^.*?remote \\w+ already exists.*?$" );
 	
 	public static void addRemote( String name, String location, File viewContext ) throws GitException, ElementAlreadyExistsException {
@@ -99,9 +101,9 @@ public class Git {
 			List<String> list = CommandLine.run( "git branch", viewContext ).stdoutList;
 			
 			for( String s : list ) {
-				list.add( s.substring( 2 ).trim() );
+				branches.add( s.substring( 2 ).trim() );
 			}
-		} catch( Exception e ) {
+		} catch( AbnormalProcessTerminationException e ) {
 			throw new GitException( "Could not list Git branches: " + e.getMessage() );
 		}
 		
