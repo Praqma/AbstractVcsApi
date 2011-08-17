@@ -97,9 +97,19 @@ public class ClearcaseReplay extends AbstractReplay {
 					}
 				}
 				
-				if( cse.getStatus() != Status.DELETED ) {
-					logger.debug( "Writing" );
-						
+				switch( cse.getStatus() ) {
+				case DELETED:
+					try {
+						version.removeName( true );
+					} catch (UCMException e1) {
+						logger.error( "ClearCase could not remove name: " + e1.getMessage() );
+						success = false;
+						continue;
+					}
+					break;
+					
+				case CREATED:
+				case CHANGED:
 					PrintStream ps;
 					try {
 						ps = new PrintStream( new BufferedOutputStream(new FileOutputStream(version.getVersion(), true) ) );
@@ -109,16 +119,13 @@ public class ClearcaseReplay extends AbstractReplay {
 						success = false;
 						logger.error( "Could not write to file(" + version.getVersion().getAbsolutePath() + "): " + e );
 					}
-				} else {
-					/* Delete */
-					try {
-						version.removeName( true );
-					} catch (UCMException e1) {
-						logger.error( "ClearCase could not remove name: " + e1.getMessage() );
-						success = false;
-						continue;
-					}
+
+					break;
+					
+				case RENAMED:
+					break;
 				}
+				
 			}
 			
 			return success;
