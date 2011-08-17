@@ -18,6 +18,7 @@ import net.praqma.clearcase.ucm.view.SnapshotView.COMP;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
+import net.praqma.vcs.model.Commit;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementException.FailureType;
@@ -29,8 +30,9 @@ import net.praqma.vcs.util.Utils;
  * @author wolfgang
  *
  */
-public class ClearcaseBranch extends AbstractBranch{
+public class ClearcaseBranch<CommitType extends ClearcaseCommit> extends AbstractBranch{
 
+	
 	private File viewroot;
 	private File developmentPath;
 	private Baseline baseline;
@@ -293,7 +295,7 @@ public class ClearcaseBranch extends AbstractBranch{
 		
 		try {
 			List<Baseline> baselines = this.devStream.getBaselines( getComponent(), null );
-			
+						
 			/* TODO Clear out baselines before offset */
 			if( offset != null ) {
 				
@@ -301,9 +303,13 @@ public class ClearcaseBranch extends AbstractBranch{
 			
 			for( int i = 0 ; i < baselines.size() ; i++ ) {
 				System.out.print( "\r" + Utils.getProgress( baselines.size(), i ) );
-				ClearcaseCommit commit = new ClearcaseCommit( baselines.get( i ), ClearcaseBranch.this, i );
+				
+				//CommitType commit = new CommitType( baselines.get( i ), ClearcaseBranch.this, i );
+				Commit<CommitType> commit = new Commit<CommitType>();
+				//commit.
+				
 				if( load ) {
-					commit.load();
+					commit.commit.load();
 				}
 				commits.add( commit );
 			}

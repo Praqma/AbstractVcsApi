@@ -1,22 +1,10 @@
 package net.praqma.vcs.model.clearcase;
 
-import java.io.File;
-import java.util.Date;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import net.praqma.clearcase.ucm.entities.Baseline;
-import net.praqma.clearcase.ucm.utils.BaselineDiff;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.ChangeSetElement;
-import net.praqma.vcs.model.AbstractCommit.Load;
-import net.praqma.vcs.model.ChangeSetElement.Status;
-import net.praqma.vcs.model.git.GitCommit;
-import net.praqma.vcs.model.git.GitCommit.LoadImpl;
-import net.praqma.vcs.util.CommandLine;
 
 public class ClearcaseCommit extends AbstractCommit {
 	
@@ -27,6 +15,10 @@ public class ClearcaseCommit extends AbstractCommit {
 		super( baseline.getFullyQualifiedName(), branch, number );
 		
 		this.baseline = baseline;
+	}
+	
+	public void instantiate( Baseline baseline, AbstractBranch branch, int number ) {
+		
 	}
 
 	public void load() {
