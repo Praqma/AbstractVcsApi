@@ -99,6 +99,7 @@ public class GitCommit extends AbstractCommit {
 						Matcher m5 = rx_renameFile.matcher( m4.group( 1 ) );
 						if( m5.find() ) {
 							String[] names = m5.group(2).split( "=>" );
+							logger.debug( "WHOOP: " + names[0] + "/" + names[1] );
 							String newFilename = m5.group(1) + names[1].trim() + m5.group(3);
 							String oldFilename = m5.group(1) + names[1].trim() + m5.group(3);
 							ChangeSetElement cse = new ChangeSetElement( new File( newFilename ), Status.RENAMED );
@@ -122,8 +123,9 @@ public class GitCommit extends AbstractCommit {
 		Matcher m = rx_renameFile.matcher( line );
 		if( m.find() ) {
 			String[] names = m.group(2).split( "=>" );
+			logger.debug( "WHOOP: " + names[0] + "/" + names[1] );
 			String newFilename = m.group(1) + names[1].trim() + m.group(3);
-			String oldFilename = m.group(1) + names[1].trim() + m.group(3);
+			String oldFilename = m.group(1) + names[0].trim() + m.group(3);
 			ChangeSetElement cse = new ChangeSetElement( new File( newFilename ), Status.RENAMED );
 			cse.setRenameFromFile( new File( oldFilename ) );
 		
@@ -132,4 +134,5 @@ public class GitCommit extends AbstractCommit {
 
 		return null;
 	}
+
 }

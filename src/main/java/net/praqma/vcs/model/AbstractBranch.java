@@ -1,6 +1,7 @@
 package net.praqma.vcs.model;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +20,8 @@ public abstract class AbstractBranch implements Cleanable {
 	protected Repository parent;
 	
 	protected AbstractCommit lastCommit;
+	
+	protected List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
 	
 	protected Logger logger = Logger.getLogger();
 	

@@ -5,7 +5,7 @@ import java.util.Date;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
 
-public abstract class AbstractCommit {
+public abstract class AbstractCommit implements Comparable<AbstractCommit> {
 	
 	protected String key;
 	protected String parentKey;
@@ -104,8 +104,16 @@ public abstract class AbstractCommit {
 		
 		for(ChangeSetElement cs : changeSet.asList()) {
 			sb.append( " * " + cs.getFile() + "(" + cs.getStatus() + ")\n" );
+			if( cs.getRenameFromFile() != null ) {
+				sb.append( "   " + cs.getRenameFromFile() + "\n" );
+			}
 		}
 		
 		return sb.toString();
-	}	
+	}
+	
+	public int compareTo( AbstractCommit other ) {
+		return this.committerDate.compareTo( other.getAuthorDate() ); 
+	}
+
 }
