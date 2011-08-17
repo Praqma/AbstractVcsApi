@@ -2,8 +2,10 @@ package net.praqma.vcs.model.clearcase;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
@@ -109,13 +111,27 @@ public class ClearcaseReplay extends AbstractReplay {
 					break;
 					
 				case CREATED:
+					try {
+						version.getVersion().createNewFile();
+					} catch (IOException e1) {
+						logger.warning( "Could not create file: " + e1.getMessage() );
+						/* Continue anyway */
+					}
 				case CHANGED:
 					PrintStream ps;
 					try {
-						ps = new PrintStream( new BufferedOutputStream(new FileOutputStream(version.getVersion(), true) ) );
-						ps.println( commit.getKey() + " - " + commit.getAuthorDate() );
-						ps.close();
+						FileInputStream fis = new FileInputStream(cse.getFile());
+						FileOutputStream fos = new FileOutputStream(version.getVersion());
+						
+						fos.write( fis.read() );
+						
+						//ps = new PrintStream( new BufferedOutputStream(new FileOutputStream(version.getVersion(), true) ) );
+						//ps.println( commit.getKey() + " - " + commit.getAuthorDate() );
+						//ps.close();
 					} catch (FileNotFoundException e) {
+						success = false;
+						logger.error( "Could not write to file(" + version.getVersion().getAbsolutePath() + "): " + e );
+					} catch (IOException e) {
 						success = false;
 						logger.error( "Could not write to file(" + version.getVersion().getAbsolutePath() + "): " + e );
 					}
@@ -123,6 +139,7 @@ public class ClearcaseReplay extends AbstractReplay {
 					break;
 					
 				case RENAMED:
+					/* TODO how to rename a file in CC? */
 					break;
 				}
 				
