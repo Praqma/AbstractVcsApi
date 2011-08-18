@@ -78,30 +78,10 @@ public class ClearcaseReplay extends AbstractReplay {
 				
 				Version version = null;
 				
-				/* TODO Determine whether the version exists or not */
-				if( !file.exists() ) {
-					try {
-						version = Version.create( file, ccBranch.getSnapshotView() );
-					} catch (UCMException e1) {
-						logger.error( "ClearCase could not create version: " + e1.getMessage() );
-						success = false;						
-						continue;
-					}
-				} else {
-					try {
-						version = Version.getUnextendedVersion( file, ccBranch.getDevelopmentPath() );
-						version.setView( ccBranch.getSnapshotView() );
-						version.checkOut();
-					} catch (UCMException e1) {
-						logger.error( "ClearCase could not get version: " + e1.getMessage() );
-						success = false;
-						continue;
-					}
-				}
-				
 				switch( cse.getStatus() ) {
 				case DELETED:
 					try {
+						version = getFile( file );
 						version.removeName( true );
 					} catch (UCMException e1) {
 						logger.error( "ClearCase could not remove name: " + e1.getMessage() );
@@ -112,15 +92,16 @@ public class ClearcaseReplay extends AbstractReplay {
 					
 				case CREATED:
 					try {
+						version = getFile( file );
 						version.getVersion().createNewFile();
 					} catch (IOException e1) {
 						logger.warning( "Could not create file: " + e1.getMessage() );
 						/* Continue anyway */
 					}
 				case CHANGED:
-					PrintStream ps;
+					version = getFile( file );
 					try {
-						FileInputStream fis = new FileInputStream(cse.getFile());
+						FileInputStream fis = new FileInputStream( new File( commit.getBranch().getPath(), cse.getFile().toString() ));
 						FileOutputStream fos = new FileOutputStream(version.getVersion());
 						
 						fos.write( fis.read() );
@@ -139,13 +120,42 @@ public class ClearcaseReplay extends AbstractReplay {
 					break;
 					
 				case RENAMED:
+					File oldfile = new File( ccBranch.getDevelopmentPath(), cse.getRenameFromFile().getPath() );
+					version = getFile( oldfile );
 					/* TODO how to rename a file in CC? */
+					try {
+						version.moveFile( cse.getFile() );
+					} catch( UCMException e ) {
+						logger.warning( "Could not rename file" );
+					}
 					break;
 				}
 				
 			}
 			
 			return success;
+		}
+		
+		private Version getFile( File file ) {
+			Version version = null;
+			/* TODO Determine whether the file exists or not */
+			if( !file.exists() ) {
+				try {
+					version = Version.create( file, ccBranch.getSnapshotView() );
+				} catch (UCMException e1) {
+					logger.error( "ClearCase could not create version: " + e1.getMessage() );
+				}
+			} else {
+				try {
+					version = Version.getUnextendedVersion( file, ccBranch.getDevelopmentPath() );
+					version.setView( ccBranch.getSnapshotView() );
+					version.checkOut();
+				} catch (UCMException e1) {
+					logger.error( "ClearCase could not get version: " + e1.getMessage() );
+				}
+			}
+			
+			return version;
 		}
 		
 		public boolean cleanup( boolean status ) {

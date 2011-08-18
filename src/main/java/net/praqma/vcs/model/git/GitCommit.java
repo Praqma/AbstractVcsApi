@@ -50,7 +50,7 @@ public class GitCommit extends AbstractCommit {
 			logger.debug( "GIT: perform load" );
 			
 			
-			String cmd = "git show -M --numstat --summary --pretty=format:\"%H%n%P%n%aN <%ae>%n%cN <%ce>%n%at%n%ct%n%s%nLISTINGCHANGES\" " + GitCommit.this.key;
+			String cmd = "git show -M90% --numstat --summary --pretty=format:\"%H%n%P%n%aN <%ae>%n%cN <%ce>%n%at%n%ct%n%s%nLISTINGCHANGES\" " + GitCommit.this.key;
 			List<String> result = CommandLine.run( cmd, branch.getPath() ).stdoutList;
 			
 			if( result.size() < 8 ) {

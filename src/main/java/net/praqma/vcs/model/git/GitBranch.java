@@ -131,18 +131,11 @@ public class GitBranch extends AbstractBranch{
 	}
 
 	public void update() {
-		doUpdate( new UpdateImpl(null) );
-	}
-	
-	public void update( AbstractCommit commit ) {
-		doUpdate( new UpdateImpl( commit ) );
+		doUpdate( new UpdateImpl() );
 	}
 	
 	public class UpdateImpl extends Update {
 
-		public UpdateImpl( AbstractCommit commit ) {
-			super( commit );
-		}
 
 		public boolean update() {
 			logger.debug( "GIT: perform checkout" );
@@ -161,19 +154,17 @@ public class GitBranch extends AbstractBranch{
 				return false;
 			}
 
-			/* Checkout a specific commit */
-			if( commit != null ) {
-				try {
-					logger.info( "Checking out " + commit.getTitle() );
-					Git.checkoutCommit( commit.getKey(), localRepositoryPath );
-				} catch (GitException e) {
-					System.err.println( "Could not pull git branch" );
-					logger.warning( "Could not pull git branch" );
-					return false;
-				}
-			}
-			
 			return true;
+		}
+	}
+	
+	public void checkoutCommit( AbstractCommit commit ) {
+		try {
+			logger.info( "Checking out " + commit.getTitle() );
+			Git.checkoutCommit( commit.getKey(), localRepositoryPath );
+		} catch (GitException e) {
+			System.err.println( "Could not pull git branch" );
+			logger.warning( "Could not pull git branch" );
 		}
 	}
 	

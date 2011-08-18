@@ -58,7 +58,7 @@ public class GitToClearcase3 {
         Cool.setLogger(logger2);
         		
 		logger.toStdOut( true );
-		logger.setMinLogLevel( LogLevel.INFO );
+		//logger.setMinLogLevel( LogLevel.INFO );
 		
 		PVob pvob = ClearcaseVCS.bootstrap();
 		//PVob pvob = new PVob( "\\AVA_PVOB" );
@@ -128,6 +128,7 @@ public class GitToClearcase3 {
 			System.out.print( "\r" + Utils.getProgress( commits.size(), i ) );
 			System.out.print( " - " + t + new String( new char[ml - t.length()] ).replace( "\0", " " ) );
 			//branch.checkout( commits.get( i ) );
+			//branch.update( commits.get( i ) );
 			cr.replay( commits.get( i ) );
 		}
 		System.out.println(" Done");

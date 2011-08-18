@@ -90,8 +90,6 @@ public abstract class AbstractBranch implements Cleanable {
 	 */
 	public abstract void update();
 	
-	public abstract void update( AbstractCommit commit );
-	
 	protected final void doUpdate( Update update ) {
 
 		/* Run the pre pull listener */
@@ -109,15 +107,13 @@ public abstract class AbstractBranch implements Cleanable {
 	}
 	
 	protected abstract class Update extends AbstractConstructSequence{
-		protected AbstractCommit commit;
-		public Update( AbstractCommit commit ) {
-			this.commit = commit;
-		}
 		
 		public boolean update() {
 			return true;
 		}
 	}
+	
+	public abstract void checkoutCommit( AbstractCommit commit );
 	
 	public abstract List<AbstractCommit> getCommits();
 	public abstract List<AbstractCommit> getCommits( boolean load );

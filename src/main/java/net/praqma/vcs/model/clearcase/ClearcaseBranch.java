@@ -160,6 +160,8 @@ public class ClearcaseBranch extends AbstractBranch{
 		}
 	}
 	
+	
+	
 	public boolean exists() {
 		boolean result = true;
 		
@@ -237,18 +239,10 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	
 	public void update() {
-		doUpdate( new UpdateImpl(null) );
-	}
-	
-	@Override
-	public void update( AbstractCommit commit ) {
-		doUpdate( new UpdateImpl(commit) );
+		doUpdate( new UpdateImpl() );
 	}
 	
 	public class UpdateImpl extends Update {
-		public UpdateImpl( AbstractCommit commit ) {
-			super( commit );
-		}
 
 		public boolean setup() {
 			if( snapshot == null || devStream == null ) {
@@ -273,6 +267,11 @@ public class ClearcaseBranch extends AbstractBranch{
 			
 			return true;
 		}
+	}
+	
+	@Override
+	public void checkoutCommit( AbstractCommit commit ) {
+		/* TODO how to checkout a commit i CC? */
 	}
 	
 	
