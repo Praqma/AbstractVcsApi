@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.List;
 
@@ -99,12 +101,20 @@ public class ClearcaseReplay extends AbstractReplay {
 						/* Continue anyway */
 					}
 				case CHANGED:
-					version = getFile( file );
+					if( cse.getStatus().equals( Status.CHANGED ) ) {
+						version = getFile( file );
+					}
+					InputStream in = null;
+					OutputStream out = null;
 					try {
-						FileInputStream fis = new FileInputStream( new File( commit.getBranch().getPath(), cse.getFile().toString() ));
-						FileOutputStream fos = new FileOutputStream(version.getVersion());
+						in = new FileInputStream( new File( commit.getBranch().getPath(), cse.getFile().toString() ));
+						out = new FileOutputStream(version.getVersion());
 						
-						fos.write( fis.read() );
+					    byte[] buf = new byte[1024];
+					    int len;
+					    while ((len = in.read(buf)) > 0) {
+					        out.write(buf, 0, len);
+					    }
 						
 						//ps = new PrintStream( new BufferedOutputStream(new FileOutputStream(version.getVersion(), true) ) );
 						//ps.println( commit.getKey() + " - " + commit.getAuthorDate() );
@@ -115,6 +125,14 @@ public class ClearcaseReplay extends AbstractReplay {
 					} catch (IOException e) {
 						success = false;
 						logger.error( "Could not write to file(" + version.getVersion().getAbsolutePath() + "): " + e );
+					} finally {
+						try {
+							in.close();
+							out.close();
+						} catch (IOException e) {
+							logger.warning( "Could not close files: " + e.getMessage() );
+						}
+						
 					}
 
 					break;
@@ -122,9 +140,15 @@ public class ClearcaseReplay extends AbstractReplay {
 				case RENAMED:
 					File oldfile = new File( ccBranch.getDevelopmentPath(), cse.getRenameFromFile().getPath() );
 					version = getFile( oldfile );
-					/* TODO how to rename a file in CC? */
+					
+					/* Write before rename? */
+					write( new File( commit.getBranch().getPath(), cse.getFile().toString() ), oldfile );
+					
+					/* Add to source control */
+					version = getFile( file.getParentFile() );
+					
 					try {
-						version.moveFile( cse.getFile() );
+						version.moveFile( file );
 					} catch( UCMException e ) {
 						logger.warning( "Could not rename file" );
 					}
@@ -134,6 +158,39 @@ public class ClearcaseReplay extends AbstractReplay {
 			}
 			
 			return success;
+		}
+		
+		private void write( File src, File dst ) {
+			InputStream in = null;
+			OutputStream out = null;
+			
+			try {
+				in = new FileInputStream( src );
+				out = new FileOutputStream( dst );
+				
+				logger.debug( "Writing..." );
+				
+			    byte[] buf = new byte[1024];
+			    int len;
+			    while ((len = in.read(buf)) > 0) {
+			        out.write(buf, 0, len);
+			    }
+			    
+			    logger.debug( "... Done" );
+
+			} catch (FileNotFoundException e) {
+				logger.error( "Could not write to file(" + dst + "): " + e );
+			} catch (IOException e) {
+				logger.error( "Could not write to file(" + dst + "): " + e );
+			} finally {
+				try {
+					in.close();
+					out.close();
+				} catch (IOException e) {
+					logger.warning( "Could not close files: " + e.getMessage() );
+				}
+				
+			}
 		}
 		
 		private Version getFile( File file ) {
@@ -166,7 +223,7 @@ public class ClearcaseReplay extends AbstractReplay {
 			try {
 				List<File> files = Version.getUncheckedIn( ccBranch.getDevelopmentPath() );
 				for( File f : files ) {
-					Version.checkIn( f, ccBranch.getDevelopmentPath() );
+					Version.checkIn( f, true, ccBranch.getDevelopmentPath() );
 				}
 			} catch (UCMException e) {
 				logger.error( e.getMessage() );

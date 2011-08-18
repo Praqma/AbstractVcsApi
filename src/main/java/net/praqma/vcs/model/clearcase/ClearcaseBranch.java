@@ -271,11 +271,10 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	@Override
 	public void checkoutCommit( AbstractCommit commit ) {
+		this.currentCommit = commit;
 		/* TODO how to checkout a commit i CC? */
 	}
 	
-	
-
 	@Override
 	public List<AbstractCommit> getCommits() {
 		return getCommits( false, null );

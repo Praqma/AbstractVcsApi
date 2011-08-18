@@ -129,6 +129,7 @@ public class GitToClearcase3 {
 			System.out.print( " - " + t + new String( new char[ml - t.length()] ).replace( "\0", " " ) );
 			//branch.checkout( commits.get( i ) );
 			//branch.update( commits.get( i ) );
+			branch.checkoutCommit( commits.get( i ) );
 			cr.replay( commits.get( i ) );
 		}
 		System.out.println(" Done");

@@ -20,6 +20,7 @@ public abstract class AbstractBranch implements Cleanable {
 	protected Repository parent;
 	
 	protected AbstractCommit lastCommit;
+	protected AbstractCommit currentCommit;
 	
 	protected List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
 	

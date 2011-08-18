@@ -159,12 +159,13 @@ public class GitBranch extends AbstractBranch{
 	}
 	
 	public void checkoutCommit( AbstractCommit commit ) {
+		this.currentCommit = commit;
 		try {
 			logger.info( "Checking out " + commit.getTitle() );
 			Git.checkoutCommit( commit.getKey(), localRepositoryPath );
 		} catch (GitException e) {
-			System.err.println( "Could not pull git branch" );
-			logger.warning( "Could not pull git branch" );
+			System.err.println( "Could not checkout commit" );
+			logger.warning( "Could not checkout commit: " + e.getMessage() );
 		}
 	}
 	
