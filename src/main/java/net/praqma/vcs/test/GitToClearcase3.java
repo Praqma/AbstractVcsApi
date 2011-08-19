@@ -122,8 +122,8 @@ public class GitToClearcase3 {
 			}} );
 
 		int ml = 50;
-		for( int i = 0 ; i < commits.size() ; i++ ) {
-		//for( int i = 0 ; i < 5 ; i++ ) {
+		//for( int i = 0 ; i < commits.size() ; i++ ) {
+		for( int i = 0 ; i < 3 ; i++ ) {
 			String t = commits.get( i ).getTitle().substring( 0, Math.min(commits.get( i ).getTitle().length(), ml) );
 			System.out.print( "\r" + Utils.getProgress( commits.size(), i ) );
 			System.out.print( " - " + t + new String( new char[ml - t.length()] ).replace( "\0", " " ) );

@@ -1,8 +1,11 @@
 package net.praqma.vcs.model.clearcase;
 
 
+import java.util.List;
+
 import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Baseline;
+import net.praqma.clearcase.ucm.entities.Version;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
@@ -11,10 +14,12 @@ public class ClearcaseCommit extends AbstractCommit {
 	
 	private Logger logger = Logger.getLogger();
 	private Baseline baseline;
+	private ClearcaseBranch ccbranch;
 
-	public ClearcaseCommit( Baseline baseline, AbstractBranch branch, int number ) {
+	public ClearcaseCommit( Baseline baseline, ClearcaseBranch branch, int number ) {
 		super( baseline.getFullyQualifiedName(), branch, number );
 		
+		this.ccbranch = branch;
 		this.baseline = baseline;
 	}
 	
@@ -34,7 +39,7 @@ public class ClearcaseCommit extends AbstractCommit {
 		}
 
 		public boolean perform() {
-			logger.debug( "GIT: perform load" );
+			logger.debug( "CC: perform load" );
 
 			try {
 				ClearcaseCommit.this.parentKey = null;
@@ -44,6 +49,11 @@ public class ClearcaseCommit extends AbstractCommit {
 				ClearcaseCommit.this.committerDate = baseline.getDate();
 	
 				ClearcaseCommit.this.title = ( baseline.getComment() != null ? baseline.getComment() : baseline.getFullyQualifiedName() );
+				List<Version> versions = baseline.beforeBaselineDifferences( null, ccbranch.getSnapshotView() );
+				
+				for( Version v : versions ) {
+					System.out.println( "FILE: " + v.getVersion() );
+				}
 				
 				/*
 				BaselineDiff diffs = baseline.getDifferences( ((ClearcaseBranch)branch).getSnapshotView() );
@@ -74,7 +84,7 @@ public class ClearcaseCommit extends AbstractCommit {
 				*/
 					
 			} catch( UCMException e ) {
-				
+				logger.warning( "Could not get differences: " + e.getMessage() );
 			}
 			
 			return true;
