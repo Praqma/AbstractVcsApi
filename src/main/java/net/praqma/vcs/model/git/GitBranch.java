@@ -38,10 +38,15 @@ public class GitBranch extends AbstractBranch{
 	}
 	
 	public void initialize() throws ElementNotCreatedException, ElementAlreadyExistsException {
-		initialize(false);
+		try {
+			initialize(false);
+		} catch (ElementDoesNotExistException e) {
+			/* This shouldn't be possible */
+			logger.fatal( "False shouldn't throw exist exceptions!!!" );
+		}
 	}
 	
-	public void initialize( boolean get ) throws ElementNotCreatedException, ElementAlreadyExistsException {
+	public void initialize( boolean get ) throws ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException {
 		InitializeImpl init = new InitializeImpl( get );
 		doInitialize( init );
 	}

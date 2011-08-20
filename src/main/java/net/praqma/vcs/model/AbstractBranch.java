@@ -54,9 +54,9 @@ public abstract class AbstractBranch implements Cleanable {
 	 * @throws OperationNotSupportedException
 	 */
 	public abstract void initialize() throws ElementNotCreatedException, ElementAlreadyExistsException;
-	public abstract void initialize( boolean get ) throws ElementNotCreatedException, ElementAlreadyExistsException;
+	public abstract void initialize( boolean get ) throws ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException;
 	
-	protected final boolean doInitialize( Initialize initialize ) throws ElementNotCreatedException, ElementAlreadyExistsException {
+	protected final boolean doInitialize( Initialize initialize ) throws ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException {
 		boolean status = initialize.setup();
 		
 		/* Only initialize if setup went good */
@@ -73,7 +73,7 @@ public abstract class AbstractBranch implements Cleanable {
 			this.get = get;
 		}
 		
-		public boolean initialize() throws ElementNotCreatedException, ElementAlreadyExistsException {
+		public boolean initialize() throws ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException {
 			return true;
 		}
 	}
