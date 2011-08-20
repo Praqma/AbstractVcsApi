@@ -151,10 +151,11 @@ public class ClearcaseBranch extends AbstractBranch{
 				}
 			}
 			
-			/* Create output stream */
+			/* Create output stream
+			 * This is a read only stream, allowing rebasing. */
 			try {
 				logger.info( "Creating development output stream"  );
-				devStream_out = Stream.create( parent, name_out + "@" + ccVCS.getPVob(), false, baseline );
+				devStream_out = Stream.create( parent, name_out + "@" + ccVCS.getPVob(), true, baseline );
 			} catch (UCMException e) {
 				if( get ) {
 					try {
@@ -231,22 +232,43 @@ public class ClearcaseBranch extends AbstractBranch{
 	public boolean exists() {
 		boolean result = true;
 		
+		/* Test input stream */
 		try {
-			UCMEntity.getStream( name, ccVCS.getPVob(), false );
+			UCMEntity.getStream( name_in, ccVCS.getPVob(), false );
 		} catch (UCMException e1) {
-			logger.error( "Stream does not exist" );
+			logger.error( "Input stream does not exist" );
+		}
+		
+		/* Test output stream */
+		try {
+			UCMEntity.getStream( name_out, ccVCS.getPVob(), false );
+		} catch (UCMException e1) {
+			logger.error( "Output stream does not exist" );
 		}
 
-
+		/* Test input view */
 		if( !UCMView.ViewExists( viewtag_in )) {
-			logger.debug( "View tag does not exist" );
+			logger.debug( "Input view tag does not exist" );
 			result = false;
 		} else {
 			try {
 				UCMView.GetSnapshotView(viewroot_in);
 			} catch (Exception e1) {
-				logger.debug( "View root does not exist" );
-				result = false;			
+				logger.debug( "Input view root does not exist" );
+				result = false;
+			}
+		}
+		
+		/* Test output view */
+		if( !UCMView.ViewExists( viewtag_out )) {
+			logger.debug( "Output view tag does not exist" );
+			result = false;
+		} else {
+			try {
+				UCMView.GetSnapshotView(viewroot_out);
+			} catch (Exception e1) {
+				logger.debug( "Output view root does not exist" );
+				result = false;
 			}
 		}
 		
@@ -267,18 +289,35 @@ public class ClearcaseBranch extends AbstractBranch{
 		
 		boolean exists = true;
 		try{
-			this.devStream_in = UCMEntity.getStream( name, ccVCS.getPVob(), false );
+			this.devStream_in = UCMEntity.getStream( name_in, ccVCS.getPVob(), false );
 		} catch( UCMException e ) {
-			logger.debug( "Stream did not exist" );
+			logger.debug( "Input stream did not exist" );
+			exists = false;
+		}
+		
+		try{
+			this.devStream_out = UCMEntity.getStream( name_out, ccVCS.getPVob(), false );
+		} catch( UCMException e ) {
+			logger.debug( "Output stream did not exist" );
 			exists = false;
 		}
 		
 		if( !UCMView.ViewExists( viewtag_in ) ) {
-			logger.debug( "View did not exist" );
+			logger.debug( "Input View did not exist" );
 			exists = false;
 		/* The view exists, but is the path correct? */
 		} else {
 			if( !viewroot_in.exists() ) {
+				exists = false;
+			}
+		}
+		
+		if( !UCMView.ViewExists( viewtag_out ) ) {
+			logger.debug( "Output view did not exist" );
+			exists = false;
+		/* The view exists, but is the path correct? */
+		} else {
+			if( !viewroot_out.exists() ) {
 				exists = false;
 			}
 		}
@@ -297,8 +336,15 @@ public class ClearcaseBranch extends AbstractBranch{
 			try {
 				snapshot_in = UCMView.GetSnapshotView(viewroot_in);
 			} catch (UCMException e) {
-				logger.error( "Could not get view: " + e.getMessage() );
-				throw new ElementDoesNotExistException( "Could not get clearcase view" );
+				logger.error( "Could not get input view: " + e.getMessage() );
+				throw new ElementDoesNotExistException( "Could not get input clearcase view" );
+			}
+			
+			try {
+				snapshot_out = UCMView.GetSnapshotView(viewroot_out);
+			} catch (UCMException e) {
+				logger.error( "Could not get output view: " + e.getMessage() );
+				throw new ElementDoesNotExistException( "Could not get output clearcase view" );
 			}
 		}
 	}
@@ -307,7 +353,13 @@ public class ClearcaseBranch extends AbstractBranch{
 	public void update() {
 		doUpdate( new UpdateImpl() );
 	}
-	
+
+	/**
+	 * This Update implementation only updates the input view, because the output view 
+	 * does not need to be updated, only when demanded.
+	 * @author wolfgang
+	 *
+	 */
 	public class UpdateImpl extends Update {
 
 		public boolean setup() {
