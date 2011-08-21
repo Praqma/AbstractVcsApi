@@ -31,25 +31,88 @@ import net.praqma.vcs.util.Utils;
  */
 public class ClearcaseBranch extends AbstractBranch{
 
+	/**
+	 * The out most view root, ideally containing the
+	 * folders in and/ out/
+	 */
 	private File viewroot;
 	
+	/**
+	 * The name of the input stream
+	 */
 	private String name_in;
+	
+	/**
+	 * The name of the output stream
+	 */
 	private String name_out;
+	
+	/**
+	 * The view root of the input view
+	 */
 	private File viewroot_in;
+	
+	/**
+	 * The view root of the output view
+	 */
 	private File viewroot_out;
+	
+	/**
+	 * The root of the development view,
+	 * basically the folder of the component
+	 */
 	private File developmentPath_in;
+	
 	private File developmentPath_out;
+	
+	/**
+	 * The view tag of the input view
+	 */
 	private String viewtag_in;
+	
+	/**
+	 * The view tag of the output view
+	 */
 	private String viewtag_out;
+	
+	/**
+	 * The {@link Stream} of the input
+	 */
 	private Stream devStream_in;
+	
+	/**
+	 * The {@link Stream} of the output
+	 */
 	private Stream devStream_out;
+	
+	/**
+	 * The {@link SnapshotView} of the input
+	 */
 	private SnapshotView snapshot_in;
+	
+	/**
+	 * The {@link SnapshotView} of the output
+	 */
 	private SnapshotView snapshot_out;
 	
+	/**
+	 * The foundation {@link Baseline} of the branch
+	 */
 	private Baseline baseline;
+	
+	/**
+	 * The parent {@link Stream} of the branch
+	 */
 	private Stream parent;
 	
+	/**
+	 * The {@link Project}s {@link Vob}
+	 */
 	private Vob vob;
+	
+	/**
+	 * 
+	 */
 	private ClearcaseVCS ccVCS;
 	
 	
