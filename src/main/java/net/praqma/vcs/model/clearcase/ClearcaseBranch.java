@@ -143,7 +143,8 @@ public class ClearcaseBranch extends AbstractBranch{
 			throw new ElementNotCreatedException( "Could not create Clearcase branch: " + e.getMessage(), FailureType.DEPENDENCY );
 		}
 		
-		this.developmentPath_in = new File( viewroot, vob + "/" + this.component.getShortname() );
+		this.developmentPath_in = new File( viewroot_in, vob + "/" + this.component.getShortname() );
+		this.developmentPath_out = new File( viewroot_out, vob + "/" + this.component.getShortname() );
 		
 		File view = new File( viewroot, vob.toString() );
 		this.localRepositoryPath = view;
@@ -218,7 +219,7 @@ public class ClearcaseBranch extends AbstractBranch{
 			 * This is a read only stream, allowing rebasing. */
 			try {
 				logger.info( "Creating development output stream"  );
-				devStream_out = Stream.create( parent, name_out + "@" + ccVCS.getPVob(), true, baseline );
+				devStream_out = Stream.create( devStream_in, name_out + "@" + ccVCS.getPVob(), true, baseline );
 			} catch (UCMException e) {
 				if( get ) {
 					try {
@@ -517,6 +518,15 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	public File getDevelopmentPath() {
 		return this.developmentPath_in;
+	}
+	
+	public File getInputPath() {
+		return this.viewroot_in;
+	}
+	
+	@Override
+	public File getPath() {
+		return this.developmentPath_out;
 	}
 	
 	public Component getComponent() {

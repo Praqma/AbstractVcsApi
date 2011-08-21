@@ -2,9 +2,13 @@ package net.praqma.vcs.model;
 
 import java.io.File;
 
+import net.praqma.util.debug.Logger;
+
 public class ChangeSetElement {
 	private File file;
 	private File renameFrom;
+	
+	private static Logger logger = Logger.getLogger();
 	
 	public enum Status {
 		CREATED,
@@ -30,6 +34,7 @@ public class ChangeSetElement {
 	}
 	
 	public void setRenameFromFile( File file ) {
+		logger.debug( "Rename file: " + file );
 		this.renameFrom = file;
 	}
 	

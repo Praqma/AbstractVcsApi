@@ -138,16 +138,17 @@ public class ClearcaseReplay extends AbstractReplay {
 					break;
 					
 				case RENAMED:
-					File oldfile = new File( ccBranch.getDevelopmentPath(), cse.getRenameFromFile().getPath() );
+					File oldfile = new File( ccBranch.getDevelopmentPath(), cse.getRenameFromFile().toString() );
 					version = getFile( oldfile );
 					
 					/* Write before rename? */
 					write( new File( commit.getBranch().getPath(), cse.getFile().toString() ), oldfile );
 					
 					/* Add to source control */
-					version = getFile( file.getParentFile() );
+					getFile( file.getParentFile() );
 					
 					try {
+						logger.debug( "MOVING: " + version.getVersion() );
 						version.moveFile( file );
 					} catch( UCMException e ) {
 						logger.warning( "Could not rename file" );
@@ -194,6 +195,7 @@ public class ClearcaseReplay extends AbstractReplay {
 		}
 		
 		private Version getFile( File file ) {
+			logger.debug( "GETFILE: " + file );
 			Version version = null;
 			/* TODO Determine whether the file exists or not */
 			if( !file.exists() ) {
