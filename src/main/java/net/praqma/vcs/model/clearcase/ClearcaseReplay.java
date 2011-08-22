@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -75,7 +76,9 @@ public class ClearcaseReplay extends AbstractReplay {
 			boolean success = true;
 			
 			for( ChangeSetElement cse : cs ) {
-				File file = new File( ccBranch.getDevelopmentPath(), cse.getFile().getPath() );
+				File file = new File( ccBranch.getDevelopmentPath(), cse.getFile().toString() );
+				logger.debug( "File: " + file.isFile() );
+				logger.debug( "CSE : " + cse.getFile().isFile() );
 				logger.debug( "File(" + cse.getStatus() + "): " + file );
 				
 				Version version = null;
@@ -83,8 +86,9 @@ public class ClearcaseReplay extends AbstractReplay {
 				switch( cse.getStatus() ) {
 				case DELETED:
 					try {
-						version = getFile( file );
+						version = getFile( file, file.isDirectory() );
 						version.removeName( true );
+						removeEmptyDirectories( file.getParentFile() );
 					} catch (UCMException e1) {
 						logger.error( "ClearCase could not remove name: " + e1.getMessage() );
 						success = false;
@@ -94,7 +98,8 @@ public class ClearcaseReplay extends AbstractReplay {
 					
 				case CREATED:
 					try {
-						version = getFile( file );
+						logger.info( "Creating file: " + file );
+						version = getFile( file, file.isDirectory() );
 						version.getVersion().createNewFile();
 					} catch (IOException e1) {
 						logger.warning( "Could not create file: " + e1.getMessage() );
@@ -102,7 +107,7 @@ public class ClearcaseReplay extends AbstractReplay {
 					}
 				case CHANGED:
 					if( cse.getStatus().equals( Status.CHANGED ) ) {
-						version = getFile( file );
+						version = getFile( file, file.isDirectory() );
 					}
 					InputStream in = null;
 					OutputStream out = null;
@@ -129,7 +134,7 @@ public class ClearcaseReplay extends AbstractReplay {
 						try {
 							in.close();
 							out.close();
-						} catch (IOException e) {
+						} catch (Exception e) {
 							logger.warning( "Could not close files: " + e.getMessage() );
 						}
 						
@@ -139,13 +144,13 @@ public class ClearcaseReplay extends AbstractReplay {
 					
 				case RENAMED:
 					File oldfile = new File( ccBranch.getDevelopmentPath(), cse.getRenameFromFile().toString() );
-					version = getFile( oldfile );
+					version = getFile( oldfile, false );
 					
 					/* Write before rename? */
 					write( new File( commit.getBranch().getPath(), cse.getFile().toString() ), oldfile );
 					
 					/* Add to source control */
-					getFile( file.getParentFile() );
+					getFile( file.getParentFile(), true );
 					
 					try {
 						logger.debug( "MOVING: " + version.getVersion() );
@@ -153,12 +158,30 @@ public class ClearcaseReplay extends AbstractReplay {
 					} catch( UCMException e ) {
 						logger.warning( "Could not rename file" );
 					}
+					
+					/* Clear out empty directories */
+					removeEmptyDirectories( oldfile.getParentFile() );
+					
 					break;
 				}
 				
 			}
 			
 			return success;
+		}
+		
+		private void removeEmptyDirectories( File d ) {			
+			logger.debug( d + " has " + d.list().length + " elements" );
+			while( d.list().length == 0 ) {
+				try {
+					Version version = Version.getUnextendedVersion( d, ccBranch.getDevelopmentPath() );
+					version.remove();
+				} catch (UCMException e) {
+					logger.warning( "Could not remote version " + d );
+				}
+				
+				d = d.getParentFile();
+			}
 		}
 		
 		private void write( File src, File dst ) {
@@ -194,14 +217,14 @@ public class ClearcaseReplay extends AbstractReplay {
 			}
 		}
 		
-		private Version getFile( File file ) {
+		private Version getFile( File file, boolean mkdir ) {
 			logger.debug( "GETFILE: " + file );
 			Version version = null;
 			/* TODO Determine whether the file exists or not */
 			
 			if( !file.exists() || !Version.isUnderSourceControl( file, ccBranch.getSnapshotView().GetViewRoot() ) ) {
 				try {
-					version = Version.create( file, ccBranch.getSnapshotView() );
+					version = Version.create( file, mkdir, ccBranch.getSnapshotView() );
 				} catch (UCMException e1) {
 					logger.error( "ClearCase could not create version: " + e1.getMessage() );
 				}
