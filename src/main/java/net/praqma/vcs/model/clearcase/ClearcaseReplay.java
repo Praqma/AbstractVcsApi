@@ -198,7 +198,8 @@ public class ClearcaseReplay extends AbstractReplay {
 			logger.debug( "GETFILE: " + file );
 			Version version = null;
 			/* TODO Determine whether the file exists or not */
-			if( !file.exists() ) {
+			
+			if( !file.exists() || !Version.isUnderSourceControl( file, ccBranch.getSnapshotView().GetViewRoot() ) ) {
 				try {
 					version = Version.create( file, ccBranch.getSnapshotView() );
 				} catch (UCMException e1) {

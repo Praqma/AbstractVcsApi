@@ -39,7 +39,7 @@ public class ClearcaseVCS extends AbstractVCS {
 	/**
 	 * This is the default PVob name
 	 */
-	private static String pvobName = "\\AVA_PVOB";
+	private static String pvobName = "\\AVA_PVOB2";
 
 	private String bootView = "AVA_bootstrapview";
 
