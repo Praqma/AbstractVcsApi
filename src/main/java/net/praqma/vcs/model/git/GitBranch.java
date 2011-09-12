@@ -29,8 +29,6 @@ public class GitBranch extends AbstractBranch{
 		super( localRepositoryPath, name, parent );
 	}
 
-	
-	
 	public static GitBranch create( File localRepository, String name, Repository parent ) throws ElementNotCreatedException, ElementAlreadyExistsException {
 		GitBranch gb = new GitBranch( localRepository, name, parent );
 		gb.initialize();
@@ -188,7 +186,9 @@ public class GitBranch extends AbstractBranch{
 	public List<AbstractCommit> getCommits( boolean load, Date offset ) {
 		logger.info( "Getting git commits for branch " + name );
 		
-		String cmd = "git rev-list --no-merges --reverse --all";
+		String cmd = "";
+		cmd = "git rev-list --no-merges --reverse --all";
+
 		List<String> cs = CommandLine.run( cmd, localRepositoryPath.getAbsoluteFile() ).stdoutList;
 		
 		//Collections.reverse( cs );
@@ -201,6 +201,13 @@ public class GitBranch extends AbstractBranch{
 			GitCommit commit = new GitCommit( cs.get( i ), GitBranch.this, i );
 			if( load ) {
 				commit.load();
+				
+				/* TODO For now we skip old commits by loading them and checks the author date */
+				if( offset != null ) {
+					if( commit.getAuthorDate().before( offset ) ) {
+						continue;
+					}
+				}
 			}
 			
 			commits.add( commit );

@@ -17,6 +17,14 @@ public class Git {
 	private static Logger logger = Logger.getLogger();
 	private static final Pattern rx_remoteExists = Pattern.compile( "^.*?remote \\w+ already exists.*?$" );
 	
+	public static void add( File file, File viewContext ) throws GitException {
+		try {
+			CommandLine.run( "git add " + file, viewContext );
+		} catch( AbnormalProcessTerminationException e ) {
+			throw new GitException( "Could add " + file + ": " + e.getMessage() );
+		}
+	}
+	
 	public static void addRemote( String name, String location, File viewContext ) throws GitException, ElementAlreadyExistsException {
 		try {
 			CommandLine.run( "git remote add " + name + " " + location, viewContext );
@@ -52,6 +60,14 @@ public class Git {
 				throw new ElementAlreadyExistsException( "Branch " + branchName + " already exists" );
 			}
 			throw new GitException( "Could not checkout remote branch " + branchName + ": " + e.getMessage() );
+		}	
+	}
+	
+	public static void createCommit( String message, File viewContext ) throws GitException {
+		try {
+			CommandLine.run( "git commit -a -m " + message, viewContext );
+		} catch( AbnormalProcessTerminationException e ) {
+			throw new GitException( "Could not commit " + message + ": " + e.getMessage() );
 		}	
 	}
 	

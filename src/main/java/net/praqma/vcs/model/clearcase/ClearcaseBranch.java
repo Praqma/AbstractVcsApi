@@ -22,6 +22,7 @@ import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementException.FailureType;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
+import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
 import net.praqma.vcs.util.Utils;
 
 /**
@@ -60,9 +61,13 @@ public class ClearcaseBranch extends AbstractBranch{
 	/**
 	 * The root of the development view,
 	 * basically the folder of the component
+	 * @deprecated
 	 */
 	private File developmentPath_in;
 	
+	/**
+	 * @deprecated
+	 */
 	private File developmentPath_out;
 	
 	/**
@@ -142,6 +147,9 @@ public class ClearcaseBranch extends AbstractBranch{
 		this.viewtag_out = viewtag + "_out";
 		this.baseline = baseline;
 		
+		logger.debug( "VIEWTAG=" + this.viewtag_in );
+		logger.debug( "VIEWTAG=" + this.viewtag_out );
+		
 		this.parent = parent;
 		
 		this.vob = vob;
@@ -159,8 +167,8 @@ public class ClearcaseBranch extends AbstractBranch{
 		this.developmentPath_in = new File( viewroot_in, vob + "/" + this.component.getShortname() );
 		this.developmentPath_out = new File( viewroot_out, vob + "/" + this.component.getShortname() );
 		
-		File view = new File( viewroot, vob.toString() );
-		this.localRepositoryPath = view;
+		/* Set this to the view root of the out view */
+		this.localRepositoryPath = viewroot_out;
 	}
 
 	/**
@@ -471,9 +479,20 @@ public class ClearcaseBranch extends AbstractBranch{
 	}
 	
 	@Override
-	public void checkoutCommit( AbstractCommit commit ) {
+	public void checkoutCommit( AbstractCommit commit ) throws UnableToCheckoutCommitException {
 		this.currentCommit = commit;
 		/* TODO how to checkout a commit i CC? */
+		if( commit instanceof ClearcaseCommit ) {
+			ClearcaseCommit cccommit = (ClearcaseCommit)commit;
+			this.devStream_out.rebase( this.snapshot_out, cccommit.getBaseline(), true );
+			try {
+				this.snapshot_out.Update(true, true, true, false, COMP.ALL, null);
+			} catch (UCMException e) {
+				throw new UnableToCheckoutCommitException( "Could not checkout " + cccommit.getBaseline() );
+			}
+		} else {
+			logger.warning( "I don't know how to do this!!!" );
+		}
 	}
 	
 	@Override
@@ -490,7 +509,7 @@ public class ClearcaseBranch extends AbstractBranch{
 	public List<AbstractCommit> getCommits( boolean load, Date offset ) {
 		
 		List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
-		
+				
 		try {
 			List<Baseline> baselines = this.devStream_in.getBaselines( getComponent(), null, offset );
 			
@@ -533,6 +552,7 @@ public class ClearcaseBranch extends AbstractBranch{
 		return baseline;
 	}
 	
+	@Deprecated
 	public File getDevelopmentPath() {
 		return this.developmentPath_in;
 	}
@@ -543,7 +563,7 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	@Override
 	public File getPath() {
-		return this.developmentPath_out;
+		return this.viewroot_out;
 	}
 	
 	public Component getComponent() {

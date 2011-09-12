@@ -26,9 +26,7 @@ public abstract class AbstractReplay {
 		this.branch = branch;
 	}
 	
-	public void replay( AbstractCommit commit ) throws OperationNotImplementedException, UnableToReplayException {
-		throw new OperationNotImplementedException( "Replay" );
-	}
+	public abstract void replay( AbstractCommit commit ) throws UnableToReplayException;
 	
 	protected void doReplay( Replay replay ) {
 		

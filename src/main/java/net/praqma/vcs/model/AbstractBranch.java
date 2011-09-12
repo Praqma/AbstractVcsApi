@@ -10,6 +10,7 @@ import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.OperationNotSupportedException;
+import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
 import net.praqma.vcs.model.extensions.PullListener;
 import net.praqma.vcs.model.interfaces.Cleanable;
 
@@ -114,7 +115,7 @@ public abstract class AbstractBranch implements Cleanable {
 		}
 	}
 	
-	public abstract void checkoutCommit( AbstractCommit commit );
+	public abstract void checkoutCommit( AbstractCommit commit ) throws UnableToCheckoutCommitException;
 	
 	public abstract List<AbstractCommit> getCommits();
 	public abstract List<AbstractCommit> getCommits( boolean load );

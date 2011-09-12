@@ -1,6 +1,7 @@
 package net.praqma.vcs.model.clearcase;
 
-
+import java.io.File;
+import java.util.List;
 
 import net.praqma.clearcase.changeset.ChangeSet2;
 import net.praqma.clearcase.changeset.ChangeSetElement2;
@@ -9,6 +10,8 @@ import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
+import net.praqma.vcs.model.ChangeSetElement;
+import net.praqma.vcs.model.ChangeSetElement.Status;
 
 public class ClearcaseCommit extends AbstractCommit {
 	
@@ -54,37 +57,50 @@ public class ClearcaseCommit extends AbstractCommit {
 				
 				logger.debug( "Changeset for " + ClearcaseCommit.this.baseline.getShortname() );
 				
+				/*
 				for( ChangeSetElement2 e : changeset.getElementsAsList() ) {
 					logger.debug( " " + e.getFile() + " " + e.getStatus() + ( e.getOldFile() != null ? " (Moved)" : "" ) );
 				}
+				*/
 				
-				/*
-				BaselineDiff diffs = baseline.getDifferences( ((ClearcaseBranch)branch).getSnapshotView() );
-	
-				for(int i = 8 ; i < result.size() ; i++) {
+				List<ChangeSetElement2> elements = changeset.getElementsAsList();
+				
+				int length = ccbranch.getSnapshotView().getViewRoot().getAbsoluteFile().toString().length();
+				
+				for( ChangeSetElement2 element : elements ) {
 					
-					Matcher m = rx_getChangeFile.matcher( result.get( i ) );
-					if( m.find() ) {
-						logger.debug("Line(change): " + result.get( i ));
-						GitCommit.this.changeSet.put( m.group(3), new ChangeSetElement( new File( m.group(3) ), Status.CHANGED ) );
+					/* Plain change */
+					if( element.getStatus().equals( net.praqma.clearcase.ucm.entities.Version.Status.CHANGED ) ) {
+						ChangeSetElement cse = new ChangeSetElement( new File( element.getFile().getAbsoluteFile().toString().substring( length ) ), Status.CHANGED );
+						if( element.getOldFile() != null ) {
+							cse.setRenameFromFile( element.getOldFile() );
+							cse.setStatus( Status.RENAMED );
+						}
+						logger.debug(element.getFile() + " " + cse.getStatus() );
+						ClearcaseCommit.this.changeSet.put( element.getFile().toString(), cse );
 						continue;
 					}
 					
-					Matcher m2 = rx_getCreateFile.matcher( result.get( i ) );
-					if( m2.find() ) {
-						logger.debug("Line(create): " + result.get( i ));
-						GitCommit.this.changeSet.put( m2.group(1), new ChangeSetElement( new File( m2.group(1) ), Status.CREATED ) );
+					/* Added */
+					if( element.getStatus().equals( net.praqma.clearcase.ucm.entities.Version.Status.ADDED ) ) {
+						ChangeSetElement cse = new ChangeSetElement( new File( element.getFile().getAbsoluteFile().toString().substring( length ) ), Status.CREATED );
+						if( element.getOldFile() != null ) {
+							cse.setRenameFromFile( element.getOldFile() );
+							cse.setStatus( Status.RENAMED );
+						}
+						logger.debug(element.getFile() + " " + cse.getStatus() );
+						ClearcaseCommit.this.changeSet.put( element.getFile().toString(), cse );
 						continue;
 					}
 					
-					Matcher m3 = rx_getDeleteFile.matcher( result.get( i ) );
-					if( m3.find() ) {
-						logger.debug("Line(delete): " + result.get( i ));
-						GitCommit.this.changeSet.put( m3.group(1), new ChangeSetElement( new File( m3.group(1) ), Status.DELETED ) );
+					/* Deleted */
+					if( element.getStatus().equals( net.praqma.clearcase.ucm.entities.Version.Status.DELETED ) ) {
+						ChangeSetElement cse = new ChangeSetElement( new File( element.getFile().getAbsoluteFile().toString().substring( length ) ), Status.DELETED );
+						logger.debug(element.getFile() + " " + cse.getStatus() );
+						ClearcaseCommit.this.changeSet.put( element.getFile().toString(), cse );
 						continue;
 					}
 				}
-				*/
 					
 			} catch( UCMException e ) {
 				logger.warning( "Could not get differences: " + e.getMessage() );
@@ -92,6 +108,10 @@ public class ClearcaseCommit extends AbstractCommit {
 			
 			return true;
 		}
+	}
+	
+	public Baseline getBaseline() {
+		return baseline;
 	}
 
 }

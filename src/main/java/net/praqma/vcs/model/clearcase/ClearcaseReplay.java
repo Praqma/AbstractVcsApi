@@ -76,7 +76,8 @@ public class ClearcaseReplay extends AbstractReplay {
 			boolean success = true;
 			
 			for( ChangeSetElement cse : cs ) {
-				File file = new File( ccBranch.getDevelopmentPath(), cse.getFile().toString() );
+				//File file = new File( ccBranch.getDevelopmentPath(), cse.getFile().toString() );
+				File file = new File( ccBranch.getInputPath(), cse.getFile().toString() );
 				logger.debug( "File: " + file.isFile() );
 				logger.debug( "CSE : " + cse.getFile().isFile() );
 				logger.debug( "File(" + cse.getStatus() + "): " + file );

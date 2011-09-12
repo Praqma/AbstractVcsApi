@@ -27,17 +27,23 @@ import net.praqma.vcs.model.clearcase.ClearcaseVCS;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
+import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
+import net.praqma.vcs.model.exceptions.UnableToReplayException;
 import net.praqma.vcs.model.git.GitBranch;
+import net.praqma.vcs.model.git.GitReplay;
 
 
 /**
- * java -classpath ava.jar net.praqma.vcs.test.SiemensDemo -w c:\Temp\views\siemens\001 -o Siemens -c Siemens -s Siemens_int -p siemens -g c:\projects\monkit\branches -V
- * java -classpath ava.jar net.praqma.vcs.test.SiemensDemo -w c:\Temp\views\siemens\001 -o Siemens -b Siemens_Structure_1_0 -s Siemens_int -p siemens -g c:\projects\monkit\branches -V
+ * INIT:<br>
+ * java -classpath ava.jar net.praqma.vcs.test.SiemensDemo -w c:\Temp\views\siemens\001 -t siemens_view_tag -o Siemens -c Siemens -s Siemens_int -p siemens -g c:\projects\monkit\branches -V
+ * <br>
+ * 
+ * RUN:<br>
+ * java -classpath ava.jar net.praqma.vcs.test.SiemensDemo -w c:\Temp\views\siemens\001 -t siemens_view_tag -o Siemens -b Siemens_Structure_1_0 -s Siemens_int -p siemens -g c:\projects\monkit\branches -V
+ * 
  * @author wolfgang
  *
  */
-
-
 public class SiemensDemo {
 	private static Logger logger = Logger.getLogger();
 	
@@ -47,7 +53,7 @@ public class SiemensDemo {
         }
     }
 	
-	public static void main(String[] args) throws IOException, UCMException, ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException {
+	public static void main(String[] args) throws IOException, UCMException, ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException, UnableToCheckoutCommitException, UnableToReplayException {
 		
         Options o = new Options( "1.0.0" );
 
@@ -67,6 +73,7 @@ public class SiemensDemo {
         o.setOption( ostreamname );
         o.setOption( oprojectname );
         o.setOption( ogit );
+        o.setOption( oviewtag );
         
         o.setDefaultOptions();
         
@@ -87,9 +94,6 @@ public class SiemensDemo {
         } else {
         	logger.setMinLogLevel( LogLevel.INFO );
         }
-        
-        logger.info( "Press any key to start" );
-        System.in.read();
         
 		/* Do the ClearCase thing... */
 		UCM.setContext( UCM.ContextType.CLEARTOOL );
@@ -131,12 +135,18 @@ public class SiemensDemo {
         
         BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
         Date now = null;
+        
+        GitReplay gr = new GitReplay( gitbranch );
 		
 		while( true ) {
 			if( now != null ) {
 				logger.info( "Getting baselines after " + now );
 			}
 			List<AbstractCommit> cccommits = ccbranch.getCommits(true, now);
+			for( AbstractCommit commit : cccommits ) {
+				ccbranch.checkoutCommit( commit );
+				gr.replay( commit );
+			}
 			
 			now = new Date();
 			
