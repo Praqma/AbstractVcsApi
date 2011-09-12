@@ -81,7 +81,7 @@ public class CCTest5 {
 		Baseline baseline = UCMEntity.getBaseline( "etteren", pvob, true );
 		
 		//ClearcaseBranch ccbranch = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_1" ), projectName + "_1_view", projectName + "_1_dev" );
-		ClearcaseBranch ccbranch = new ClearcaseBranch( pvob, myvob, stream, baseline, new File( path, projectName ), projectName + "_test2_view", projectName );
+		ClearcaseBranch ccbranch = new ClearcaseBranch( pvob, myvob, stream, baseline, new File( path, projectName ), projectName + "_test6_view", projectName );
 		ccbranch.initialize(true);
 		ccbranch.getCommits(true);
                                                                    

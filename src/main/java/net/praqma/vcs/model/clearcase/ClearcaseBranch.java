@@ -120,6 +120,17 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	private static Logger logger = Logger.getLogger();
 	
+	/**
+	 * If the Stream does not exist, it will be created as a child of the Stream parent.
+	 * @param pvob
+	 * @param vob
+	 * @param parent
+	 * @param baseline
+	 * @param viewroot
+	 * @param viewtag
+	 * @param name
+	 * @throws ElementNotCreatedException
+	 */
 	public ClearcaseBranch( PVob pvob, Vob vob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementNotCreatedException {
 		super(viewroot, name);
 		this.name_in = name;
@@ -196,7 +207,7 @@ public class ClearcaseBranch extends AbstractBranch{
 			super( get );
 		}
 
-		public boolean initialize() throws ElementDoesNotExistException, ElementNotCreatedException {
+		public boolean initialize() throws ElementDoesNotExistException, ElementNotCreatedException, ElementAlreadyExistsException {
 
 			/* Create input stream */
 			try {
@@ -208,7 +219,7 @@ public class ClearcaseBranch extends AbstractBranch{
 						devStream_in = UCMEntity.getStream( name_in, pvob, false );
 						logger.info( "Input stream already exists" );
 					} catch (UCMException e1) {
-						logger.error( "Could not find input stream: " + e.getMessage() );
+						logger.error( "Error while initializing input stream: " + e.getMessage() );
 						throw new ElementDoesNotExistException( "Could not find input stream: " + e.getMessage() );
 					}
 				} else {
@@ -238,56 +249,58 @@ public class ClearcaseBranch extends AbstractBranch{
 			}
 			
 			/* Creating input view */
-			try {
-				logger.info( "Creating development input view, " + viewtag_in );
-				viewroot_in.mkdirs();
-				snapshot_in = SnapshotView.create( devStream_in, viewroot_in, viewtag_in );
-			} catch (UCMException e) {
-				if( get ) {
+			if( get ) {
+				try {
+					snapshot_in = UCMView.getSnapshotView(viewroot_in);
+					logger.info( "Using existing input view" );
+				} catch (Exception e1) {
 					try {
-						snapshot_in = UCMView.getSnapshotView(viewroot_in);
-						logger.info( "Input view already exists" );
-					} catch (Exception e1) {
-						logger.error( "Error while initializing input view: " + e.getMessage() );
-						logger.error( e );
-						/* try to generate new input view */
-						try {
-							snapshot_in = SnapshotView.create( devStream_in, viewroot_in, viewtag_in + System.currentTimeMillis() );
-						} catch (UCMException e2) {
-							logger.error( "Could not generate new input view: " + e2.getMessage() );
-							throw new ElementNotCreatedException( "Could not generate new input view: " + e2.getMessage() );
+						logger.info( "Creating development input view, " + viewtag_in );
+						if( !viewroot_in.exists() ) {
+							viewroot_in.mkdirs();
 						}
+						snapshot_in = SnapshotView.create( devStream_in, viewroot_in, viewtag_in );
+					} catch (UCMException e) {
+						logger.error( "Error while initializing input view: " + e.getMessage() );
 					}
-				} else {
-					logger.error("Error while creating input Snapshot View: " + e.getMessage());
-					throw new ElementNotCreatedException( "Error while creating input Snapshot View: " + e.getMessage() );
+				}
+			} else {
+				try {
+					logger.info( "Creating development input view, " + viewtag_in );
+					if( !viewroot_in.exists() ) {
+						viewroot_in.mkdirs();
+					}
+					snapshot_in = SnapshotView.create( devStream_in, viewroot_in, viewtag_in );
+				} catch (UCMException e) {
+					throw new ElementAlreadyExistsException( "The input view " + viewtag_in + " already exists" );
 				}
 			}
 			
 			/* Creating output view */
-			try {
-				logger.info( "Creating development ouput view, " + viewtag_out );
-				viewroot_out.mkdirs();
-				snapshot_out = SnapshotView.create( devStream_out, viewroot_out, viewtag_out );
-			} catch (UCMException e) {
-				if( get ) {
+			if( get ) {
+				try {
+					snapshot_out = UCMView.getSnapshotView(viewroot_out);
+					logger.info( "Using existing output view" );
+				} catch (Exception e1) {
 					try {
-						snapshot_out = UCMView.getSnapshotView(viewroot_out);
-						logger.info( "Output view already exists" );
-					} catch (Exception e1) {
-						logger.error( "Error while initializing output view: " + e.getMessage() );
-						logger.error( e );
-						/* try to generate new output view */
-						try {
-							snapshot_out = SnapshotView.create( devStream_out, viewroot_out, viewtag_out + System.currentTimeMillis() );
-						} catch (UCMException e2) {
-							logger.error( "Could not generate new output view: " + e2.getMessage() );
-							throw new ElementNotCreatedException( "Could not generate new output view: " + e2.getMessage() );
+						logger.info( "Creating development output view, " + viewtag_out );
+						if( !viewroot_out.exists() ) {
+							viewroot_out.mkdirs();
 						}
+						snapshot_out = SnapshotView.create( devStream_out, viewroot_out, viewtag_out );
+					} catch (UCMException e) {
+						logger.error( "Error while initializing output view: " + e.getMessage() );
 					}
-				} else {
-					logger.error("Error while creating output Snapshot View: " + e.getMessage());
-					throw new ElementNotCreatedException( "Error while creating output Snapshot View: " + e.getMessage() );
+				}
+			} else {
+				try {
+					logger.info( "Creating development output view, " + viewtag_out );
+					if( !viewroot_out.exists() ) {
+						viewroot_out.mkdirs();
+					}
+					snapshot_out = SnapshotView.create( devStream_out, viewroot_out, viewtag_out );
+				} catch (UCMException e) {
+					throw new ElementAlreadyExistsException( "The output view " + viewtag_out + " already exists" );
 				}
 			}
 			
@@ -472,14 +485,14 @@ public class ClearcaseBranch extends AbstractBranch{
 	public List<AbstractCommit> getCommits( boolean load ) {
 		return getCommits( load, null );
 	}
-
+	
 	@Override
 	public List<AbstractCommit> getCommits( boolean load, Date offset ) {
 		
 		List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
 		
 		try {
-			List<Baseline> baselines = this.devStream_in.getBaselines( getComponent(), null );
+			List<Baseline> baselines = this.devStream_in.getBaselines( getComponent(), null, offset );
 			
 			/* TODO Clear out baselines before offset */
 			if( offset != null ) {
@@ -499,8 +512,6 @@ public class ClearcaseBranch extends AbstractBranch{
 		} catch (UCMException e) {
 			logger.error( "Could not list baselines: " + e.getMessage() );
 		}
-		
-		System.out.println( " Done" );
 		
 		return commits;
 	}
