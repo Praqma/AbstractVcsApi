@@ -111,16 +111,16 @@ public class ClearcaseBranch extends AbstractBranch{
 	private Vob vob;
 	
 	/**
-	 * 
+	 * The {@link Project}s {@link PVob}
 	 */
-	private ClearcaseVCS ccVCS;
+	private PVob pvob;
 	
 	
 	private Component component;
 	
 	private static Logger logger = Logger.getLogger();
 	
-	public ClearcaseBranch( ClearcaseVCS ccVCS, Vob vob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementNotCreatedException {
+	public ClearcaseBranch( PVob pvob, Vob vob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementNotCreatedException {
 		super(viewroot, name);
 		this.name_in = name;
 		this.name_out = name + "_out";
@@ -134,7 +134,9 @@ public class ClearcaseBranch extends AbstractBranch{
 		this.parent = parent;
 		
 		this.vob = vob;
-		this.ccVCS = ccVCS;
+		this.pvob = pvob;
+		//this.ccVCS = ccVCS;
+		
 		
 		try {
 			this.component = baseline.getComponent();
@@ -163,8 +165,8 @@ public class ClearcaseBranch extends AbstractBranch{
 	 * @throws ElementNotCreatedException
 	 * @throws ElementAlreadyExistsException 
 	 */
-	public static ClearcaseBranch create( ClearcaseVCS ccVCS, Vob vob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementNotCreatedException, ElementAlreadyExistsException {
-		ClearcaseBranch branch = new ClearcaseBranch( ccVCS, vob, parent, baseline, viewroot, viewtag, name );
+	public static ClearcaseBranch create( PVob pvob, Vob vob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementNotCreatedException, ElementAlreadyExistsException {
+		ClearcaseBranch branch = new ClearcaseBranch( pvob, vob, parent, baseline, viewroot, viewtag, name );
 		branch.initialize();
 		//branch.get();
 		return branch;
@@ -199,11 +201,11 @@ public class ClearcaseBranch extends AbstractBranch{
 			/* Create input stream */
 			try {
 				logger.info( "Creating development input stream"  );
-				devStream_in = Stream.create( parent, name_in + "@" + ccVCS.getPVob(), false, baseline );
+				devStream_in = Stream.create( parent, name_in + "@" + pvob, false, baseline );
 			} catch (UCMException e) {
 				if( get ) {
 					try {
-						devStream_in = UCMEntity.getStream( name_in, ccVCS.getPVob(), false );
+						devStream_in = UCMEntity.getStream( name_in, pvob, false );
 						logger.info( "Input stream already exists" );
 					} catch (UCMException e1) {
 						logger.error( "Could not find input stream: " + e.getMessage() );
@@ -219,11 +221,11 @@ public class ClearcaseBranch extends AbstractBranch{
 			 * This is a read only stream, allowing rebasing. */
 			try {
 				logger.info( "Creating development output stream"  );
-				devStream_out = Stream.create( devStream_in, name_out + "@" + ccVCS.getPVob(), true, baseline );
+				devStream_out = Stream.create( devStream_in, name_out + "@" + pvob, true, baseline );
 			} catch (UCMException e) {
 				if( get ) {
 					try {
-						devStream_out = UCMEntity.getStream( name_out, ccVCS.getPVob(), false );
+						devStream_out = UCMEntity.getStream( name_out, pvob, false );
 						logger.info( "Output stream already exists" );
 					} catch (UCMException e1) {
 						logger.error( "Could not find output stream: " + e.getMessage() );
@@ -235,21 +237,22 @@ public class ClearcaseBranch extends AbstractBranch{
 				}
 			}
 			
-			/* Creating inout view */
+			/* Creating input view */
 			try {
-				logger.info( "Creating development input view" );
+				logger.info( "Creating development input view, " + viewtag_in );
 				viewroot_in.mkdirs();
-				snapshot_in = SnapshotView.Create( devStream_in, viewroot_in, viewtag_in );
+				snapshot_in = SnapshotView.create( devStream_in, viewroot_in, viewtag_in );
 			} catch (UCMException e) {
 				if( get ) {
 					try {
-						snapshot_in = UCMView.GetSnapshotView(viewroot_in);
+						snapshot_in = UCMView.getSnapshotView(viewroot_in);
 						logger.info( "Input view already exists" );
 					} catch (Exception e1) {
-						logger.error( "Could not find input view: " + e.getMessage() );
+						logger.error( "Error while initializing input view: " + e.getMessage() );
+						logger.error( e );
 						/* try to generate new input view */
 						try {
-							snapshot_in = SnapshotView.Create( devStream_in, viewroot_in, viewtag_in + System.currentTimeMillis() );
+							snapshot_in = SnapshotView.create( devStream_in, viewroot_in, viewtag_in + System.currentTimeMillis() );
 						} catch (UCMException e2) {
 							logger.error( "Could not generate new input view: " + e2.getMessage() );
 							throw new ElementNotCreatedException( "Could not generate new input view: " + e2.getMessage() );
@@ -263,19 +266,20 @@ public class ClearcaseBranch extends AbstractBranch{
 			
 			/* Creating output view */
 			try {
-				logger.info( "Creating development ouput view" );
+				logger.info( "Creating development ouput view, " + viewtag_out );
 				viewroot_out.mkdirs();
-				snapshot_out = SnapshotView.Create( devStream_out, viewroot_out, viewtag_out );
+				snapshot_out = SnapshotView.create( devStream_out, viewroot_out, viewtag_out );
 			} catch (UCMException e) {
 				if( get ) {
 					try {
-						snapshot_out = UCMView.GetSnapshotView(viewroot_out);
+						snapshot_out = UCMView.getSnapshotView(viewroot_out);
 						logger.info( "Output view already exists" );
 					} catch (Exception e1) {
-						logger.error( "Could not find output view: " + e.getMessage() );
+						logger.error( "Error while initializing output view: " + e.getMessage() );
+						logger.error( e );
 						/* try to generate new output view */
 						try {
-							snapshot_out = SnapshotView.Create( devStream_out, viewroot_out, viewtag_out + System.currentTimeMillis() );
+							snapshot_out = SnapshotView.create( devStream_out, viewroot_out, viewtag_out + System.currentTimeMillis() );
 						} catch (UCMException e2) {
 							logger.error( "Could not generate new output view: " + e2.getMessage() );
 							throw new ElementNotCreatedException( "Could not generate new output view: " + e2.getMessage() );
@@ -298,25 +302,25 @@ public class ClearcaseBranch extends AbstractBranch{
 		
 		/* Test input stream */
 		try {
-			UCMEntity.getStream( name_in, ccVCS.getPVob(), false );
+			UCMEntity.getStream( name_in, pvob, false );
 		} catch (UCMException e1) {
 			logger.error( "Input stream does not exist" );
 		}
 		
 		/* Test output stream */
 		try {
-			UCMEntity.getStream( name_out, ccVCS.getPVob(), false );
+			UCMEntity.getStream( name_out, pvob, false );
 		} catch (UCMException e1) {
 			logger.error( "Output stream does not exist" );
 		}
 
 		/* Test input view */
-		if( !UCMView.ViewExists( viewtag_in )) {
-			logger.debug( "Input view tag does not exist" );
+		if( !UCMView.viewExists( viewtag_in )) {
+			logger.debug( "Input view tag, " + viewtag_in + ", does not exist" );
 			result = false;
 		} else {
 			try {
-				UCMView.GetSnapshotView(viewroot_in);
+				UCMView.getSnapshotView(viewroot_in);
 			} catch (Exception e1) {
 				logger.debug( "Input view root does not exist" );
 				result = false;
@@ -324,12 +328,12 @@ public class ClearcaseBranch extends AbstractBranch{
 		}
 		
 		/* Test output view */
-		if( !UCMView.ViewExists( viewtag_out )) {
-			logger.debug( "Output view tag does not exist" );
+		if( !UCMView.viewExists( viewtag_out )) {
+			logger.debug( "Output view tag, " + viewtag_out + ", does not exist" );
 			result = false;
 		} else {
 			try {
-				UCMView.GetSnapshotView(viewroot_out);
+				UCMView.getSnapshotView(viewroot_out);
 			} catch (Exception e1) {
 				logger.debug( "Output view root does not exist" );
 				result = false;
@@ -352,21 +356,23 @@ public class ClearcaseBranch extends AbstractBranch{
 	public void get( boolean initialize ) throws ElementDoesNotExistException, ElementNotCreatedException {
 		
 		boolean exists = true;
+		boolean outputExists = false;
 		try{
-			this.devStream_in = UCMEntity.getStream( name_in, ccVCS.getPVob(), false );
+			this.devStream_in = UCMEntity.getStream( name_in, pvob, false );
 		} catch( UCMException e ) {
 			logger.debug( "Input stream did not exist" );
 			exists = false;
 		}
 		
 		try{
-			this.devStream_out = UCMEntity.getStream( name_out, ccVCS.getPVob(), false );
+			this.devStream_out = UCMEntity.getStream( name_out, pvob, false );
+			outputExists = true;
 		} catch( UCMException e ) {
 			logger.debug( "Output stream did not exist" );
 			exists = false;
 		}
 		
-		if( !UCMView.ViewExists( viewtag_in ) ) {
+		if( !UCMView.viewExists( viewtag_in ) ) {
 			logger.debug( "Input View did not exist" );
 			exists = false;
 		/* The view exists, but is the path correct? */
@@ -376,7 +382,7 @@ public class ClearcaseBranch extends AbstractBranch{
 			}
 		}
 		
-		if( !UCMView.ViewExists( viewtag_out ) ) {
+		if( !UCMView.viewExists( viewtag_out ) ) {
 			logger.debug( "Output view did not exist" );
 			exists = false;
 		/* The view exists, but is the path correct? */
@@ -398,14 +404,14 @@ public class ClearcaseBranch extends AbstractBranch{
 		} else {
 			logger.debug( "DONT initialize" );
 			try {
-				snapshot_in = UCMView.GetSnapshotView(viewroot_in);
+				snapshot_in = UCMView.getSnapshotView(viewroot_in);
 			} catch (UCMException e) {
 				logger.error( "Could not get input view: " + e.getMessage() );
 				throw new ElementDoesNotExistException( "Could not get input clearcase view" );
 			}
 			
 			try {
-				snapshot_out = UCMView.GetSnapshotView(viewroot_out);
+				snapshot_out = UCMView.getSnapshotView(viewroot_out);
 			} catch (UCMException e) {
 				logger.error( "Could not get output view: " + e.getMessage() );
 				throw new ElementDoesNotExistException( "Could not get output clearcase view" );
@@ -505,7 +511,7 @@ public class ClearcaseBranch extends AbstractBranch{
 	}
 	
 	public PVob getPVob() {
-		return ccVCS.getPVob();
+		return pvob;
 	}
 	
 	public Vob getVob() {

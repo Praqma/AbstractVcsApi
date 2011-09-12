@@ -54,7 +54,7 @@ public class ClearcaseReplay extends AbstractReplay {
 
 		public boolean setup() {
 			try {
-				Activity.create( null, ccBranch.getPVob(), true, "CCReplay: " + commit.getKey(), ccBranch.getSnapshotView().GetViewRoot() );
+				Activity.create( null, ccBranch.getPVob(), true, "CCReplay: " + commit.getKey(), ccBranch.getSnapshotView().getViewRoot() );
 			} catch (UCMException e1) {
 				logger.error( "ClearCase Activity could not be created: " + e1.getMessage() );
 				return false;
@@ -87,7 +87,8 @@ public class ClearcaseReplay extends AbstractReplay {
 				case DELETED:
 					try {
 						version = getFile( file, file.isDirectory() );
-						version.removeName( true );
+						version.removeName();
+						//version.removeVersion();
 						removeEmptyDirectories( file.getParentFile() );
 					} catch (UCMException e1) {
 						logger.error( "ClearCase could not remove name: " + e1.getMessage() );
@@ -100,7 +101,7 @@ public class ClearcaseReplay extends AbstractReplay {
 					try {
 						logger.info( "Creating file: " + file );
 						version = getFile( file, file.isDirectory() );
-						version.getVersion().createNewFile();
+						version.getFile().createNewFile();
 					} catch (IOException e1) {
 						logger.warning( "Could not create file: " + e1.getMessage() );
 						/* Continue anyway */
@@ -113,7 +114,7 @@ public class ClearcaseReplay extends AbstractReplay {
 					OutputStream out = null;
 					try {
 						in = new FileInputStream( new File( commit.getBranch().getPath(), cse.getFile().toString() ));
-						out = new FileOutputStream(version.getVersion());
+						out = new FileOutputStream(version.getFile());
 						
 					    byte[] buf = new byte[1024];
 					    int len;
@@ -126,10 +127,10 @@ public class ClearcaseReplay extends AbstractReplay {
 						//ps.close();
 					} catch (FileNotFoundException e) {
 						success = false;
-						logger.error( "Could not write to file(" + version.getVersion().getAbsolutePath() + "): " + e );
+						logger.error( "Could not write to file(" + version.getFile().getAbsolutePath() + "): " + e );
 					} catch (IOException e) {
 						success = false;
-						logger.error( "Could not write to file(" + version.getVersion().getAbsolutePath() + "): " + e );
+						logger.error( "Could not write to file(" + version.getFile().getAbsolutePath() + "): " + e );
 					} finally {
 						try {
 							in.close();
@@ -174,10 +175,10 @@ public class ClearcaseReplay extends AbstractReplay {
 			logger.debug( d + " has " + d.list().length + " elements" );
 			while( d.list().length == 0 ) {
 				try {
-					Version version = Version.getUnextendedVersion( d, ccBranch.getDevelopmentPath() );
-					version.remove();
+					Version.removeName( d, ccBranch.getSnapshotView().getViewRoot() );
+					//Version.removeVersion( d, ccBranch.getSnapshotView().GetViewRoot() );
 				} catch (UCMException e) {
-					logger.warning( "Could not remote version " + d );
+					logger.warning( "Could not remove version " + d );
 				}
 				
 				d = d.getParentFile();
@@ -222,7 +223,7 @@ public class ClearcaseReplay extends AbstractReplay {
 			Version version = null;
 			/* TODO Determine whether the file exists or not */
 			
-			if( !file.exists() || !Version.isUnderSourceControl( file, ccBranch.getSnapshotView().GetViewRoot() ) ) {
+			if( !file.exists() || !Version.isUnderSourceControl( file, ccBranch.getSnapshotView().getViewRoot() ) ) {
 				try {
 					version = Version.create( file, mkdir, ccBranch.getSnapshotView() );
 				} catch (UCMException e1) {

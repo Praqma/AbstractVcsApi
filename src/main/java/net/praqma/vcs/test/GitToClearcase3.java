@@ -35,7 +35,7 @@ public class GitToClearcase3 {
 		
 		if( args.length < 4 ) {
 			System.err.println( "Too few parameters" );
-			System.err.println( "Usage: GitToClearcase3 <vobname> <componentname> <projectname> <viewroot>" );
+			System.err.println( "Usage: GitToClearcase3 <vobname> <componentname> <projectname> <viewroot> <git repo>" );
 			System.exit( 1 );
 		}
 		
@@ -47,6 +47,7 @@ public class GitToClearcase3 {
 		String projectName = args[2];
 		String streamName = projectName + "_int";
 		File path = new File( args[3] );
+		File grepo = new File( args[4] );
 		
 		/* Do the ClearCase thing... */
 		UCM.setContext( UCM.ContextType.CLEARTOOL );
@@ -73,7 +74,7 @@ public class GitToClearcase3 {
 		logger.info( "Clearcase initialized" );
 		
 		/* Make number 1 stream */
-		final ClearcaseBranch ccbranch = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_1" ), projectName + "_1_view", projectName + "_1_dev" );
+		final ClearcaseBranch ccbranch = new ClearcaseBranch( pvob, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_1" ), projectName + "_1_view", projectName + "_1_dev" );
 		try {
 			ccbranch.get(true);
 		} catch( Exception e ) {
@@ -83,7 +84,7 @@ public class GitToClearcase3 {
 		ccbranch.update();
 
 		/* Make number 2 stream */
-		final ClearcaseBranch ccbranch2 = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_2" ), projectName + "_2_view", projectName + "_2_dev" );
+		final ClearcaseBranch ccbranch2 = new ClearcaseBranch( pvob, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_2" ), projectName + "_2_view", projectName + "_2_dev" );
 		try {
 			ccbranch2.get(true);
 		} catch( Exception e ) {
@@ -95,7 +96,7 @@ public class GitToClearcase3 {
 		ClearcaseReplay cr = new ClearcaseReplay( ccbranch );
 		
 		//GitBranch branch = new GitBranch( new File( "C:/projects/monkit/branches" ), "master" );
-		GitBranch branch = new GitBranch( new File( "C:/projects/other/ccbridgetest" ), "master" );
+		GitBranch branch = new GitBranch( grepo, "master" );
 		List<AbstractCommit> commits = branch.getCommits(true);
 		
 		logger.info( commits.size() + " commits on branch " + branch );

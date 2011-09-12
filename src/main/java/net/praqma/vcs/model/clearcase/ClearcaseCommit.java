@@ -1,11 +1,11 @@
 package net.praqma.vcs.model.clearcase;
 
 
-import java.util.List;
 
+import net.praqma.clearcase.changeset.ChangeSet2;
+import net.praqma.clearcase.changeset.ChangeSetElement2;
 import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Baseline;
-import net.praqma.clearcase.ucm.entities.Version;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
@@ -49,10 +49,13 @@ public class ClearcaseCommit extends AbstractCommit {
 				ClearcaseCommit.this.committerDate = baseline.getDate();
 	
 				ClearcaseCommit.this.title = ( baseline.getComment() != null ? baseline.getComment() : baseline.getFullyQualifiedName() );
-				List<Version> versions = baseline.beforeBaselineDifferences( null, ccbranch.getSnapshotView() );
+				//List<Version> versions = baseline.beforeBaselineDifferences( null, ccbranch.getSnapshotView() );
+				ChangeSet2 changeset = ChangeSet2.getChangeSet( baseline, null, ccbranch.getSnapshotView().getViewRoot() );
 				
-				for( Version v : versions ) {
-					System.out.println( "FILE: " + v.getVersion() );
+				logger.debug( "Changeset for " + ClearcaseCommit.this.baseline.getShortname() );
+				
+				for( ChangeSetElement2 e : changeset.getElementsAsList() ) {
+					logger.debug( " " + e.getFile() + " " + e.getStatus() + ( e.getOldFile() != null ? " (Moved)" : "" ) );
 				}
 				
 				/*

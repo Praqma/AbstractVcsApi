@@ -24,6 +24,7 @@ import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.clearcase.ClearcaseBranch;
 import net.praqma.vcs.model.clearcase.ClearcaseReplay;
 import net.praqma.vcs.model.clearcase.ClearcaseVCS;
+import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
@@ -36,7 +37,7 @@ public class CCTest5 {
 
 	static net.praqma.util.debug.Logger logger = net.praqma.util.debug.Logger.getLogger();
 	
-	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, UnableToReplayException, UCMException, ElementDoesNotExistException, ElementNotCreatedException {
+	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, UnableToReplayException, UCMException, ElementDoesNotExistException, ElementNotCreatedException, ElementAlreadyExistsException {
 		
 		if( args.length < 4 ) {
 			System.err.println( "Too few parameters" );
@@ -60,22 +61,28 @@ public class CCTest5 {
 		
 		String vname = args[0];
 		String cname = args[1];
-		String projectName = args[2];
+		String projectName = "student_HandJob";
 		String streamName = projectName + "_int";
 		File path = new File( args[3] );
 		
+		Vob myvob = new Vob( "\\" + vname );
+		
 		PVob pvob = ClearcaseVCS.bootstrap();
 
-		ClearcaseVCS cc = new ClearcaseVCS( null, vname, cname, projectName, streamName, 
+		/*ClearcaseVCS cc = new ClearcaseVCS( null, vname, cname, projectName, streamName, 
                 Project.POLICY_INTERPROJECT_DELIVER  | 
                 Project.POLICY_CHSTREAM_UNRESTRICTED | 
                 Project.POLICY_DELIVER_NCO_DEVSTR, pvob );
 		
-		cc.get(true);
-		logger.info( "Clearcase initialized" );
+		cc.get(false);
+		logger.info( "Clearcase initialized" ); */
 		
-		ClearcaseBranch ccbranch = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_1" ), projectName + "_1_view", projectName + "_1_dev" );
-		ccbranch.get();
+		Stream stream = UCMEntity.getStream( "student_HandJob", pvob, true );
+		Baseline baseline = UCMEntity.getBaseline( "etteren", pvob, true );
+		
+		//ClearcaseBranch ccbranch = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_1" ), projectName + "_1_view", projectName + "_1_dev" );
+		ClearcaseBranch ccbranch = new ClearcaseBranch( pvob, myvob, stream, baseline, new File( path, projectName ), projectName + "_test2_view", projectName );
+		ccbranch.initialize(true);
 		ccbranch.getCommits(true);
                                                                    
 	}

@@ -70,12 +70,12 @@ public class GitToClearcase2 {
 		logger.info( "Clearcase initialized" );
 		
 		/* Make number 1 stream */
-		final ClearcaseBranch ccbranch = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, append + "_1" ), name + "_1_view", name + "_1_dev" );
+		final ClearcaseBranch ccbranch = new ClearcaseBranch( pvob, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, append + "_1" ), name + "_1_view", name + "_1_dev" );
 		ccbranch.get();
 		ccbranch.update();
 
 		/* Make number 2 stream */
-		final ClearcaseBranch ccbranch2 = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, append + "_2" ), name + "_2_view", name + "_2_dev" );
+		final ClearcaseBranch ccbranch2 = new ClearcaseBranch( pvob, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, append + "_2" ), name + "_2_view", name + "_2_dev" );
 		ccbranch2.get();
 		ccbranch2.update();
 

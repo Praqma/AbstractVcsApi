@@ -111,7 +111,7 @@ public class ClearcaseVCS extends AbstractVCS {
 		return cc;
 	}
 	
-	public ClearcaseVCS(  File location, String vobName, String componentName, String projectName, String streamName, int policies, PVob pvob ) {
+	public ClearcaseVCS( File location, String vobName, String componentName, String projectName, String streamName, int policies, PVob pvob ) {
 		super( location );
 		
 		this.baseName = componentName;
@@ -353,7 +353,7 @@ public class ClearcaseVCS extends AbstractVCS {
 			
 			logger.info( "Creating base view" );
 			DynamicView bview = null;
-			if( !UCMView.ViewExists( ClearcaseVCS.this.baseName + "_" + bootView )) {
+			if( !UCMView.viewExists( ClearcaseVCS.this.baseName + "_" + bootView )) {
 				try {
 					bview = DynamicView.create( null, ClearcaseVCS.this.baseName + "_" + bootView, integrationStream );
 				} catch (UCMException e) {
@@ -374,7 +374,7 @@ public class ClearcaseVCS extends AbstractVCS {
 			logger.info( "Creating Structure_1_0" );
 			try {
 				//baseline = Baseline.create( ClearcaseVCS.this.baseName + "_Structure_1_0", c, new File( viewPath, ClearcaseVCS.this.baseName + "_" + bootView + "/" + ClearcaseVCS.this.baseName ), false, true );
-				baseline = Baseline.create( ClearcaseVCS.this.baselineName, c, new File( viewPath, bview.GetViewtag() + "/" + vob.getName() ), false, true );
+				baseline = Baseline.create( ClearcaseVCS.this.baselineName, c, new File( viewPath, bview.getViewtag() + "/" + vob.getName() ), false, true );
 			} catch (UCMException e) {
 				if( get ) {
 					try {
@@ -466,7 +466,7 @@ public class ClearcaseVCS extends AbstractVCS {
 			}
 		}
 
-		if( !UCMView.ViewExists( ClearcaseVCS.dynView ) ) {
+		if( !UCMView.viewExists( ClearcaseVCS.dynView ) ) {
 			try {
 				logger.info( "Creating baseview" );
 				baseView = DynamicView.create( null, dynView, null );

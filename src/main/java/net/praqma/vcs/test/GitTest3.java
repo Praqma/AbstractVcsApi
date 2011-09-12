@@ -82,10 +82,10 @@ public class GitTest3 {
 		Component component = UCMEntity.getComponent( cname, pvob, true );
 		
         SnapshotView sview = null;
-		if( !UCMView.ViewExists( viewtag ) ) {
+		if( !UCMView.viewExists( viewtag ) ) {
 			sview = Utilities.CreateView("stream:OpenSCM_dev" + "@" + pvob, intStream, baseline, view, viewtag );
 		} else {
-			sview = UCMView.GetSnapshotView(view);	
+			sview = UCMView.getSnapshotView(view);	
 		}
 		
 		File devview = new File( view, vname + "/" + cname );
