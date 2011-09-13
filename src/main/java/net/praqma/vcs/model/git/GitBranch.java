@@ -193,7 +193,7 @@ public class GitBranch extends AbstractBranch{
 		List<String> cs = null;
 		try {
 			cs = CommandLine.run( cmd, localRepositoryPath.getAbsoluteFile() ).stdoutList;
-		} catch( AbnormalProcessTerminationException e ) {
+		} catch( Exception e ) {
 			/* It is probably just empty */
 			cs = new ArrayList<String>();
 		}
