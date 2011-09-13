@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.praqma.util.execute.AbnormalProcessTerminationException;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.Repository;
@@ -189,7 +190,13 @@ public class GitBranch extends AbstractBranch{
 		String cmd = "";
 		cmd = "git rev-list --no-merges --reverse --all";
 
-		List<String> cs = CommandLine.run( cmd, localRepositoryPath.getAbsoluteFile() ).stdoutList;
+		List<String> cs = null;
+		try {
+			cs = CommandLine.run( cmd, localRepositoryPath.getAbsoluteFile() ).stdoutList;
+		} catch( AbnormalProcessTerminationException e ) {
+			/* It is probably just empty */
+			cs = new ArrayList<String>();
+		}
 		
 		//Collections.reverse( cs );
 		
