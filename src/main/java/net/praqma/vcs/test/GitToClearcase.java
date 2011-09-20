@@ -36,7 +36,6 @@ public class GitToClearcase {
 		}
 		
 		new AVA();
-		logger.setMinLogLevel( LogLevel.INFO );
 		
 		String vname = args[0];
 		String cname = args[1];
@@ -51,8 +50,6 @@ public class GitToClearcase {
 		
 		/* Do the ClearCase thing... */
 		UCM.setContext( UCM.ContextType.CLEARTOOL );
-		
-		logger.toStdOut( true );
 		
 		/*
 		ClearcaseVCS cc = ClearcaseVCS.create( null, vname, cname, Project.POLICY_INTERPROJECT_DELIVER  | 

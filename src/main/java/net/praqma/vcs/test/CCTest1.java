@@ -16,7 +16,6 @@ public class CCTest1 {
 		/* Do the ClearCase thing... */
 		UCM.setContext( UCM.ContextType.CLEARTOOL );
 		
-		logger.toStdOut( true );
 		
 		String append = "001";
 		File path = new File( "C:/Temp/views/" + append );

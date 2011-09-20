@@ -25,13 +25,6 @@ public class CCTest2 {
 		/* Do the ClearCase thing... */
 		UCM.setContext( UCM.ContextType.CLEARTOOL );
 		
-		/* Setup the logger */
-		net.praqma.util.debug.PraqmaLogger.Logger logger2 = net.praqma.util.debug.PraqmaLogger.getLogger(false);
-        logger2.subscribeAll();
-        logger2.setLocalLog( new File( "versiontest.log") );
-        Cool.setLogger(logger2);		
-		
-		logger.toStdOut( true );
 		
 		String append = "001";
 		File path = new File( "C:/Temp/views/" + append );

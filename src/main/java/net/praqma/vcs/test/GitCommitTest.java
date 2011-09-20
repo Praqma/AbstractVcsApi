@@ -35,7 +35,6 @@ public class GitCommitTest {
 	static net.praqma.util.debug.Logger logger = net.praqma.util.debug.Logger.getLogger();
 	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, UnableToReplayException, UCMException, ElementNotCreatedException {
 		
-		logger.toStdOut( true );
 		new AVA();
 		
         File view = new File( args[0] );
@@ -68,12 +67,6 @@ public class GitCommitTest {
 		
 		/* Do the ClearCase thing... */
 		UCM.setContext( UCM.ContextType.CLEARTOOL );
-		
-		/* Setup the logger */
-        Logger logger = PraqmaLogger.getLogger(false);
-        logger.subscribeAll();
-        logger.setLocalLog( new File( "gittest.log") );
-        Cool.setLogger(logger);
         
         String viewtag = "OpenSCM_test";
         PVob pvob = new PVob( "\\" + vname + "_PVOB" );

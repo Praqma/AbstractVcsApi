@@ -53,13 +53,6 @@ public class GitToClearcase4 {
 		UCM.setContext( UCM.ContextType.CLEARTOOL );
 		
 		/* Setup the logger */
-        Logger logger2 = PraqmaLogger.getLogger(false);
-        logger2.subscribeAll();
-        logger2.setLocalLog( new File( "gittest.log") );
-        Cool.setLogger(logger2);
-        		
-		logger.toStdOut( true );
-		//logger.setMinLogLevel( LogLevel.INFO );
 		
 		PVob pvob = ClearcaseVCS.bootstrap();
 		//PVob pvob = new PVob( "\\AVA_PVOB" );

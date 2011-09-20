@@ -37,7 +37,6 @@ public class CCTest3 {
 	
 	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, UnableToReplayException, UCMException, ElementDoesNotExistException, ElementNotCreatedException {
 		
-		logger.toStdOut( true );
 		new AVA();
 		
 		File gitpath = new File( "c:\\temp\\git_tests\\repo1" );
@@ -62,11 +61,6 @@ public class CCTest3 {
 		/* Do the ClearCase thing... */
 		UCM.setContext( UCM.ContextType.CLEARTOOL );
 		
-		/* Setup the logger */
-        Logger logger = PraqmaLogger.getLogger(false);
-        logger.subscribeAll();
-        logger.setLocalLog( new File( "gittest.log") );
-        Cool.setLogger(logger);
         
         /*
         String viewtag = "OpenSCM_test";

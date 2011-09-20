@@ -38,19 +38,11 @@ public class CCTest4 {
 	
 	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, UnableToReplayException, UCMException, ElementDoesNotExistException, ElementNotCreatedException {
 		
-		logger.toStdOut( true );
 		new AVA();
 		
 		/* Do the ClearCase thing... */
 		UCM.setContext( UCM.ContextType.CLEARTOOL );
-		
-		/* Setup the logger */
-        Logger logger2 = PraqmaLogger.getLogger(false);
-        logger2.subscribeAll();
-        logger2.setLocalLog( new File( "gittest.log") );
-        Cool.setLogger(logger2);
-		
-		logger.toStdOut( true );
+
 		
 		String append = "1014";
 		File path = new File( "C:/Temp/views/" + append );

@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -19,6 +18,7 @@ import net.praqma.clearcase.ucm.entities.UCM;
 import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.util.debug.Logger;
 import net.praqma.util.debug.Logger.LogLevel;
+import net.praqma.util.debug.appenders.StreamAppender;
 import net.praqma.util.option.Option;
 import net.praqma.util.option.Options;
 import net.praqma.vcs.AVA;
@@ -51,6 +51,7 @@ import net.praqma.vcs.model.git.GitReplay;
  */
 public class SiemensDemo {
 	private static Logger logger = Logger.getLogger();
+	private static StreamAppender app = new StreamAppender( System.out );
 	
     static class MyShutdown extends Thread {
         public void run() {
@@ -88,7 +89,7 @@ public class SiemensDemo {
         
         o.parse( args );
         
-        logger.toStdOut( true );
+        Logger.addAppender( app );
 
         try {
             o.checkOptions();
@@ -99,17 +100,13 @@ public class SiemensDemo {
         }
 
         if( o.isVerbose() ) {
-        	logger.setMinLogLevel( LogLevel.DEBUG );
+        	app.setMinimumLevel( LogLevel.DEBUG );
         } else {
-        	logger.setMinLogLevel( LogLevel.INFO );
+        	app.setMinimumLevel( LogLevel.INFO );
         }
         
 		/* Do the ClearCase thing... */
 		UCM.setContext( UCM.ContextType.CLEARTOOL );
-		net.praqma.util.debug.PraqmaLogger.Logger plogger = net.praqma.util.debug.PraqmaLogger.getLogger();
-		plogger.subscribeAll();
-		plogger.setLocalLog(new File("demo.log"));
-		Cool.setLogger( plogger );
 		
 		new AVA();
 		

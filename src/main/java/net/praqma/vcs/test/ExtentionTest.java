@@ -13,7 +13,7 @@ public class ExtentionTest {
 	public static void main( String[] args ) {
 		new AVA();
 		AVA.getInstance().registerExtension( "Test", new PullListenerImpl() );
-		logger.setMinLogLevel( LogLevel.INFO );
+		
 		logger.log( "hej", LogLevel.DEBUG );
 		logger.log( "hej" );
 		PullListener.runPreCheckoutListener();

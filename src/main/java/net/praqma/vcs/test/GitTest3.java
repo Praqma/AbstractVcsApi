@@ -35,7 +35,6 @@ public class GitTest3 {
 	static net.praqma.util.debug.Logger logger = net.praqma.util.debug.Logger.getLogger();
 	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, UnableToReplayException, UCMException, ElementNotCreatedException {
 		
-		logger.toStdOut( true );
 		new AVA();
 		
         File view = new File( args[0] );
