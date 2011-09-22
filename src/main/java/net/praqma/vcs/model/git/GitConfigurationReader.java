@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.clearcase;
+package net.praqma.vcs.model.git;
 
 import java.io.File;
 
@@ -7,7 +7,6 @@ import org.w3c.dom.Element;
 import net.praqma.vcs.configuration.AbstractConfiguration;
 import net.praqma.vcs.configuration.AbstractConfigurationReader;
 import net.praqma.vcs.configuration.exception.ConfigurationException;
-import net.praqma.vcs.model.git.GitConfiguration;
 
 public class GitConfigurationReader extends AbstractConfigurationReader {
 

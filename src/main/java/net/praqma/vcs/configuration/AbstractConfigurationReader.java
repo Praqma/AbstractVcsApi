@@ -10,8 +10,8 @@ import org.w3c.dom.Element;
 import net.praqma.util.xml.XML;
 import net.praqma.vcs.configuration.exception.ConfigurationDoesNotExistException;
 import net.praqma.vcs.configuration.exception.ConfigurationException;
-import net.praqma.vcs.model.clearcase.GitConfigurationReader;
-import net.praqma.vcs.model.git.ClearCaseConfigurationReader;
+import net.praqma.vcs.model.clearcase.ClearCaseConfigurationReader;
+import net.praqma.vcs.model.git.GitConfigurationReader;
 
 public abstract class AbstractConfigurationReader extends XML {
 	
