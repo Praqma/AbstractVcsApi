@@ -11,7 +11,7 @@ public class ExtentionTest {
 	static Logger logger = Logger.getLogger();
 	
 	public static void main( String[] args ) {
-		new AVA();
+		new AVA(null);
 		AVA.getInstance().registerExtension( "Test", new PullListenerImpl() );
 		
 		logger.log( "hej", LogLevel.DEBUG );

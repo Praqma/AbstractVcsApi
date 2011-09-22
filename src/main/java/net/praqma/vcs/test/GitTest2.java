@@ -36,7 +36,7 @@ public class GitTest2 {
 	static net.praqma.util.debug.Logger logger = net.praqma.util.debug.Logger.getLogger();
 	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, UnableToReplayException, UCMException, ElementNotCreatedException {
 		
-		new AVA();
+		new AVA(null);
 
 		GitBranch branch = new GitBranch( new File( "c:/projects/monkit/branches" ), "master" );
 		

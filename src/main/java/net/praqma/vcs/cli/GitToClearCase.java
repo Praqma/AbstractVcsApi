@@ -32,6 +32,7 @@ import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
 import net.praqma.vcs.model.exceptions.UnableToReplayException;
 import net.praqma.vcs.model.git.GitBranch;
 import net.praqma.vcs.model.git.GitReplay;
+import net.praqma.vcs.persistence.XMLStrategy;
 
 public class GitToClearCase {
 	private static Logger logger = Logger.getLogger();
@@ -55,6 +56,8 @@ public class GitToClearCase {
         Option obaselinename = new Option( "baseline", "b", false, 1, "Foundation Baseline name" );
         Option ogit = new Option( "git", "g", true, 1, "Path to git repo" );
         
+        Option ointeractive = new Option( "interactive", "i", false, 1, "Interactive" );
+        
         o.setOption( oview );
         o.setOption( obaselinename );
         o.setOption( ovobname );
@@ -62,6 +65,7 @@ public class GitToClearCase {
         o.setOption( ochildstreamname );
         o.setOption( ogit );
         o.setOption( oviewtag );
+        o.setOption( ointeractive );
         
         o.setDefaultOptions();
         
@@ -86,7 +90,7 @@ public class GitToClearCase {
 		/* Do the ClearCase thing... */
 		UCM.setContext( UCM.ContextType.CLEARTOOL );
 		
-		new AVA();
+		new AVA( new XMLStrategy( new File( "ava.xml" ) ) );
 		
 		/* Setup ClearCase */
 		PVob pvob = ClearcaseVCS.bootstrap();
@@ -116,8 +120,10 @@ public class GitToClearCase {
         Date now = null;
         
         ClearcaseReplay cr = new ClearcaseReplay( ccbranch );
+        
+        boolean interactive = ointeractive.isUsed();
 		
-		while( true ) {
+		do {
 			if( now != null ) {
 				logger.info( "Getting commits after " + now );
 			}
@@ -135,6 +141,6 @@ public class GitToClearCase {
 	        logger.info( "Press any key to continue" );
 	        
 	        String s = stdin.readLine();
-		}
+		} while( interactive );
 	}
 }

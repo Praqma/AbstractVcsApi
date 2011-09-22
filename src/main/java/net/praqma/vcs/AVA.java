@@ -1,26 +1,43 @@
 package net.praqma.vcs;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import net.praqma.vcs.persistence.PersistenceStrategy;
 
 public class AVA {
 	
 	private static AVA instance;
 	
-	private boolean verbose = true;
-	
 	private List<Extension> extensionsList = new ArrayList<Extension>();
 	
-	public AVA() {
+	private PersistenceStrategy persistence;
+	
+	public AVA( PersistenceStrategy persistence ) {
 		if( instance != null ) {
 			throw new IllegalStateException( "Instance already defined" );
 		}
+		
+		this.persistence = persistence;
 		
 		instance = this;
 	}
 	
 	public static AVA getInstance() {
 		return instance;
+	}
+	
+	public PersistenceStrategy getPersistenceStrategy() {
+		return persistence;
+	}
+	
+	public Date getLastCommitDate() {
+		return persistence.getLastCommitDate();
+	}
+	
+	public void setLastCommitDate( Date date ) {
+		persistence.setLastCommitDate( date );
 	}
 	
 	public void registerExtension( String name, Extension ext ) {

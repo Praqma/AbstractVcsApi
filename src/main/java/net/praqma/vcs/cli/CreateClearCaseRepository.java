@@ -67,7 +67,7 @@ public class CreateClearCaseRepository {
 		/* Do the ClearCase thing... */
 		UCM.setContext( UCM.ContextType.CLEARTOOL );
 		
-		new AVA();
+		new AVA( null );
 		
 		/* Setup ClearCase */
 		PVob pvob = ClearcaseVCS.bootstrap();

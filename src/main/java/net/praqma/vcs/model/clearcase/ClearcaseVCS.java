@@ -64,6 +64,10 @@ public class ClearcaseVCS extends AbstractVCS {
 	public ClearcaseVCS( File location ) {
 		super( location );
 	}
+	
+	public static void setPVob( PVob pvob ) {
+		
+	}
 
 	/**
 	 * Create and initialize an instance of {@link ClearcaseVCS}
@@ -441,6 +445,10 @@ public class ClearcaseVCS extends AbstractVCS {
 	 */
 	public static PVob bootstrap() throws ElementNotCreatedException {
 		return bootstrap( ClearcaseVCS.pvobName, ClearcaseVCS.viewPath );
+	}
+	
+	public static PVob bootstrap( String pvobName ) throws ElementNotCreatedException {
+		return bootstrap( pvobName, ClearcaseVCS.viewPath );
 	}
 	
 	/**

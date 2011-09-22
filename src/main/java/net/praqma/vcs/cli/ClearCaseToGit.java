@@ -55,6 +55,9 @@ public class ClearCaseToGit {
         Option obaselinename = new Option( "baseline", "b", true, 1, "Foundation Baseline name for child stream" );
         Option ogit = new Option( "git", "g", true, 1, "Path to git repo" );
         
+        Option ointeractive = new Option( "interactive", "i", false, 1, "Interactive" );
+        Option ointerval = new Option( "interval", "I", false, 1, "Interval" );
+        
         o.setOption( oview );
         o.setOption( obaselinename );
         o.setOption( ovobname );
@@ -62,6 +65,8 @@ public class ClearCaseToGit {
         o.setOption( ochildstreamname );
         o.setOption( ogit );
         o.setOption( oviewtag );
+        o.setOption( ointeractive );
+        o.setOption( ointerval );
         
         o.setDefaultOptions();
         
@@ -86,7 +91,7 @@ public class ClearCaseToGit {
 		/* Do the ClearCase thing... */
 		UCM.setContext( UCM.ContextType.CLEARTOOL );
 		
-		new AVA();
+		new AVA( null );
 		
 		/* Setup ClearCase */
 		PVob pvob = ClearcaseVCS.bootstrap();
@@ -116,6 +121,9 @@ public class ClearCaseToGit {
         Date now = null;
         
         GitReplay gr = new GitReplay( gitbranch );
+        
+        boolean interactive = ointeractive.isUsed();
+        int interval = ointerval.getInteger();
 		
 		while( true ) {
 			if( now != null ) {

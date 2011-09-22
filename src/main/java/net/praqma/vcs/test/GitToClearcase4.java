@@ -39,7 +39,7 @@ public class GitToClearcase4 {
 			System.exit( 1 );
 		}
 		
-		new AVA();
+		new AVA(null);
 		//logger.setMinLogLevel( LogLevel.INFO );
 		
 		String vname = args[0];

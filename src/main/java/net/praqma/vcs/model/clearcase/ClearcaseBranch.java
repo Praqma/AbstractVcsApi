@@ -199,7 +199,7 @@ public class ClearcaseBranch extends AbstractBranch{
 			initialize(false);
 		} catch (ElementDoesNotExistException e) {
 			/* This shouldn't be possible */
-			logger.fatal( "False shouldn't throw exist exceptions!!!" );
+			logger.fatal( "FAIL!! Shouldn't throw exist exceptions!!!" );
 		}
 	}
 	

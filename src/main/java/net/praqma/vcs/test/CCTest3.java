@@ -37,7 +37,7 @@ public class CCTest3 {
 	
 	public static void main( String[] args ) throws UnableToPerformException, URISyntaxException, OperationNotSupportedException, MalformedURLException, OperationNotImplementedException, UnableToReplayException, UCMException, ElementDoesNotExistException, ElementNotCreatedException {
 		
-		new AVA();
+		new AVA(null);
 		
 		File gitpath = new File( "c:\\temp\\git_tests\\repo1" );
 		

@@ -2,6 +2,10 @@ package net.praqma.vcs.model;
 
 public class Repository {
 	private String location;
+	
+	/**
+	 * Sometimes the name equals the branch name. This is the case with Git
+	 */
 	private String name = "";
 	
 	public Repository( String location, String name ) {
@@ -18,6 +22,6 @@ public class Repository {
 	}
 	
 	public String toString() {
-		return location;
+		return "(" + name + ")" + location;
 	}
 }

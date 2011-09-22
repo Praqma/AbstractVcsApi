@@ -45,7 +45,7 @@ public class CCTest5 {
 			System.exit( 1 );
 		}
 		
-		new AVA();
+		new AVA(null);
 		
 		/* Do the ClearCase thing... */
 		UCM.setContext( UCM.ContextType.CLEARTOOL );

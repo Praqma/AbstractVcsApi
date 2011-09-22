@@ -17,12 +17,14 @@ import net.praqma.clearcase.ucm.entities.Activity;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Version;
 import net.praqma.util.debug.Logger;
+import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
 import net.praqma.vcs.model.ChangeSetElement;
 import net.praqma.vcs.model.ChangeSetElement.Status;
 import net.praqma.vcs.model.clearcase.listeners.ClearcaseReplayListener;
 import net.praqma.vcs.model.exceptions.UnableToReplayException;
+import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
 
 public class ClearcaseReplay extends AbstractReplay {
 	
@@ -34,6 +36,15 @@ public class ClearcaseReplay extends AbstractReplay {
 		super( branch );
 		
 		this.ccBranch = branch;
+	}
+	
+	public ClearcaseReplay( AbstractBranch branch ) throws UnsupportedBranchException {
+		super( branch );
+		if( branch instanceof ClearcaseBranch ) {
+			this.ccBranch = (ClearcaseBranch)branch;
+		} else {
+			throw new UnsupportedBranchException( "ClearCase replays only supports ClearCase branches" );
+		}
 	}
 	
 	public void setBranch( ClearcaseBranch branch ) {

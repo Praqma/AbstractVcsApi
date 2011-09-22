@@ -35,7 +35,7 @@ public class GitToClearcase {
 			System.exit( 1 );
 		}
 		
-		new AVA();
+		new AVA(null);
 		
 		String vname = args[0];
 		String cname = args[1];

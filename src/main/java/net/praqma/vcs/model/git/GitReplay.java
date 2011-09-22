@@ -9,10 +9,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
 import net.praqma.vcs.model.ChangeSetElement;
+import net.praqma.vcs.model.clearcase.ClearcaseBranch;
 import net.praqma.vcs.model.exceptions.UnableToReplayException;
+import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
 import net.praqma.vcs.model.git.api.Git;
 import net.praqma.vcs.model.git.exceptions.GitException;
 
@@ -20,6 +23,14 @@ public class GitReplay extends AbstractReplay{
 
 	public GitReplay( GitBranch branch ) {
 		super( branch );
+	}
+	
+	public GitReplay( AbstractBranch branch ) throws UnsupportedBranchException {
+		super( branch );
+		if( branch instanceof GitBranch ) {
+		} else {
+			throw new UnsupportedBranchException( "Git replays only supports Git branches" );
+		}
 	}
 
 	@Override
