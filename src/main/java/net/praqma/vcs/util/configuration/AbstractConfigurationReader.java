@@ -1,4 +1,4 @@
-package net.praqma.vcs.configuration;
+package net.praqma.vcs.util.configuration;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,10 +8,10 @@ import java.util.Map;
 import org.w3c.dom.Element;
 
 import net.praqma.util.xml.XML;
-import net.praqma.vcs.configuration.exception.ConfigurationDoesNotExistException;
-import net.praqma.vcs.configuration.exception.ConfigurationException;
-import net.praqma.vcs.model.clearcase.ClearCaseConfigurationReader;
-import net.praqma.vcs.model.git.GitConfigurationReader;
+import net.praqma.vcs.util.configuration.exception.ConfigurationDoesNotExistException;
+import net.praqma.vcs.util.configuration.exception.ConfigurationException;
+import net.praqma.vcs.util.configuration.implementation.ClearCaseConfigurationReader;
+import net.praqma.vcs.util.configuration.implementation.GitConfigurationReader;
 
 public abstract class AbstractConfigurationReader extends XML {
 	

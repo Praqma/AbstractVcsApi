@@ -88,9 +88,6 @@ public class GitReplay extends AbstractReplay{
 					        out.write(buf, 0, len);
 					    }
 						
-						//ps = new PrintStream( new BufferedOutputStream(new FileOutputStream(version.getVersion(), true) ) );
-						//ps.println( commit.getKey() + " - " + commit.getAuthorDate() );
-						//ps.close();
 					} catch (FileNotFoundException e) {
 						success = false;
 						logger.error( "Could not write to file(" + sourcefile + "): " + e );
@@ -110,9 +107,21 @@ public class GitReplay extends AbstractReplay{
 					break;
 					
 				case DELETED:
+					try {
+						Git.remove( targetfile, branch.getPath() );
+					} catch (GitException e) {
+						logger.warning( e.getMessage() );
+						success = false;
+					}
 					break;
 					
 				case RENAMED:
+					try {
+						Git.move( sourcefile, targetfile, branch.getPath() );
+					} catch (GitException e) {
+						logger.warning( e.getMessage() );
+						success = false;
+					}
 					break;
 				}
 			}

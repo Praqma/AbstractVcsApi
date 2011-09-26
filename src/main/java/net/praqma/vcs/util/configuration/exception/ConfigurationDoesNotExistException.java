@@ -1,4 +1,4 @@
-package net.praqma.vcs.configuration.exception;
+package net.praqma.vcs.util.configuration.exception;
 
 public class ConfigurationDoesNotExistException extends Exception {
 

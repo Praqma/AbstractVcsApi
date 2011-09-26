@@ -1,14 +1,16 @@
-package net.praqma.vcs.model.git;
+package net.praqma.vcs.util.configuration.implementation;
 
 import java.io.File;
 
-import net.praqma.vcs.configuration.AbstractConfiguration;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractReplay;
 import net.praqma.vcs.model.clearcase.ClearcaseReplay;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
+import net.praqma.vcs.model.git.GitBranch;
+import net.praqma.vcs.model.git.GitReplay;
+import net.praqma.vcs.util.configuration.AbstractConfiguration;
 
 public class GitConfiguration extends AbstractConfiguration {
 	

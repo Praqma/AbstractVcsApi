@@ -126,6 +126,14 @@ public class Git {
 		return branches;
 	}
 	
+	public static void move( File file, File destination, File viewContext ) throws GitException {
+		try {
+			CommandLine.run( "git mv " + file + " " + destination, viewContext );
+		} catch( AbnormalProcessTerminationException e ) {
+			throw new GitException( "Could not move " + file + " : " + e.getMessage() );
+		}
+	}
+	
 	/**
 	 * Pull from a remote location, where location is either an address or a remote
 	 * @param branch The remote branch name
@@ -137,7 +145,15 @@ public class Git {
 		try {
 			CommandLine.run( "git pull " + location + " " + branch, viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new GitException( "Could pull " + branch + " from " + location + " : " + e.getMessage() );
+			throw new GitException( "Could not pull " + branch + " from " + location + " : " + e.getMessage() );
+		}
+	}
+	
+	public static void remove( File file, File viewContext ) throws GitException {
+		try {
+			CommandLine.run( "git rm " + file, viewContext ); // What about directories? -r
+		} catch( AbnormalProcessTerminationException e ) {
+			throw new GitException( "Could not remove " + file + " : " + e.getMessage() );
 		}
 	}
 	

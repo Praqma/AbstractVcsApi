@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.clearcase;
+package net.praqma.vcs.util.configuration.implementation;
 
 import java.io.File;
 
@@ -8,13 +8,15 @@ import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.entities.UCMEntity;
-import net.praqma.vcs.configuration.AbstractConfiguration;
-import net.praqma.vcs.configuration.exception.ConfigurationException;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractReplay;
+import net.praqma.vcs.model.clearcase.ClearcaseBranch;
+import net.praqma.vcs.model.clearcase.ClearcaseReplay;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
+import net.praqma.vcs.util.configuration.AbstractConfiguration;
+import net.praqma.vcs.util.configuration.exception.ConfigurationException;
 
 public class ClearCaseConfiguration extends AbstractConfiguration {
 	private String viewtag;

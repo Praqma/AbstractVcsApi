@@ -1,12 +1,12 @@
-package net.praqma.vcs.model.git;
+package net.praqma.vcs.util.configuration.implementation;
 
 import java.io.File;
 
 import org.w3c.dom.Element;
 
-import net.praqma.vcs.configuration.AbstractConfiguration;
-import net.praqma.vcs.configuration.AbstractConfigurationReader;
-import net.praqma.vcs.configuration.exception.ConfigurationException;
+import net.praqma.vcs.util.configuration.AbstractConfiguration;
+import net.praqma.vcs.util.configuration.AbstractConfigurationReader;
+import net.praqma.vcs.util.configuration.exception.ConfigurationException;
 
 public class GitConfigurationReader extends AbstractConfigurationReader {
 

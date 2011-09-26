@@ -22,10 +22,6 @@ import net.praqma.util.debug.appenders.StreamAppender;
 import net.praqma.util.option.Option;
 import net.praqma.util.option.Options;
 import net.praqma.vcs.AVA;
-import net.praqma.vcs.configuration.AbstractConfigurationReader;
-import net.praqma.vcs.configuration.Configuration;
-import net.praqma.vcs.configuration.exception.ConfigurationDoesNotExistException;
-import net.praqma.vcs.configuration.exception.ConfigurationException;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
@@ -42,6 +38,10 @@ import net.praqma.vcs.model.git.GitBranch;
 import net.praqma.vcs.model.git.GitReplay;
 import net.praqma.vcs.persistence.XMLStrategy;
 import net.praqma.vcs.util.Cycle;
+import net.praqma.vcs.util.configuration.AbstractConfigurationReader;
+import net.praqma.vcs.util.configuration.Configuration;
+import net.praqma.vcs.util.configuration.exception.ConfigurationDoesNotExistException;
+import net.praqma.vcs.util.configuration.exception.ConfigurationException;
 
 public class Simple {
 	private static Logger logger = Logger.getLogger();
