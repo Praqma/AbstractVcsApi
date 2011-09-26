@@ -61,6 +61,7 @@ public class GitReplay extends AbstractReplay{
 				
 				switch( cse.getStatus() ) {
 				case CREATED:
+					logger.debug( "Create element" );
 					try {
 						targetfile.getParentFile().mkdirs();
 						targetfile.createNewFile();
@@ -75,7 +76,7 @@ public class GitReplay extends AbstractReplay{
 					}
 					
 				case CHANGED:
-					
+					logger.debug( "Change element" );
 					InputStream in = null;
 					OutputStream out = null;
 					try {
@@ -107,6 +108,7 @@ public class GitReplay extends AbstractReplay{
 					break;
 					
 				case DELETED:
+					logger.debug( "Delete element" );
 					try {
 						Git.remove( targetfile, branch.getPath() );
 					} catch (GitException e) {
@@ -116,14 +118,60 @@ public class GitReplay extends AbstractReplay{
 					break;
 					
 				case RENAMED:
+					logger.debug( "Rename element" );
+					File oldfile = new File( branch.getPath(), cse.getRenameFromFile().toString() );
+					
+					/* Write before rename */
+					write( sourcefile, oldfile );
+					
+					/* Make sure the target directory exists */
+					if( !targetfile.getParentFile().exists() ) {
+						logger.debug( "The directory " + targetfile.getParentFile() + " does not exist. Creating it." );
+						targetfile.getParentFile().mkdirs();
+					}
+					
 					try {
-						Git.move( sourcefile, targetfile, branch.getPath() );
+						Git.move( oldfile, targetfile, branch.getPath() );
 					} catch (GitException e) {
 						logger.warning( e.getMessage() );
 						success = false;
 					}
 					break;
 				}
+			}
+			
+			return success;
+		}
+		
+		private boolean write( File source, File target ) {
+			InputStream in = null;
+			OutputStream out = null;
+			boolean success = true;
+			
+			try {
+				in = new FileInputStream( source );
+				out = new FileOutputStream( target );
+				
+			    byte[] buf = new byte[1024];
+			    int len;
+			    while ((len = in.read(buf)) > 0) {
+			        out.write(buf, 0, len);
+			    }
+				
+			} catch (FileNotFoundException e) {
+				success = false;
+				logger.error( "Could not write to file(" + source + "): " + e );
+			} catch (IOException e) {
+				success = false;
+				logger.error( "Could not write to file(" + source + "): " + e );
+			} finally {
+				try {
+					in.close();
+					out.close();
+				} catch (Exception e) {
+					logger.warning( "Could not close files: " + e.getMessage() );
+				}
+				
 			}
 			
 			return success;

@@ -8,6 +8,9 @@ import net.praqma.vcs.model.exceptions.UnableToReplayException;
 
 public abstract class AbstractReplay {
 	
+	/**
+	 * The branch of the target repository
+	 */
 	protected AbstractBranch branch;
 	
 	protected Logger logger = Logger.getLogger();

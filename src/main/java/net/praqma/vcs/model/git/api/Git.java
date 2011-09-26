@@ -65,7 +65,7 @@ public class Git {
 	
 	public static void createCommit( String message, File viewContext ) throws GitException {
 		try {
-			CommandLine.run( "git commit -a -m " + message, viewContext );
+			CommandLine.run( "git commit -a -m \"" + message + "\"", viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
 			throw new GitException( "Could not commit " + message + ": " + e.getMessage() );
 		}	
@@ -126,6 +126,13 @@ public class Git {
 		return branches;
 	}
 	
+	/**
+	 * Move or rename a file from file to destination
+	 * @param file
+	 * @param destination
+	 * @param viewContext
+	 * @throws GitException
+	 */
 	public static void move( File file, File destination, File viewContext ) throws GitException {
 		try {
 			CommandLine.run( "git mv " + file + " " + destination, viewContext );

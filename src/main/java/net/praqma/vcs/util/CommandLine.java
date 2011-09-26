@@ -13,17 +13,14 @@ public class CommandLine {
 	private static Logger logger = Logger.getLogger();
 	
 	public static CmdResult run(  String cmd ) throws CommandLineException, AbnormalProcessTerminationException {
-		logger.debug(" $ " + cmd );
 		return cli.run( cmd, null, false, false );
 	}
 	
 	public static CmdResult run(  String cmd, File dir ) throws CommandLineException, AbnormalProcessTerminationException {
-		logger.debug(" $ " + cmd );
 		return cli.run( cmd, dir, false, false );
 	}
 	
 	public static CmdResult run(  String cmd, File dir, boolean merge, boolean ignore ) throws CommandLineException, AbnormalProcessTerminationException {
-		logger.debug(" $ " + cmd );
 		return cli.run( cmd, dir, merge, ignore );
 	}
 }
