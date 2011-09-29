@@ -12,6 +12,7 @@ import net.praqma.vcs.util.configuration.exception.ConfigurationDoesNotExistExce
 import net.praqma.vcs.util.configuration.exception.ConfigurationException;
 import net.praqma.vcs.util.configuration.implementation.ClearCaseConfigurationReader;
 import net.praqma.vcs.util.configuration.implementation.GitConfigurationReader;
+import net.praqma.vcs.util.configuration.implementation.MercurialConfigurationReader;
 
 public abstract class AbstractConfigurationReader extends XML {
 	
@@ -29,6 +30,7 @@ public abstract class AbstractConfigurationReader extends XML {
 	static {
 		readers.put( "clearcase", ClearCaseConfigurationReader.class );
 		readers.put( "git", GitConfigurationReader.class );
+		readers.put( "mercurial", MercurialConfigurationReader.class );
 	}
 	
 	/**

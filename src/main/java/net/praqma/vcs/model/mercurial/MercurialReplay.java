@@ -17,6 +17,7 @@ import net.praqma.vcs.model.exceptions.UnableToReplayException;
 import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
 import net.praqma.vcs.model.mercurial.api.Mercurial;
 import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
+import net.praqma.vcs.util.IO;
 
 public class MercurialReplay extends AbstractReplay{
 
@@ -28,7 +29,7 @@ public class MercurialReplay extends AbstractReplay{
 		super( branch );
 		if( branch instanceof MercurialBranch ) {
 		} else {
-			throw new UnsupportedBranchException( "Git replays only supports Mercurial branches" );
+			throw new UnsupportedBranchException( "Mercurial replays only supports Mercurial branches" );
 		}
 	}
 
@@ -69,7 +70,7 @@ public class MercurialReplay extends AbstractReplay{
 						logger.warning( "Could not create file: " + e.getMessage() );
 						/* Continue anyway */
 					} catch (MercurialException e) {
-						logger.error( "Could not add " + targetfile + " to git" );
+						logger.error( "Could not add " + targetfile + " to Mercurial" );
 						success = false;
 						continue;
 					}
@@ -121,7 +122,7 @@ public class MercurialReplay extends AbstractReplay{
 					File oldfile = new File( branch.getPath(), cse.getRenameFromFile().toString() );
 					
 					/* Write before rename */
-					write( sourcefile, oldfile );
+					IO.write( sourcefile, oldfile );
 					
 					/* Make sure the target directory exists */
 					if( !targetfile.getParentFile().exists() ) {
@@ -142,39 +143,7 @@ public class MercurialReplay extends AbstractReplay{
 			return success;
 		}
 		
-		private boolean write( File source, File target ) {
-			InputStream in = null;
-			OutputStream out = null;
-			boolean success = true;
-			
-			try {
-				in = new FileInputStream( source );
-				out = new FileOutputStream( target );
-				
-			    byte[] buf = new byte[1024];
-			    int len;
-			    while ((len = in.read(buf)) > 0) {
-			        out.write(buf, 0, len);
-			    }
-				
-			} catch (FileNotFoundException e) {
-				success = false;
-				logger.error( "Could not write to file(" + source + "): " + e );
-			} catch (IOException e) {
-				success = false;
-				logger.error( "Could not write to file(" + source + "): " + e );
-			} finally {
-				try {
-					in.close();
-					out.close();
-				} catch (Exception e) {
-					logger.warning( "Could not close files: " + e.getMessage() );
-				}
-				
-			}
-			
-			return success;
-		}
+
 		
 		public boolean cleanup( boolean status ) {
 			if( status ) {

@@ -19,9 +19,9 @@ public class MercurialVCS extends AbstractVCS {
 	}
 	
 	public static MercurialVCS create( File location) throws ElementNotCreatedException, ElementDoesNotExistException {
-		MercurialVCS git = new MercurialVCS( location );
-		git.initialize();
-		return git;
+		MercurialVCS hg = new MercurialVCS( location );
+		hg.initialize();
+		return hg;
 	}
 	
 	public boolean exists() {
@@ -35,7 +35,7 @@ public class MercurialVCS extends AbstractVCS {
 	}
 	
 	public void initialize( boolean get ) throws ElementNotCreatedException, ElementDoesNotExistException {
-		logger.info( "Initializing git repository " + location );
+		logger.info( "Initializing Mercurial repository " + location );
 		InitializeImpl init = new InitializeImpl(get);
 		doInitialize( init );
 	}
@@ -51,7 +51,7 @@ public class MercurialVCS extends AbstractVCS {
 				Mercurial.initialize( location.getAbsoluteFile() );
 			} catch( MercurialException e ) {
 				logger.warning( "Could not initialize repository at " + location.getAbsolutePath() );
-				throw new ElementNotCreatedException( "Could not initialize Git repository: " + e.getMessage() );
+				throw new ElementNotCreatedException( "Could not initialize Mercurial repository: " + e.getMessage() );
 			}
 			return true;
 		}
@@ -72,7 +72,7 @@ public class MercurialVCS extends AbstractVCS {
 			initialize(true);
 		} else {
 			if( !exists() ) {
-				throw new ElementDoesNotExistException( "Git repository at " + location + " does not exist" );
+				throw new ElementDoesNotExistException( "Mercurial repository at " + location + " does not exist" );
 			}
 		}
 	}
