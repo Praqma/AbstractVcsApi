@@ -1,19 +1,24 @@
 package net.praqma.vcs.model.mercurial.api;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import net.praqma.util.debug.Logger;
 import net.praqma.util.execute.AbnormalProcessTerminationException;
 import net.praqma.vcs.model.Repository;
+import net.praqma.vcs.model.exceptions.VCSException.FailureType;
+import net.praqma.vcs.model.git.exceptions.GitException;
 import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
 import net.praqma.vcs.util.CommandLine;
 
 public class Mercurial {
 
 	private static Logger logger = Logger.getLogger();
+	private static final SimpleDateFormat datetimeformat  = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
 	
 	public static void add( File file, File viewContext ) throws MercurialException {
 		try {
@@ -37,9 +42,9 @@ public class Mercurial {
 	
 	private static final Pattern rx_branchExists = Pattern.compile( "^.*?branch \\w+ already exists.*?$" );
 	
-	public static void createCommit( String message, File viewContext ) throws MercurialException {
+	public static void createCommit( String message, Date date, File viewContext ) throws MercurialException {
 		try {
-			CommandLine.run( "hg commit -m \"" + message + "\"", viewContext );
+			CommandLine.run( "hg commit -m \"" + message + "\"" + ( date != null ? " --date=\"" + datetimeformat.format( date ) + "\"" : "" ), viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
 			throw new MercurialException( "Could not commit " + message + ": " + e.getMessage() );
 		}	
@@ -82,8 +87,26 @@ public class Mercurial {
 		}		
 	}
 	
-	public static void getCommits() {
-		
+	public static List<String> getCommitHashes( Date from, Date to, File viewContext ) throws MercurialException {
+		try {
+			String dateString = "";
+			if( from != null ) {
+				dateString = datetimeformat.format( from );
+			}
+			if( to != null ) {
+				if( dateString.length() > 0 ) {
+					dateString += " to " + datetimeformat.format( to );
+				} else {
+					dateString = datetimeformat.format( to );
+				}
+			}
+			return CommandLine.run( "hg log --rev 0: --template '{node}\n'" + ( dateString.length() > 0 ? " --date=\"" + dateString : "" ), viewContext ).stdoutList;
+		} catch( AbnormalProcessTerminationException e ) {
+			if( e.getMessage().matches( "^fatal: bad default revision 'HEAD'$" ) ) {
+				throw new MercurialException( "Could not get hashes: " + e.getMessage(), FailureType.NO_OUTPUT );
+			}
+			throw new MercurialException( "Could not get hashes: " + e.getMessage() );
+		}
 	}
 	
 

@@ -179,7 +179,7 @@ public class MercurialReplay extends AbstractReplay{
 		public boolean cleanup( boolean status ) {
 			if( status ) {
 				try {
-					Mercurial.createCommit( commit.getTitle(), branch.getPath() );
+					Mercurial.createCommit( commit.getTitle(), commit.getAuthorDate(), branch.getPath() );
 					return true;
 				} catch (MercurialException e) {
 					return false;

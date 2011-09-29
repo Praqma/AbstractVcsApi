@@ -11,10 +11,8 @@ import net.praqma.vcs.model.Repository;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.interfaces.Cleanable;
 import net.praqma.vcs.model.mercurial.api.Mercurial;
 import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
-import net.praqma.vcs.util.CommandLine;
 import net.praqma.vcs.util.Utils;
 
 public class MercurialBranch extends AbstractBranch{
@@ -95,17 +93,10 @@ public class MercurialBranch extends AbstractBranch{
 				try {
 					Mercurial.pull( parent.getLocation(), parent.getName(), localRepositoryPath );
 				} catch( MercurialException e ) {
-					logger.warning( "Could not initialize Git branch " + name + " from remote " + parent.getName() + ": " + e.getMessage() );
-					throw new ElementNotCreatedException( "Could not initialize Git branch: " + e.getMessage() );
+					logger.warning( "Could not initialize Mercurial branch " + name + " from remote " + parent.getName() + ": " + e.getMessage() );
+					throw new ElementNotCreatedException( "Could not initialize Mercurial branch: " + e.getMessage() );
 				}
 				
-			} else {
-				/*
-				CommandLine.run( "git symbolic-ref HEAD refs/heads/" + name );
-				File index = new File( ".git/index" );
-				index.delete();
-				CommandLine.run( "git clean -fdx" );
-				*/
 			}
 			
 			return true;
@@ -121,7 +112,7 @@ public class MercurialBranch extends AbstractBranch{
 
 
 		public boolean update() {
-			logger.debug( "GIT: perform checkout" );
+			logger.debug( "Mercurial: perform checkout" );
 			
 			if( parent == null ) {
 				logger.info( "No parent given, nothing to check out" );
@@ -130,10 +121,9 @@ public class MercurialBranch extends AbstractBranch{
 			
 			try {
 				Mercurial.pull( parent.getLocation(), name, localRepositoryPath );
-				//Git.checkoutRemoteBranch( name, parent.getName() + "/" + name, localRepositoryPath );
 			} catch (MercurialException e) {
-				System.err.println( "Could not pull git branch" );
-				logger.warning( "Could not pull git branch" );
+				System.err.println( "Could not pull Mercurial branch" );
+				logger.warning( "Could not pull Mercurial branch" );
 				return false;
 			}
 
@@ -164,20 +154,14 @@ public class MercurialBranch extends AbstractBranch{
 	
 	@Override
 	public List<AbstractCommit> getCommits( boolean load, Date offset ) {
-		logger.info( "Getting git commits for branch " + name );
+		logger.info( "Getting Mercurial commits for branch " + name );
 		
-		String cmd = "";
-		cmd = "git rev-list --no-merges --reverse --all";
-
 		List<String> cs = null;
 		try {
-			cs = CommandLine.run( cmd, localRepositoryPath.getAbsoluteFile() ).stdoutList;
-		} catch( Exception e ) {
-			/* It is probably just empty */
-			cs = new ArrayList<String>();
+			cs = Mercurial.getCommitHashes( offset, null, localRepositoryPath.getAbsoluteFile() );
+		} catch (MercurialException e) {
+			logger.warning( "Could not get hashes" );
 		}
-		
-		//Collections.reverse( cs );
 		
 		List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
 		
@@ -187,13 +171,6 @@ public class MercurialBranch extends AbstractBranch{
 			MercurialCommit commit = new MercurialCommit( cs.get( i ), MercurialBranch.this, i );
 			if( load ) {
 				commit.load();
-				
-				/* TODO For now we skip old commits by loading them and checks the author date */
-				if( offset != null ) {
-					if( commit.getAuthorDate().before( offset ) ) {
-						continue;
-					}
-				}
 			}
 			
 			commits.add( commit );

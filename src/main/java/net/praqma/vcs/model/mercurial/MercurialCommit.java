@@ -1,8 +1,15 @@
 package net.praqma.vcs.model.mercurial;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,92 +54,98 @@ public class MercurialCommit extends AbstractCommit {
 		}
 
 		public boolean perform() {
-			logger.debug( "GIT: perform load" );
+			logger.debug( "Mercurial: perform load" );
 			
 			
-			String cmd = "git show -M90% --numstat --summary --pretty=format:\"%H%n%P%n%aN <%ae>%n%cN <%ce>%n%at%n%ct%n%s%nLISTINGCHANGES\" " + MercurialCommit.this.key;
+			String cmd = "hg log --rev " + MercurialCommit.this.key +  " --template '{parents}{author}\n{date|isodate}\n{files}\n{file_adds}\n{file_dels}\n{file_copies}\n{desc}' ";
 			List<String> result = CommandLine.run( cmd, branch.getPath() ).stdoutList;
 			
 			if( result.size() < 8 ) {
 				
 			} else {
-				MercurialCommit.this.parentKey = result.get( 1 );
-				MercurialCommit.this.author = result.get( 2 );
-				MercurialCommit.this.committer = result.get( 3 );
-				MercurialCommit.this.authorDate = new Date( (long)Integer.parseInt( result.get( 4 ) ) * 1000 );
-				MercurialCommit.this.committerDate = new Date( (long)Integer.parseInt( result.get( 5 ) ) * 1000 );
+				MercurialCommit.this.parentKey = result.get( 0 );
+				MercurialCommit.this.author = result.get( 1 );
+				MercurialCommit.this.committer = result.get( 1 );
+				Date date = null;
+				try {
+					date = DateFormat.getInstance().parse( result.get( 2 ) );
+				} catch (ParseException e1) {
+					logger.warning( "Could not parse date. Defaulting to now" );
+					date = new Date();
+				}
+				MercurialCommit.this.authorDate = date;
+				MercurialCommit.this.committerDate = date;
 
-				MercurialCommit.this.title = result.get( 6 );
+				MercurialCommit.this.title = result.get( 7 );
 				
-				/* Fetch change set */				
-				for(int i = 8 ; i < result.size() ; i++) {
-					
-					Matcher m = rx_getChangeFile.matcher( result.get( i ) );
-					if( m.find() ) {
-						logger.debug("Line(change): " + result.get( i ));
-						ChangeSetElement cse = findRename(m.group(3));
-						if( cse != null ) {
-							MercurialCommit.this.changeSet.put( cse.getFile().toString(), cse );
-						} else {
-							MercurialCommit.this.changeSet.put( m.group(3), new ChangeSetElement( new File( m.group(3) ), Status.CHANGED ) );
-						}
-						continue;
-					}
-					
-					Matcher m2 = rx_getCreateFile.matcher( result.get( i ) );
-					if( m2.find() ) {
-						logger.debug("Line(create): " + result.get( i ));
-						MercurialCommit.this.changeSet.put( m2.group(1), new ChangeSetElement( new File( m2.group(1) ), Status.CREATED ) );
-						continue;
-					}
-					
-					Matcher m3 = rx_getDeleteFile.matcher( result.get( i ) );
-					if( m3.find() ) {
-						logger.debug("Line(delete): " + result.get( i ));
-						MercurialCommit.this.changeSet.put( m3.group(1), new ChangeSetElement( new File( m3.group(1) ), Status.DELETED ) );
-						continue;
-					}
-					
-					Matcher m4 = rx_getRenameFile.matcher( result.get( i ) );
-					if( m4.find() ) {
-						logger.debug("Line(rename): " + result.get( i ));
-						Matcher m5 = rx_renameFile.matcher( m4.group( 1 ) );
-						if( m5.find() ) {
-							String[] names = m5.group(2).split( "=>" );
-							logger.debug( "WHOOP: " + names[0] + "/" + names[1] );
-							String newFilename = m5.group(1) + names[1].trim() + m5.group(3);
-							String oldFilename = m5.group(1) + names[1].trim() + m5.group(3);
-							ChangeSetElement cse = new ChangeSetElement( new File( newFilename ), Status.RENAMED );
-							cse.setRenameFromFile( new File( oldFilename ) );
-							MercurialCommit.this.changeSet.put( m3.group(1), cse );
-						}
-						//GitCommit.this.changeSet.put( m3.group(1), new ChangeSetElement( new File( m3.group(1) ), Status.DELETED ) );
-						continue;
-					}
+				/* Get total changeset */
+				String[] files = result.get( 3 ).split( "\\s+" );
+				
+				/* Get added */
+				String[] a = result.get( 4 ).split( "\\s+" );
+				Set<String> added = new HashSet<String>( Arrays.asList( a ) );
+				
+				/* Get deletes */
+				String[] d = result.get( 5 ).split( "\\s+" );
+				Set<String> deletes = new HashSet<String>( Arrays.asList( d ) );
+				
+				/* Get moves */
+				/* To, From */
+				Pattern p = Pattern.compile( "(.*?)\\((.*?)\\)" );
+				Matcher m1 = p.matcher( result.get( 6 ) );
+				Set<String> movesFrom = new HashSet<String>();
+				Set<String> movesTo = new HashSet<String>();
+				Map<String, String> moves = new HashMap<String, String>();
+				while( m1.find() ) {
+					moves.put( m1.group(1).trim(), m1.group(2).trim() );
+					movesTo.add( m1.group(1).trim() );
+					movesFrom.add( m1.group(2).trim() );			
 				}
 				
+				for( String file : files ) {
+					
+					/* The file has been added */
+					if( added.contains( file ) ) {
+						/* Detecting a move to */
+						if( movesTo.contains( file ) ) {
+							logger.debug( "Moving " + moves.get( file ) + " to " + file );
+							
+							ChangeSetElement cse = new ChangeSetElement( new File( file ), Status.RENAMED );
+							cse.setRenameFromFile( new File( moves.get( file ) ) );
+							MercurialCommit.this.changeSet.put( file, cse );
+						/* Just a plain add */
+						} else {
+							logger.debug( "Adding " + file );
+							MercurialCommit.this.changeSet.put( file, new ChangeSetElement( new File( file ), Status.CREATED ) );
+						}
+						
+						continue;
+					}
+					
+					/* The file has been deleted */
+					if( deletes.contains( file )) {
+						/* A move from. This is essentially indifferent, it is handled elsewhere */
+						if( movesFrom.contains( file ) ) {
+							logger.debug( file + " has been deleted" );
+							/* no op */
+						/* A regular delete */
+						} else {
+							MercurialCommit.this.changeSet.put( file, new ChangeSetElement( new File( file ), Status.DELETED ) );
+						}
+						
+						continue;
+					}
+					
+					/* Nothing else applies, this is an ordinary change */
+					MercurialCommit.this.changeSet.put( file, new ChangeSetElement( new File( file ), Status.CHANGED ) );
+				}
+								
 				result.clear();
 			}
 			
 			return true;
 		}
 	}
-	
-	private ChangeSetElement findRename( String line ) {
-		logger.debug("Line: " + line);
-		Matcher m = rx_renameFile.matcher( line );
-		if( m.find() ) {
-			String[] names = m.group(2).split( "=>" );
-			logger.debug( "WHOOP: " + names[0] + "/" + names[1] );
-			String newFilename = m.group(1) + names[1].trim() + m.group(3);
-			String oldFilename = m.group(1) + names[0].trim() + m.group(3);
-			ChangeSetElement cse = new ChangeSetElement( new File( newFilename ), Status.RENAMED );
-			cse.setRenameFromFile( new File( oldFilename ) );
-		
-			return cse;
-		}
 
-		return null;
-	}
 
 }

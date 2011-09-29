@@ -1,6 +1,9 @@
 package net.praqma.vcs.model.mercurial.exceptions;
 
-public class MercurialException extends Exception {
+import net.praqma.vcs.model.exceptions.VCSException;
+import net.praqma.vcs.model.exceptions.VCSException.FailureType;
+
+public class MercurialException extends VCSException {
 
 	private static final long serialVersionUID = 5511630514361323388L;
 	
@@ -12,4 +15,7 @@ public class MercurialException extends Exception {
 		super(s);
 	}
 	
+	public MercurialException( String s, FailureType type ) {
+		super( s, type );
+	}
 }
