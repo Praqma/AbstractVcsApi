@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.git;
+package net.praqma.vcs.model.mercurial;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,23 +13,22 @@ import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
 import net.praqma.vcs.model.ChangeSetElement;
-import net.praqma.vcs.model.clearcase.ClearcaseBranch;
 import net.praqma.vcs.model.exceptions.UnableToReplayException;
 import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
-import net.praqma.vcs.model.git.api.Git;
-import net.praqma.vcs.model.git.exceptions.GitException;
+import net.praqma.vcs.model.mercurial.api.Mercurial;
+import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
 
-public class GitReplay extends AbstractReplay{
+public class MercurialReplay extends AbstractReplay{
 
-	public GitReplay( GitBranch branch ) {
+	public MercurialReplay( MercurialBranch branch ) {
 		super( branch );
 	}
 	
-	public GitReplay( AbstractBranch branch ) throws UnsupportedBranchException {
+	public MercurialReplay( AbstractBranch branch ) throws UnsupportedBranchException {
 		super( branch );
-		if( branch instanceof GitBranch ) {
+		if( branch instanceof MercurialBranch ) {
 		} else {
-			throw new UnsupportedBranchException( "Git replays only supports Git branches" );
+			throw new UnsupportedBranchException( "Git replays only supports Mercurial branches" );
 		}
 	}
 
@@ -65,11 +64,11 @@ public class GitReplay extends AbstractReplay{
 					try {
 						targetfile.getParentFile().mkdirs();
 						targetfile.createNewFile();
-						Git.add( targetfile, branch.getPath() );
+						Mercurial.add( targetfile, branch.getPath() );
 					} catch (IOException e) {
 						logger.warning( "Could not create file: " + e.getMessage() );
 						/* Continue anyway */
-					} catch (GitException e) {
+					} catch (MercurialException e) {
 						logger.error( "Could not add " + targetfile + " to git" );
 						success = false;
 						continue;
@@ -110,8 +109,8 @@ public class GitReplay extends AbstractReplay{
 				case DELETED:
 					logger.debug( "Delete element" );
 					try {
-						Git.remove( targetfile, branch.getPath() );
-					} catch (GitException e) {
+						Mercurial.remove( targetfile, branch.getPath() );
+					} catch (MercurialException e) {
 						logger.warning( e.getMessage() );
 						success = false;
 					}
@@ -131,8 +130,8 @@ public class GitReplay extends AbstractReplay{
 					}
 					
 					try {
-						Git.move( oldfile, targetfile, branch.getPath() );
-					} catch (GitException e) {
+						Mercurial.move( oldfile, targetfile, branch.getPath() );
+					} catch (MercurialException e) {
 						logger.warning( e.getMessage() );
 						success = false;
 					}
@@ -180,9 +179,9 @@ public class GitReplay extends AbstractReplay{
 		public boolean cleanup( boolean status ) {
 			if( status ) {
 				try {
-					Git.createCommit( commit.getTitle(), commit.getAuthorDate(), branch.getPath() );
+					Mercurial.createCommit( commit.getTitle(), branch.getPath() );
 					return true;
-				} catch (GitException e) {
+				} catch (MercurialException e) {
 					return false;
 				}
 			} else {

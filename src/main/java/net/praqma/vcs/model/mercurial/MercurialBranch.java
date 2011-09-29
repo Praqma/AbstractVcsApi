@@ -1,38 +1,36 @@
-package net.praqma.vcs.model.git;
+package net.praqma.vcs.model.mercurial;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import net.praqma.util.execute.AbnormalProcessTerminationException;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.Repository;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.git.api.Git;
-import net.praqma.vcs.model.git.exceptions.GitException;
 import net.praqma.vcs.model.interfaces.Cleanable;
+import net.praqma.vcs.model.mercurial.api.Mercurial;
+import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
 import net.praqma.vcs.util.CommandLine;
 import net.praqma.vcs.util.Utils;
 
-public class GitBranch extends AbstractBranch{
+public class MercurialBranch extends AbstractBranch{
 	
 	private String defaultMasterBranch = "master";
-	
-	public GitBranch( File localRepositoryPath, String name ) throws ElementNotCreatedException {
+
+	public MercurialBranch( File localRepositoryPath, String name ) throws ElementNotCreatedException {
 		super( localRepositoryPath, name );
 	}
 	
-	public GitBranch( File localRepositoryPath, String name, Repository parent ) {
+	public MercurialBranch( File localRepositoryPath, String name, Repository parent ) {
 		super( localRepositoryPath, name, parent );
 	}
 
-	public static GitBranch create( File localRepository, String name, Repository parent ) throws ElementNotCreatedException, ElementAlreadyExistsException {
-		GitBranch gb = new GitBranch( localRepository, name, parent );
+	public static MercurialBranch create( File localRepository, String name, Repository parent ) throws ElementNotCreatedException, ElementAlreadyExistsException {
+		MercurialBranch gb = new MercurialBranch( localRepository, name, parent );
 		gb.initialize();
 		return gb;
 	}
@@ -77,8 +75,8 @@ public class GitBranch extends AbstractBranch{
 	
 	public boolean exists() {
 		try {
-			return Git.branchExists( this.name, localRepositoryPath );
-		} catch (GitException e) {
+			return Mercurial.branchExists( this.name, localRepositoryPath );
+		} catch (MercurialException e) {
 			logger.warning( "Branch " + name + " at " + localRepositoryPath + " could not be queried: " + e.getMessage() );
 			return false;
 		}
@@ -94,31 +92,11 @@ public class GitBranch extends AbstractBranch{
 			/* Only do anything if a parent is given */
 			if( parent != null ) {
 				
-				
-				try { /* to add remote */
-					Git.addRemote( parent.getName(), parent.getLocation(), localRepositoryPath );
-				} catch (ElementAlreadyExistsException e1) {
-					if( get ) {
-						throw e1;
-					} else {
-						logger.debug( e1.getMessage() );
-					}
-				} catch (GitException e) {
-					throw new ElementNotCreatedException( "Could not initialize Git branch" );
-				}
-				
 				try {
-					Git.fetch( localRepositoryPath );
-					Git.checkoutRemoteBranch( name, parent.getName() + "/" + name, localRepositoryPath );
-				} catch( GitException e ) {
+					Mercurial.pull( parent.getLocation(), parent.getName(), localRepositoryPath );
+				} catch( MercurialException e ) {
 					logger.warning( "Could not initialize Git branch " + name + " from remote " + parent.getName() + ": " + e.getMessage() );
 					throw new ElementNotCreatedException( "Could not initialize Git branch: " + e.getMessage() );
-				} catch (ElementAlreadyExistsException e) {
-					if( get ) {
-						throw e;
-					} else {
-						logger.debug( e.getMessage() );
-					}
 				}
 				
 			} else {
@@ -151,9 +129,9 @@ public class GitBranch extends AbstractBranch{
 			}
 			
 			try {
-				Git.pull( parent.getLocation(), name, localRepositoryPath );
+				Mercurial.pull( parent.getLocation(), name, localRepositoryPath );
 				//Git.checkoutRemoteBranch( name, parent.getName() + "/" + name, localRepositoryPath );
-			} catch (GitException e) {
+			} catch (MercurialException e) {
 				System.err.println( "Could not pull git branch" );
 				logger.warning( "Could not pull git branch" );
 				return false;
@@ -167,8 +145,8 @@ public class GitBranch extends AbstractBranch{
 		this.currentCommit = commit;
 		try {
 			logger.info( "Checking out " + commit.getTitle() );
-			Git.checkoutCommit( commit.getKey(), localRepositoryPath );
-		} catch (GitException e) {
+			Mercurial.checkoutCommit( commit.getKey(), localRepositoryPath );
+		} catch (MercurialException e) {
 			System.err.println( "Could not checkout commit" );
 			logger.warning( "Could not checkout commit: " + e.getMessage() );
 		}
@@ -188,11 +166,15 @@ public class GitBranch extends AbstractBranch{
 	public List<AbstractCommit> getCommits( boolean load, Date offset ) {
 		logger.info( "Getting git commits for branch " + name );
 		
+		String cmd = "";
+		cmd = "git rev-list --no-merges --reverse --all";
+
 		List<String> cs = null;
 		try {
-			cs = Git.getCommitHashes( offset, null, localRepositoryPath.getAbsoluteFile() );
-		} catch (GitException e) {
-			logger.warning( "Could not get hashes" );
+			cs = CommandLine.run( cmd, localRepositoryPath.getAbsoluteFile() ).stdoutList;
+		} catch( Exception e ) {
+			/* It is probably just empty */
+			cs = new ArrayList<String>();
 		}
 		
 		//Collections.reverse( cs );
@@ -202,9 +184,16 @@ public class GitBranch extends AbstractBranch{
 		//for(String c : cs) {
 		for( int i = 0 ; i < cs.size() ; i++ ) {
 			System.out.print( "\r" + Utils.getProgress( cs.size(), i ) );
-			GitCommit commit = new GitCommit( cs.get( i ), GitBranch.this, i );
+			MercurialCommit commit = new MercurialCommit( cs.get( i ), MercurialBranch.this, i );
 			if( load ) {
 				commit.load();
+				
+				/* TODO For now we skip old commits by loading them and checks the author date */
+				if( offset != null ) {
+					if( commit.getAuthorDate().before( offset ) ) {
+						continue;
+					}
+				}
 			}
 			
 			commits.add( commit );

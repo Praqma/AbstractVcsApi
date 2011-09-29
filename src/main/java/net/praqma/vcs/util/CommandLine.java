@@ -1,6 +1,7 @@
 package net.praqma.vcs.util;
 
 import java.io.File;
+import java.util.Map;
 
 import net.praqma.util.debug.Logger;
 import net.praqma.util.execute.AbnormalProcessTerminationException;
@@ -22,5 +23,9 @@ public class CommandLine {
 	
 	public static CmdResult run(  String cmd, File dir, boolean merge, boolean ignore ) throws CommandLineException, AbnormalProcessTerminationException {
 		return cli.run( cmd, dir, merge, ignore );
+	}
+	
+	public static CmdResult run(  String cmd, File dir, boolean merge, boolean ignore, Map<String, String> variables ) throws CommandLineException, AbnormalProcessTerminationException {
+		return cli.run( cmd, dir, merge, ignore, variables );
 	}
 }

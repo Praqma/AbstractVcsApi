@@ -1,14 +1,19 @@
 package net.praqma.vcs.model.git.api;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.praqma.util.debug.Logger;
 import net.praqma.util.execute.AbnormalProcessTerminationException;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
+import net.praqma.vcs.model.exceptions.VCSException.FailureType;
 import net.praqma.vcs.model.git.exceptions.GitException;
 import net.praqma.vcs.util.CommandLine;
 
@@ -16,6 +21,7 @@ public class Git {
 
 	private static Logger logger = Logger.getLogger();
 	private static final Pattern rx_remoteExists = Pattern.compile( "^.*?remote \\w+ already exists.*?$" );
+	private static final SimpleDateFormat datetimeformat  = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
 	
 	public static void add( File file, File viewContext ) throws GitException {
 		try {
@@ -63,9 +69,21 @@ public class Git {
 		}	
 	}
 	
-	public static void createCommit( String message, File viewContext ) throws GitException {
+	/**
+	 * Create a commit with a given message. If date is not null, the commit date and author date will be set to it.
+	 * @param message Message string
+	 * @param date author/commit date
+	 * @param viewContext The path
+	 * @throws GitException
+	 */
+	public static void createCommit( String message, Date date, File viewContext ) throws GitException {
 		try {
-			CommandLine.run( "git commit -a -m \"" + message + "\"", viewContext );
+			Map<String, String> vars = new HashMap<String, String>();
+			if( date != null ) {
+				vars.put( "GIT_AUTHOR_DATE", datetimeformat.format( date ) );
+				vars.put( "GIT_COMMITTER_DATE", datetimeformat.format( date ) );
+			}
+			CommandLine.run( "git commit -a -m \"" + message + "\"", viewContext, true, false, vars );
 		} catch( AbnormalProcessTerminationException e ) {
 			throw new GitException( "Could not commit " + message + ": " + e.getMessage() );
 		}	
@@ -95,8 +113,16 @@ public class Git {
 		}		
 	}
 	
-	public static void getCommits() {
-		
+	public static List<String> getCommitHashes( Date from, Date to, File viewContext ) throws GitException {
+		try {
+			return CommandLine.run( "git log --reverse --format=\"%H\"" + ( from != null ? " --since=\"" + datetimeformat.format( from ) + "\"" : "" ) +
+					                                            ( to   != null ? " --until=\"" + datetimeformat.format( to ) + "\"" : "" ), viewContext ).stdoutList;
+		} catch( AbnormalProcessTerminationException e ) {
+			if( e.getMessage().matches( "^fatal: bad default revision 'HEAD'$" ) ) {
+				throw new GitException( "Could not get hashes: " + e.getMessage(), FailureType.NO_OUTPUT );
+			}
+			throw new GitException( "Could not get hashes: " + e.getMessage() );
+		}
 	}
 	
 	//private static final Pattern rx_repoExists = Pattern.compile( "^.*?remote \\w+ already exists.*?$" );
