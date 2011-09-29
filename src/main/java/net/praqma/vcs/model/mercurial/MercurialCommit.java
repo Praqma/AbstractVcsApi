@@ -3,6 +3,7 @@ package net.praqma.vcs.model.mercurial;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,6 +24,9 @@ import net.praqma.vcs.util.CommandLine;
 public class MercurialCommit extends AbstractCommit {
 
 	private Logger logger = Logger.getLogger();
+	
+	/* NOTE THAT THE HG MANUAL SAYS IT HAS SECONDS, BUT THE OUTPUT HASN'T */
+	private static final SimpleDateFormat isodate  = new SimpleDateFormat( "yyyy-MM-dd HH:mm Z" );
 	
 	public MercurialCommit( String key, AbstractBranch branch ) {
 		super(key, branch);
@@ -57,7 +61,7 @@ public class MercurialCommit extends AbstractCommit {
 			logger.debug( "Mercurial: perform load" );
 			
 			
-			String cmd = "hg log --rev " + MercurialCommit.this.key +  " --template '{parents}{author}\n{date|isodate}\n{files}\n{file_adds}\n{file_dels}\n{file_copies}\n{desc}' ";
+			String cmd = "hg log --rev " + MercurialCommit.this.key +  " --template '{parents}\\n{author}\\n{date|isodate}\\n{files}\\n{file_adds}\\n{file_dels}\\n{file_copies}\\n{desc}' ";
 			List<String> result = CommandLine.run( cmd, branch.getPath() ).stdoutList;
 			
 			if( result.size() < 8 ) {
@@ -68,9 +72,13 @@ public class MercurialCommit extends AbstractCommit {
 				MercurialCommit.this.committer = result.get( 1 );
 				Date date = null;
 				try {
-					date = DateFormat.getInstance().parse( result.get( 2 ) );
+					logger.debug( "Trying to parse " + result.get( 2 ) );
+					//date = DateFormat.getInstance().parse( result.get( 2 ) );
+					date = isodate.parse( result.get( 2 ) );
+					logger.debug( "Success" );
 				} catch (ParseException e1) {
-					logger.warning( "Could not parse date. Defaulting to now" );
+					logger.debug( "Failure" );
+					logger.warning( "Could not parse date. Defaulting to now: " + e1.getMessage() );
 					date = new Date();
 				}
 				MercurialCommit.this.authorDate = date;

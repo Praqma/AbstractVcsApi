@@ -115,5 +115,9 @@ public abstract class AbstractCommit implements Comparable<AbstractCommit> {
 	public int compareTo( AbstractCommit other ) {
 		return this.committerDate.compareTo( other.getAuthorDate() ); 
 	}
+	
+	public String getAuthor() {
+		return author;
+	}
 
 }

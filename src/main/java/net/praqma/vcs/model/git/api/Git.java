@@ -76,14 +76,17 @@ public class Git {
 	 * @param viewContext The path
 	 * @throws GitException
 	 */
-	public static void createCommit( String message, Date date, File viewContext ) throws GitException {
+	public static void createCommit( String message, String author, Date date, File viewContext ) throws GitException {
 		try {
 			Map<String, String> vars = new HashMap<String, String>();
 			if( date != null ) {
+				logger.debug( "Date is not null: " + date );
 				vars.put( "GIT_AUTHOR_DATE", datetimeformat.format( date ) );
 				vars.put( "GIT_COMMITTER_DATE", datetimeformat.format( date ) );
+			} else {
+				logger.debug( "Date is null" );
 			}
-			CommandLine.run( "git commit -a -m \"" + message + "\"", viewContext, true, false, vars );
+			CommandLine.run( "git commit -a -m \"" + message + "\"" + ( author != null ? " --author=\"" + author + "\"" : "" ), viewContext, true, false, vars );
 		} catch( AbnormalProcessTerminationException e ) {
 			throw new GitException( "Could not commit " + message + ": " + e.getMessage() );
 		}	

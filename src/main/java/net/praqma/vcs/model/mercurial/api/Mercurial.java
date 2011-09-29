@@ -42,9 +42,9 @@ public class Mercurial {
 	
 	private static final Pattern rx_branchExists = Pattern.compile( "^.*?branch \\w+ already exists.*?$" );
 	
-	public static void createCommit( String message, Date date, File viewContext ) throws MercurialException {
+	public static void createCommit( String message, String author, Date date, File viewContext ) throws MercurialException {
 		try {
-			CommandLine.run( "hg commit -m \"" + message + "\"" + ( date != null ? " --date=\"" + datetimeformat.format( date ) + "\"" : "" ), viewContext );
+			CommandLine.run( "hg commit -m \"" + message + "\"" + ( author != null ? " --user=\"" + author + "\"" : "" ) + ( date != null ? " --date=\"" + datetimeformat.format( date ) + "\"" : "" ), viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
 			throw new MercurialException( "Could not commit " + message + ": " + e.getMessage() );
 		}	
@@ -100,7 +100,7 @@ public class Mercurial {
 					dateString = datetimeformat.format( to );
 				}
 			}
-			return CommandLine.run( "hg log --rev 0: --template '{node}\n'" + ( dateString.length() > 0 ? " --date=\"" + dateString : "" ), viewContext ).stdoutList;
+			return CommandLine.run( "hg log --rev 0: --template '{node}\\n'" + ( dateString.length() > 0 ? " --date=\"" + dateString : "" ), viewContext ).stdoutList;
 		} catch( AbnormalProcessTerminationException e ) {
 			if( e.getMessage().matches( "^fatal: bad default revision 'HEAD'$" ) ) {
 				throw new MercurialException( "Could not get hashes: " + e.getMessage(), FailureType.NO_OUTPUT );

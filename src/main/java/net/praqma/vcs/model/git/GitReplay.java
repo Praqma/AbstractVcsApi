@@ -180,7 +180,7 @@ public class GitReplay extends AbstractReplay{
 		public boolean cleanup( boolean status ) {
 			if( status ) {
 				try {
-					Git.createCommit( commit.getTitle(), commit.getAuthorDate(), branch.getPath() );
+					Git.createCommit( commit.getTitle(), commit.getAuthor(), commit.getAuthorDate(), branch.getPath() );
 					return true;
 				} catch (GitException e) {
 					return false;
