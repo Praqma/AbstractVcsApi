@@ -4,6 +4,7 @@ import java.util.Date;
 
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
+import net.praqma.vcs.model.extensions.CommitLoadListener;
 
 public abstract class AbstractCommit implements Comparable<AbstractCommit> {
 	
@@ -42,10 +43,14 @@ public abstract class AbstractCommit implements Comparable<AbstractCommit> {
 	protected void doLoad( Load load ) {
 		boolean status = load.preLoad();
 		
+		CommitLoadListener.runPreCommitLoadListener( this );
+		
 		/* Only perform if pre step went good */
 		if( status ) {
 			status = load.perform();
 		}
+		
+		CommitLoadListener.runPostCommitLoadListener( this, status );
 		
 		load.postLoad( status );
 	}
