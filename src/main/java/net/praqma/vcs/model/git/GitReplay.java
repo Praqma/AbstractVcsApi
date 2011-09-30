@@ -18,6 +18,7 @@ import net.praqma.vcs.model.exceptions.UnableToReplayException;
 import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
 import net.praqma.vcs.model.git.api.Git;
 import net.praqma.vcs.model.git.exceptions.GitException;
+import net.praqma.vcs.util.IO;
 
 public class GitReplay extends AbstractReplay{
 
@@ -77,33 +78,7 @@ public class GitReplay extends AbstractReplay{
 					
 				case CHANGED:
 					logger.debug( "Change element" );
-					InputStream in = null;
-					OutputStream out = null;
-					try {
-						in = new FileInputStream( sourcefile );
-						out = new FileOutputStream( targetfile );
-						
-					    byte[] buf = new byte[1024];
-					    int len;
-					    while ((len = in.read(buf)) > 0) {
-					        out.write(buf, 0, len);
-					    }
-						
-					} catch (FileNotFoundException e) {
-						success = false;
-						logger.error( "Could not write to file(" + sourcefile + "): " + e );
-					} catch (IOException e) {
-						success = false;
-						logger.error( "Could not write to file(" + sourcefile + "): " + e );
-					} finally {
-						try {
-							in.close();
-							out.close();
-						} catch (Exception e) {
-							logger.warning( "Could not close files: " + e.getMessage() );
-						}
-						
-					}
+					IO.write( sourcefile, targetfile );
 					
 					break;
 					
@@ -122,7 +97,7 @@ public class GitReplay extends AbstractReplay{
 					File oldfile = new File( branch.getPath(), cse.getRenameFromFile().toString() );
 					
 					/* Write before rename */
-					write( sourcefile, oldfile );
+					IO.write( sourcefile, oldfile );
 					
 					/* Make sure the target directory exists */
 					if( !targetfile.getParentFile().exists() ) {
@@ -142,41 +117,7 @@ public class GitReplay extends AbstractReplay{
 			
 			return success;
 		}
-		
-		private boolean write( File source, File target ) {
-			InputStream in = null;
-			OutputStream out = null;
-			boolean success = true;
-			
-			try {
-				in = new FileInputStream( source );
-				out = new FileOutputStream( target );
 				
-			    byte[] buf = new byte[1024];
-			    int len;
-			    while ((len = in.read(buf)) > 0) {
-			        out.write(buf, 0, len);
-			    }
-				
-			} catch (FileNotFoundException e) {
-				success = false;
-				logger.error( "Could not write to file(" + source + "): " + e );
-			} catch (IOException e) {
-				success = false;
-				logger.error( "Could not write to file(" + source + "): " + e );
-			} finally {
-				try {
-					in.close();
-					out.close();
-				} catch (Exception e) {
-					logger.warning( "Could not close files: " + e.getMessage() );
-				}
-				
-			}
-			
-			return success;
-		}
-		
 		public boolean cleanup( boolean status ) {
 			if( status ) {
 				try {

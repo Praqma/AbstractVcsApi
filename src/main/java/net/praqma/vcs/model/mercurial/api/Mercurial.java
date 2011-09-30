@@ -87,6 +87,18 @@ public class Mercurial {
 		}		
 	}
 	
+	public static List<String> getChangeset( int revision, File viewContext ) throws MercurialException {
+		try {
+			if( revision == 0 ) {
+				return CommandLine.run( "hg status --copies --rev null:0", viewContext ).stdoutList;
+			} else {
+				return CommandLine.run( "hg status --copies --rev 'p1(" + revision + "):" + revision + "'", viewContext ).stdoutList;
+			}
+		} catch( AbnormalProcessTerminationException e ) {
+			throw new MercurialException( "Could not get changeset: " + e.getMessage() );
+		}	
+	}
+	
 	public static List<String> getCommitHashes( Date from, Date to, File viewContext ) throws MercurialException {
 		try {
 			String dateString = "";

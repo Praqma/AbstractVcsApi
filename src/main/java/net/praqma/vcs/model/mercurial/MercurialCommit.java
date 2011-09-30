@@ -1,9 +1,9 @@
 package net.praqma.vcs.model.mercurial;
 
 import java.io.File;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,6 +19,8 @@ import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.ChangeSetElement;
 import net.praqma.vcs.model.ChangeSetElement.Status;
+import net.praqma.vcs.model.mercurial.api.Mercurial;
+import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
 import net.praqma.vcs.util.CommandLine;
 
 public class MercurialCommit extends AbstractCommit {
@@ -44,13 +46,7 @@ public class MercurialCommit extends AbstractCommit {
 		LoadImpl load = new LoadImpl();
 		doLoad( load );
 	}
-	
-	private static final Pattern rx_getChangeFile = Pattern.compile( "^\\s*(\\d+)\\s*(\\d+)\\s*(.*)$" );
-	private static final Pattern rx_renameFile = Pattern.compile( "^(.*?)\\{(.*?)\\}(.*?)$" );
-	private static final Pattern rx_getCreateFile = Pattern.compile( "^\\s*create\\s*mode\\s*\\d+\\s*(.*)$" );
-	private static final Pattern rx_getDeleteFile = Pattern.compile( "^\\s*delete\\s*mode\\s*\\d+\\s*(.*)$" );
-	private static final Pattern rx_getRenameFile = Pattern.compile( "^\\s*rename\\s*mode\\s*\\d+\\s*(.*)$" );
-	
+
 	public class LoadImpl extends Load {
 		
 		public LoadImpl() {
@@ -61,95 +57,120 @@ public class MercurialCommit extends AbstractCommit {
 			logger.debug( "Mercurial: perform load" );
 			
 			
-			String cmd = "hg log --rev " + MercurialCommit.this.key +  " --template '{parents}\\n{author}\\n{date|isodate}\\n{files}\\n{file_adds}\\n{file_dels}\\n{file_copies}\\n{desc}' ";
+			String cmd = "hg log --rev " + MercurialCommit.this.key +  " --template '{parents}\\n{author}\\n{date|isodate}\\n{rev}\\n{desc}' ";
 			List<String> result = CommandLine.run( cmd, branch.getPath() ).stdoutList;
 			
-			if( result.size() < 8 ) {
-				
-			} else {
-				MercurialCommit.this.parentKey = result.get( 0 );
-				MercurialCommit.this.author = result.get( 1 );
-				MercurialCommit.this.committer = result.get( 1 );
-				Date date = null;
-				try {
-					logger.debug( "Trying to parse " + result.get( 2 ) );
-					//date = DateFormat.getInstance().parse( result.get( 2 ) );
-					date = isodate.parse( result.get( 2 ) );
-					logger.debug( "Success" );
-				} catch (ParseException e1) {
-					logger.debug( "Failure" );
-					logger.warning( "Could not parse date. Defaulting to now: " + e1.getMessage() );
-					date = new Date();
-				}
-				MercurialCommit.this.authorDate = date;
-				MercurialCommit.this.committerDate = date;
-
-				MercurialCommit.this.title = result.get( 7 );
-				
-				/* Get total changeset */
-				String[] files = result.get( 3 ).split( "\\s+" );
-				
-				/* Get added */
-				String[] a = result.get( 4 ).split( "\\s+" );
-				Set<String> added = new HashSet<String>( Arrays.asList( a ) );
-				
-				/* Get deletes */
-				String[] d = result.get( 5 ).split( "\\s+" );
-				Set<String> deletes = new HashSet<String>( Arrays.asList( d ) );
-				
-				/* Get moves */
-				/* To, From */
-				Pattern p = Pattern.compile( "(.*?)\\((.*?)\\)" );
-				Matcher m1 = p.matcher( result.get( 6 ) );
-				Set<String> movesFrom = new HashSet<String>();
-				Set<String> movesTo = new HashSet<String>();
-				Map<String, String> moves = new HashMap<String, String>();
-				while( m1.find() ) {
-					moves.put( m1.group(1).trim(), m1.group(2).trim() );
-					movesTo.add( m1.group(1).trim() );
-					movesFrom.add( m1.group(2).trim() );			
-				}
-				
-				for( String file : files ) {
-					
-					/* The file has been added */
-					if( added.contains( file ) ) {
-						/* Detecting a move to */
-						if( movesTo.contains( file ) ) {
-							logger.debug( "Moving " + moves.get( file ) + " to " + file );
-							
-							ChangeSetElement cse = new ChangeSetElement( new File( file ), Status.RENAMED );
-							cse.setRenameFromFile( new File( moves.get( file ) ) );
-							MercurialCommit.this.changeSet.put( file, cse );
-						/* Just a plain add */
-						} else {
-							logger.debug( "Adding " + file );
-							MercurialCommit.this.changeSet.put( file, new ChangeSetElement( new File( file ), Status.CREATED ) );
-						}
-						
-						continue;
-					}
-					
-					/* The file has been deleted */
-					if( deletes.contains( file )) {
-						/* A move from. This is essentially indifferent, it is handled elsewhere */
-						if( movesFrom.contains( file ) ) {
-							logger.debug( file + " has been deleted" );
-							/* no op */
-						/* A regular delete */
-						} else {
-							MercurialCommit.this.changeSet.put( file, new ChangeSetElement( new File( file ), Status.DELETED ) );
-						}
-						
-						continue;
-					}
-					
-					/* Nothing else applies, this is an ordinary change */
-					MercurialCommit.this.changeSet.put( file, new ChangeSetElement( new File( file ), Status.CHANGED ) );
-				}
-								
-				result.clear();
+			MercurialCommit.this.parentKey = result.get( 0 );
+			MercurialCommit.this.author = result.get( 1 );
+			MercurialCommit.this.committer = result.get( 1 );
+			Date date = null;
+			try {
+				logger.debug( "Trying to parse " + result.get( 2 ) );
+				//date = DateFormat.getInstance().parse( result.get( 2 ) );
+				date = isodate.parse( result.get( 2 ) );
+				logger.debug( "Success" );
+			} catch (ParseException e1) {
+				logger.debug( "Failure" );
+				logger.warning( "Could not parse date. Defaulting to now: " + e1.getMessage() );
+				date = new Date();
 			}
+			MercurialCommit.this.authorDate = date;
+			MercurialCommit.this.committerDate = date;
+
+			MercurialCommit.this.title = result.get( 4 );
+			
+			int rev = 0;
+			try {
+				rev = Integer.parseInt( result.get( 3 ) );
+			} catch( Exception e ) {
+				/* no op */
+			}
+			
+			List<String> files1 = null;
+			
+			try {
+				files1 = Mercurial.getChangeset( rev, branch.getPath() );
+			} catch (MercurialException e) {
+				logger.warning( e.getMessage() );
+				
+				return false;
+			}
+			
+			logger.debug( "CS: " + files1 );
+			
+			List<String[]> filesmap = new ArrayList<String[]>();
+			Set<String> removes = new HashSet<String>();
+			Set<String> origins = new HashSet<String>();
+			
+			for( String f : files1 ) {
+				String[] s = new String[]{ f.substring( 0, 1 ), f.substring( 2 ).trim() };
+				filesmap.add( s );
+				if( s[0].equals( "R" ) ) {
+					removes.add( s[1] );
+				}
+				
+				if( s[0].equals( " " ) ) {
+					origins.add( s[1] );
+				}
+			}
+			
+			/* Remove removes from moves */
+			for( String o : origins ) {
+				if( removes.contains( o ) ) {
+					removes.remove( o );
+				}
+			}
+			
+			for( int i = 0 ; i < filesmap.size() ; ++i ) {
+				String file = filesmap.get( i )[1];
+				String mode = filesmap.get( i )[0];
+				
+				logger.debug( "FILE: " + file + "[" + mode + "]" );
+				
+				/* Added */
+				if( mode.equals( "A" ) ) {
+					/* A renamed element */
+					if( i + 1 < filesmap.size() && filesmap.get( i + 1 )[0].equals( " " ) ) {
+						String src = filesmap.get( i + 1 )[1];
+						
+						logger.debug( "Moving " + src + " to " + file );
+						
+						ChangeSetElement cse = new ChangeSetElement( new File( file ), Status.RENAMED );
+						cse.setRenameFromFile( new File( src ) );
+						MercurialCommit.this.changeSet.put( file, cse );
+						
+						i++;
+						
+					/* Just a plain add */
+					} else {
+						logger.debug( "Adding " + file );
+						MercurialCommit.this.changeSet.put( file, new ChangeSetElement( new File( file ), Status.CREATED ) );
+					}
+					
+					continue;
+				}
+				
+				/* The file has been deleted */
+				if( mode.equals( "R" ) ) {
+					if( removes.contains( file ) ) {
+						MercurialCommit.this.changeSet.put( file, new ChangeSetElement( new File( file ), Status.DELETED ) );
+					}
+					
+					continue;
+				}
+				
+				/* The file has been modified */
+				if( mode.equals( "M" ) ) {
+					MercurialCommit.this.changeSet.put( file, new ChangeSetElement( new File( file ), Status.CHANGED ) );
+					
+					continue;
+				}
+				
+				/* Nothing else applies, let's log it */
+				logger.warning( "No satisfying action to handle " + file + "[" + mode + "]" );
+			}
+			
+			result.clear();
 			
 			return true;
 		}

@@ -18,6 +18,8 @@ public abstract class IO {
 		OutputStream out = null;
 		boolean success = true;
 		
+		logger.debug( "Writing from " + source + " to " + target );
+		
 		try {
 			in = new FileInputStream( source );
 			out = new FileOutputStream( target );
