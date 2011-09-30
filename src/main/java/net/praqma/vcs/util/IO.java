@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -47,5 +48,49 @@ public abstract class IO {
 		}
 		
 		return success;
+	}
+	
+	private static FilenameFilter filter = new FilenameFilter() {
+	    public boolean accept(File dir, String name) {
+	        return !name.matches( "^\\.{1,2}$" );
+	    }
+	};
+	
+	/**
+	 * Returns true if the path is kept
+	 * @param path
+	 * @return
+	 */
+	public static boolean removeEmptyFolders( File path ) {
+		File[] files = path.listFiles( filter );
+		
+		/* Remove */
+		if( files.length == 0 ) {
+			logger.debug( path + " is empty - removed" );
+			path.delete();
+			return false;
+		}
+		
+		boolean delete = true;
+		
+		for( File file : files ) {
+			if( file.isDirectory() ) {
+				/* If the path is kept, the directory is not empty */
+				if( removeEmptyFolders( file ) ) {
+					delete = false;
+				}
+			} else {
+				return true;
+			}
+		}
+		
+		/* Remove */
+		if( delete ) {
+			path.delete();
+			logger.debug( path + " is removed" );
+			return false;
+		}
+		
+		return true;
 	}
 }

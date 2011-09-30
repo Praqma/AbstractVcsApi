@@ -41,9 +41,9 @@ public abstract class AbstractReplay {
 			status = replay.replay();
 		}
 		
-		ReplayListener.runPostCommitLoadListener( replay.getCommit(), status );
-		
 		replay.cleanup( status );
+		
+		ReplayListener.runPostReplayListener( this, replay.getCommit(), status );
 	}
 	
 	protected abstract class Replay{
@@ -71,5 +71,9 @@ public abstract class AbstractReplay {
 		public AbstractCommit getCommit() {
 			return commit;
 		}
+	}
+	
+	public AbstractBranch getBranch() {
+		return branch;
 	}
 }

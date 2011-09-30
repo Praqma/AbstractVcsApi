@@ -3,11 +3,15 @@ package net.praqma.vcs.util.configuration;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.w3c.dom.Element;
 
+import net.praqma.util.debug.Logger;
 import net.praqma.util.xml.XML;
+import net.praqma.vcs.AVA;
+import net.praqma.vcs.Extension;
 import net.praqma.vcs.util.configuration.exception.ConfigurationDoesNotExistException;
 import net.praqma.vcs.util.configuration.exception.ConfigurationException;
 import net.praqma.vcs.util.configuration.implementation.ClearCaseConfigurationReader;
@@ -15,6 +19,8 @@ import net.praqma.vcs.util.configuration.implementation.GitConfigurationReader;
 import net.praqma.vcs.util.configuration.implementation.MercurialConfigurationReader;
 
 public abstract class AbstractConfigurationReader extends XML {
+	
+	private static Logger logger = Logger.getLogger();
 	
 	protected AbstractConfigurationReader() {
 		
@@ -65,6 +71,18 @@ public abstract class AbstractConfigurationReader extends XML {
 		XML xml = new XML( file );
 		Element source = xml.getFirstElement( "source" );
 		Element target = xml.getFirstElement( "target" );
+		
+		Element extensions = xml.getFirstElement( "extensions" );
+		List<Element> exts = xml.getElements( extensions, "extension" );
+		for( Element e : exts ) {
+			String ext = e.getTextContent();
+			try {
+				AVA.getInstance().registerExtension( "", (Extension) Class.forName( ext ).newInstance() );
+				logger.info( "Adding " + ext + " as an extension" );
+			} catch ( Exception e1 ) {
+				logger.warning( ext + " could not be added as an extension: " + e1.getMessage() );
+			}
+		}
 		
 		Configuration config = new Configuration();
 				
