@@ -68,17 +68,27 @@ public class Simple {
         o.setOption( ointeractive );
         o.setOption( ointerval );
         
+        //FileAppender app2 = new FileAppender( new File( "out.log" ) );
+        //Logger.addAppender( app2 );
+        //app2.setMinimumLevel( LogLevel.DEBUG );
+        
+        app.setTemplate( "[%level] %space %message%newline" );
+        Logger.addAppender( app );
+        
+        System.out.println("HEREH");
+        
         o.setDefaultOptions();
         
         o.parse( args );
         
-        FileAppender app2 = new FileAppender( new File( "out.log" ) );
+        if( o.isVerbose() ) {
+        	app.setMinimumLevel( LogLevel.DEBUG );
+        } else {
+        	app.setMinimumLevel( LogLevel.INFO );
+        }
         
-        Logger.addAppender( app2 );
-        app2.setMinimumLevel( LogLevel.DEBUG );
         
-        app.setTemplate( "[%level] %space %message%newline" );
-        Logger.addAppender( app );
+
 
         try {
             o.checkOptions();
@@ -88,12 +98,6 @@ public class Simple {
             System.exit( 1 );
         }
 
-        if( o.isVerbose() ) {
-        	app.setMinimumLevel( LogLevel.DEBUG );
-        } else {
-        	app.setMinimumLevel( LogLevel.INFO );
-        }
-        
 		/* Do the ClearCase thing... */
 		UCM.setContext( UCM.ContextType.CLEARTOOL );
 		
