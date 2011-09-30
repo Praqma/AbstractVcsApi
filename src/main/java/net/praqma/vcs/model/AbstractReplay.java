@@ -5,6 +5,7 @@ import java.util.List;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
 import net.praqma.vcs.model.exceptions.UnableToReplayException;
+import net.praqma.vcs.model.extensions.ReplayListener;
 
 public abstract class AbstractReplay {
 	
@@ -40,6 +41,8 @@ public abstract class AbstractReplay {
 			status = replay.replay();
 		}
 		
+		ReplayListener.runPostCommitLoadListener( replay.getCommit(), status );
+		
 		replay.cleanup( status );
 	}
 	
@@ -63,6 +66,10 @@ public abstract class AbstractReplay {
 		public boolean cleanup( boolean status ) {
 			logger.log( "Abstract replay cleanup: " + status );
 			return true;
+		}
+		
+		public AbstractCommit getCommit() {
+			return commit;
 		}
 	}
 }
