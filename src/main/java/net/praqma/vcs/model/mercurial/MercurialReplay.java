@@ -68,9 +68,9 @@ public class MercurialReplay extends AbstractReplay{
 						Mercurial.add( targetfile, branch.getPath() );
 					} catch (IOException e) {
 						logger.warning( "Could not create file: " + e.getMessage() );
-						/* Continue anyway */
+						/* Continue anyway? */
 					} catch (MercurialException e) {
-						logger.error( "Could not add " + targetfile + " to Mercurial" );
+						logger.error( "Could not add " + targetfile + " to Mercurial: " + e.getMessage() );
 						success = false;
 						continue;
 					}
@@ -118,9 +118,8 @@ public class MercurialReplay extends AbstractReplay{
 					break;
 					
 				case RENAMED:
-					logger.debug( "Rename element" );
+					logger.debug( "Rename element : " + cse );
 					File oldfile = new File( branch.getPath(), cse.getRenameFromFile().toString() );
-					
 					/* Write before rename */
 					IO.write( sourcefile, oldfile );
 					
@@ -136,6 +135,17 @@ public class MercurialReplay extends AbstractReplay{
 						logger.warning( e.getMessage() );
 						success = false;
 					}
+					
+					/* Check if the old file still lives */
+					if( oldfile.exists() ) {
+						logger.debug( "The file still lives, let's kill it" );
+						try {
+							oldfile.delete();
+						} catch( Exception e ) {
+							logger.warning( "Could not delete " + oldfile + ": " + e.getMessage() );
+						}
+					}
+					
 					break;
 				}
 			}

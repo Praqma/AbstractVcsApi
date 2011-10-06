@@ -86,6 +86,12 @@ public class Git {
 			} else {
 				logger.debug( "Date is null" );
 			}
+			/* Check author format */
+			if( author != null ) {
+				if( !author.matches( "\\s+<.*?>$" ) ) {
+					author += " <>";
+				}
+			}
 			CommandLine.run( "git commit -a -m \"" + message + "\"" + ( author != null ? " --author=\"" + author + "\"" : "" ), viewContext, true, false, vars );
 		} catch( AbnormalProcessTerminationException e ) {
 			throw new GitException( "Could not commit " + message + ": " + e.getMessage() );
@@ -164,7 +170,7 @@ public class Git {
 	 */
 	public static void move( File file, File destination, File viewContext ) throws GitException {
 		try {
-			CommandLine.run( "git mv " + file + " " + destination, viewContext );
+			CommandLine.run( "git mv \"" + file + "\" \"" + destination + "\"", viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
 			throw new GitException( "Could not move " + file + " : " + e.getMessage() );
 		}

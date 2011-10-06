@@ -49,4 +49,8 @@ public class ChangeSetElement {
 	public void setStatus( Status status ) {
 		this.status = status;
 	}
+	
+	public String toString() {
+		return "[" + status + "]" + file + ( renameFrom != null ? "(" + renameFrom + ")" : "" );
+	}
 }

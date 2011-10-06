@@ -31,15 +31,22 @@ public class Cycle {
 			/* Just to make sure, that now is really now, because we need now in getCommits, which can be lengthy */
 			before = new Date();
 			
-			logger.info( "Getting ClearCase commits" );
-			List<AbstractCommit> cccommits = branch.getCommits(true, now);
-			for( AbstractCommit commit : cccommits ) {
-				branch.checkoutCommit( commit );
-				replay.replay( commit );
+			List<AbstractCommit> commits = branch.getCommits(false, now);
+
+			for( int i = 0 ; i < commits.size() ; ++i ) {
+				System.out.print( "\rCommit " + ( i + 1 ) + "/" + commits.size() + ": " + commits.get( i ).getTitle() );
+
+				/* Load the commit */
+				commits.get( i ).load();
+				
+				branch.checkoutCommit( commits.get( i ) );
+				replay.replay( commits.get( i ) );
 			}
 			
 			/* Make now before */
 			now = before;
+			
+			AVA.getInstance().setLastCommitDate( now );
 			
 			if( interval != null ) {
 				/* Interactive mode */
@@ -54,5 +61,30 @@ public class Cycle {
 				return;
 			}
 		}
+	}
+	
+	public static class Update implements Runnable {
+
+		private List<AbstractCommit> commits;
+		private AbstractBranch branch;
+		private Date now;
+		
+		public Update( AbstractBranch branch, Date now ) {
+			this.branch = branch;
+			this.now = now;
+		}
+		
+		public void run() {
+			commits = branch.getCommits( false, now );
+			/* Update 'em */
+			for( AbstractCommit c : commits ) {
+				c.load();
+			}
+		}
+		
+		public List<AbstractCommit> getCommits() {
+			return commits;
+		}
+		
 	}
 }

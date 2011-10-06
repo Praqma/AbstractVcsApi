@@ -38,6 +38,7 @@ public class AVA {
 	
 	public void setLastCommitDate( Date date ) {
 		persistence.setLastCommitDate( date );
+		persistence.save();
 	}
 	
 	public void registerExtension( String name, Extension ext ) {

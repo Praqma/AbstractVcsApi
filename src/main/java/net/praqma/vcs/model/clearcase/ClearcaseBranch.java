@@ -218,21 +218,43 @@ public class ClearcaseBranch extends AbstractBranch{
 		public boolean initialize() throws ElementDoesNotExistException, ElementNotCreatedException, ElementAlreadyExistsException {
 
 			/* Create input stream */
-			try {
-				logger.info( "Creating development input stream"  );
-				devStream_in = Stream.create( parent, name_in + "@" + pvob, false, baseline );
-			} catch (UCMException e) {
-				if( get ) {
-					try {
-						devStream_in = UCMEntity.getStream( name_in, pvob, false );
-						logger.info( "Input stream already exists" );
-					} catch (UCMException e1) {
-						logger.error( "Error while initializing input stream: " + e.getMessage() );
-						throw new ElementDoesNotExistException( "Could not find input stream: " + e.getMessage() );
+			if( get ) {
+				try {
+					devStream_in = UCMEntity.getStream( name_in, pvob, false );
+				} catch ( UCMException e ) {
+					logger.debug( name_in + " was not found."  );
+					if( parent != null ) {
+						logger.debug( "Trying to create the stream " + name_in );
+						try {
+							devStream_in = Stream.create( parent, name_in + "@" + pvob, false, baseline );
+						} catch (UCMException e1) {
+							logger.error( "Error while creating input stream: " + e.getMessage() );
+						}
+					} else {
+						logger.debug( "Unable to create the stream " + name_in + ". Parent is null" );
 					}
-				} else {
-					logger.error( "Error while creating Development input Stream: " + e.getMessage() );
-					throw new ElementNotCreatedException( "Error while creating Development input Stream: " + e.getMessage() );
+				} finally {
+					if( devStream_in == null ) {
+						throw new ElementDoesNotExistException( "Could not find input stream" );
+					}
+				}
+			} else {
+				try {
+					logger.info( "Creating development input stream"  );
+					devStream_in = Stream.create( parent, name_in + "@" + pvob, false, baseline );
+				} catch (UCMException e) {
+					if( get ) {
+						try {
+							devStream_in = UCMEntity.getStream( name_in, pvob, false );
+							logger.info( "Input stream already exists" );
+						} catch (UCMException e1) {
+							logger.error( "Error while initializing input stream: " + e.getMessage() );
+							throw new ElementDoesNotExistException( "Could not find input stream: " + e.getMessage() );
+						}
+					} else {
+						logger.error( "Error while creating Development input Stream: " + e.getMessage() );
+						throw new ElementNotCreatedException( "Error while creating Development input Stream: " + e.getMessage() );
+					}
 				}
 			}
 			
@@ -518,9 +540,7 @@ public class ClearcaseBranch extends AbstractBranch{
 				
 			}
 			
-			for( int i = 0 ; i < baselines.size() ; i++ ) {
-				System.out.print( "\r" + Utils.getProgress( baselines.size(), i ) );
-				
+			for( int i = 0 ; i < baselines.size() ; i++ ) {				
 				ClearcaseCommit commit = new ClearcaseCommit( baselines.get( i ), ClearcaseBranch.this, i );
 				
 				if( load ) {
@@ -557,8 +577,20 @@ public class ClearcaseBranch extends AbstractBranch{
 		return this.developmentPath_in;
 	}
 	
+	public void setInputPath( File path ) {
+		this.viewroot_in = path;
+	}
+	
 	public File getInputPath() {
 		return this.viewroot_in;
+	}
+	
+	public void setOutputPath( File path ) {
+		this.viewroot_out = path;
+	}
+	
+	public File getOutputPath() {
+		return this.viewroot_out;
 	}
 	
 	@Override

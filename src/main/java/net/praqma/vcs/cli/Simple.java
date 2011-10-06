@@ -68,14 +68,8 @@ public class Simple {
         o.setOption( ointeractive );
         o.setOption( ointerval );
         
-        //FileAppender app2 = new FileAppender( new File( "out.log" ) );
-        //Logger.addAppender( app2 );
-        //app2.setMinimumLevel( LogLevel.DEBUG );
-        
-        app.setTemplate( "[%level] %space %message%newline" );
+        app.setTemplate( "[%level]%space %message%newline" );
         Logger.addAppender( app );
-        
-        System.out.println("HEREH");
         
         o.setDefaultOptions();
         
@@ -87,8 +81,6 @@ public class Simple {
         	app.setMinimumLevel( LogLevel.INFO );
         }
         
-        
-
 
         try {
             o.checkOptions();

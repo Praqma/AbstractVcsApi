@@ -134,7 +134,7 @@ public class MercurialBranch extends AbstractBranch{
 	public void checkoutCommit( AbstractCommit commit ) {
 		this.currentCommit = commit;
 		try {
-			logger.info( "Checking out " + commit.getTitle() );
+			logger.debug( "Checking out " + commit.getTitle() );
 			Mercurial.checkoutCommit( commit.getKey(), localRepositoryPath );
 		} catch (MercurialException e) {
 			System.err.println( "Could not checkout commit" );
@@ -165,9 +165,7 @@ public class MercurialBranch extends AbstractBranch{
 		
 		List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
 		
-		//for(String c : cs) {
 		for( int i = 0 ; i < cs.size() ; i++ ) {
-			System.out.print( "\r" + Utils.getProgress( cs.size(), i ) );
 			MercurialCommit commit = new MercurialCommit( cs.get( i ), MercurialBranch.this, i );
 			if( load ) {
 				commit.load();

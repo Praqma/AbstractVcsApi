@@ -7,9 +7,12 @@ import java.util.Date;
 
 import org.w3c.dom.Element;
 
+import net.praqma.util.debug.Logger;
 import net.praqma.util.xml.XML;
 
 public class XMLStrategy extends XML implements PersistenceStrategy {
+	
+	private static Logger logger = Logger.getLogger();
 	
 	private SimpleDateFormat format  = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
 	private File file;

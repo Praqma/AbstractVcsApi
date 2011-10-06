@@ -154,7 +154,7 @@ public class Mercurial {
 	 */
 	public static void move( File file, File destination, File viewContext ) throws MercurialException {
 		try {
-			CommandLine.run( "hg rename " + file + " " + destination, viewContext );
+			CommandLine.run( "hg rename \"" + file + "\" \"" + destination + "\"", viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
 			throw new MercurialException( "Could not move " + file + " : " + e.getMessage() );
 		}

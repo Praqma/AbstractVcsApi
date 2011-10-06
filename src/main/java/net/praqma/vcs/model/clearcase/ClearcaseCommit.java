@@ -73,9 +73,13 @@ public class ClearcaseCommit extends AbstractCommit {
 					if( element.getStatus().equals( net.praqma.clearcase.ucm.entities.Version.Status.CHANGED ) ) {
 						ChangeSetElement cse = new ChangeSetElement( new File( element.getFile().getAbsoluteFile().toString().substring( length ) ), Status.CHANGED );
 						if( element.getOldFile() != null ) {
-							cse.setRenameFromFile( element.getOldFile() );
+							cse.setRenameFromFile( new File( element.getOldFile().getAbsoluteFile().toString().substring( length ) ) );
+							logger.debug( "I WAS RENAMED FROM " + element.getOldFile() );
 							cse.setStatus( Status.RENAMED );
 						}
+						
+						logger.debug( cse );
+						
 						logger.debug(element.getFile() + " " + cse.getStatus() );
 						ClearcaseCommit.this.changeSet.put( element.getFile().toString(), cse );
 						continue;
@@ -100,6 +104,8 @@ public class ClearcaseCommit extends AbstractCommit {
 						ClearcaseCommit.this.changeSet.put( element.getFile().toString(), cse );
 						continue;
 					}
+					
+					
 				}
 					
 			} catch( UCMException e ) {

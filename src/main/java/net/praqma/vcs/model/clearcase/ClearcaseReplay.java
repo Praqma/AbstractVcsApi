@@ -72,7 +72,8 @@ public class ClearcaseReplay extends AbstractReplay {
 			}
 			
 			try {
-				Version.checkOut( ccBranch.getDevelopmentPath(), ccBranch.getDevelopmentPath() );
+				logger.debug( "I suspect this to go wrong...." );
+				Version.checkOut( ccBranch.getPath(), ccBranch.getPath() );
 			} catch (UCMException e1) {
 				logger.error( "ClearCase could not checkout path " + ccBranch.getDevelopmentPath() + ": " + e1.getMessage() );
 				return false;
@@ -156,7 +157,7 @@ public class ClearcaseReplay extends AbstractReplay {
 					break;
 					
 				case RENAMED:
-					File oldfile = new File( ccBranch.getDevelopmentPath(), cse.getRenameFromFile().toString() );
+					File oldfile = new File( ccBranch.getPath(), cse.getRenameFromFile().toString() );
 					version = getFile( oldfile, false );
 					
 					/* Write before rename? */
@@ -243,7 +244,7 @@ public class ClearcaseReplay extends AbstractReplay {
 				}
 			} else {
 				try {
-					version = Version.getUnextendedVersion( file, ccBranch.getDevelopmentPath() );
+					version = Version.getUnextendedVersion( file, ccBranch.getPath() );
 					version.setView( ccBranch.getSnapshotView() );
 					version.checkOut();
 				} catch (UCMException e1) {
@@ -260,9 +261,9 @@ public class ClearcaseReplay extends AbstractReplay {
 			boolean success = true;
 			
 			try {
-				List<File> files = Version.getUncheckedIn( ccBranch.getDevelopmentPath() );
+				List<File> files = Version.getUncheckedIn( ccBranch.getPath() );
 				for( File f : files ) {
-					Version.checkIn( f, true, ccBranch.getDevelopmentPath() );
+					Version.checkIn( f, true, ccBranch.getPath() );
 				}
 			} catch (UCMException e) {
 				logger.error( e.getMessage() );

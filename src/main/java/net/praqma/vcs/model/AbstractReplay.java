@@ -54,17 +54,17 @@ public abstract class AbstractReplay {
 		}
 		
 		public boolean setup() {
-			logger.log( "Abstract replay setup" );
+			logger.debug( "Abstract replay setup" );
 			return true;
 		}
 		
 		public boolean replay() {
-			logger.log( "Abstract replay" );
+			logger.debug( "Abstract replay" );
 			return true;
 		}
 		
 		public boolean cleanup( boolean status ) {
-			logger.log( "Abstract replay cleanup: " + status );
+			logger.debug( "Abstract replay cleanup: " + status );
 			return true;
 		}
 		

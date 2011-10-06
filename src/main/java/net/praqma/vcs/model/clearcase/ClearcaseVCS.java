@@ -15,7 +15,6 @@ import net.praqma.clearcase.ucm.view.UCMView;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractVCS;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementException;
 import net.praqma.vcs.model.exceptions.ElementException.FailureType;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 

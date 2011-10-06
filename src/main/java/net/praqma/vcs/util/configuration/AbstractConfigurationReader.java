@@ -72,16 +72,20 @@ public abstract class AbstractConfigurationReader extends XML {
 		Element source = xml.getFirstElement( "source" );
 		Element target = xml.getFirstElement( "target" );
 		
-		Element extensions = xml.getFirstElement( "extensions" );
-		List<Element> exts = xml.getElements( extensions, "extension" );
-		for( Element e : exts ) {
-			String ext = e.getTextContent();
-			try {
-				AVA.getInstance().registerExtension( "", (Extension) Class.forName( ext ).newInstance() );
-				logger.info( "Adding " + ext + " as an extension" );
-			} catch ( Exception e1 ) {
-				logger.warning( ext + " could not be added as an extension: " + e1.getMessage() );
+		try {
+			Element extensions = xml.getFirstElement( "extensions" );
+			List<Element> exts = xml.getElements( extensions, "extension" );
+			for( Element e : exts ) {
+				String ext = e.getTextContent();
+				try {
+					AVA.getInstance().registerExtension( "", (Extension) Class.forName( ext ).newInstance() );
+					logger.info( "Adding " + ext + " as an extension" );
+				} catch ( Exception e1 ) {
+					logger.warning( ext + " could not be added as an extension: " + e1.getMessage() );
+				}
 			}
+		} catch( Exception e ) {
+			logger.debug( "No extensions" );
 		}
 		
 		Configuration config = new Configuration();

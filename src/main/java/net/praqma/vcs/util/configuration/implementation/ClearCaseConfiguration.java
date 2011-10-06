@@ -28,6 +28,9 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 
 	private Baseline foundationBaseline;
 	
+	private File inputPath;
+	private File outputPath;
+	
 	public ClearCaseConfiguration( File path, String viewtag, String vobname, String pvobname, String foundationBaselineName, String parentStreamName, String streamName ) throws ConfigurationException {
 		super( path );
 
@@ -49,10 +52,15 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	}
 
 	public void setParentStream( String stream ) throws ConfigurationException {
-		try {
-			parentStream = UCMEntity.getStream( stream, pvob, false );
-		} catch (UCMException e) {
-			throw new ConfigurationException( "Could not get parent stream: " + e.getMessage() );
+		if( stream != null && stream.length() > 0 ) {
+			try {
+				parentStream = UCMEntity.getStream( stream, pvob, false );
+			} catch (UCMException e) {
+				throw new ConfigurationException( "Could not get parent stream: " + e.getMessage() );
+			}
+		} else {
+			/* No parent */
+			parentStream = null;
 		}
 	}
 	
@@ -92,6 +100,14 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 		return viewtag;
 	}
 	
+	public void setInputPath( File path ) {
+		this.inputPath = path;
+	}
+	
+	public void setOutputPath( File path ) {
+		this.outputPath = path;
+	}
+	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		
@@ -110,6 +126,16 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	@Override
 	public AbstractBranch getBranch() throws ElementNotCreatedException, ElementDoesNotExistException {
 		ClearcaseBranch branch = new ClearcaseBranch( pvob, vob, parentStream, foundationBaseline, path, viewtag, streamName );
+		/* Set input path */
+		if( inputPath != null ) {
+			branch.setInputPath( inputPath );
+		}
+		
+		/* Set output path */
+		if( outputPath != null ) {
+			branch.setOutputPath( outputPath );
+		}
+		
 		branch.get(true);
 		this.branch = branch;
 		return branch;

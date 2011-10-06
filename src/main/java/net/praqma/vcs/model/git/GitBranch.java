@@ -166,7 +166,7 @@ public class GitBranch extends AbstractBranch{
 	public void checkoutCommit( AbstractCommit commit ) {
 		this.currentCommit = commit;
 		try {
-			logger.info( "Checking out " + commit.getTitle() );
+			logger.debug( "Checking out " + commit.getTitle() );
 			Git.checkoutCommit( commit.getKey(), localRepositoryPath );
 		} catch (GitException e) {
 			System.err.println( "Could not checkout commit" );
@@ -195,13 +195,9 @@ public class GitBranch extends AbstractBranch{
 			logger.warning( "Could not get hashes" );
 		}
 		
-		//Collections.reverse( cs );
-		
 		List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
 		
-		//for(String c : cs) {
 		for( int i = 0 ; i < cs.size() ; i++ ) {
-			System.out.print( "\r" + Utils.getProgress( cs.size(), i ) );
 			GitCommit commit = new GitCommit( cs.get( i ), GitBranch.this, i );
 			if( load ) {
 				commit.load();
