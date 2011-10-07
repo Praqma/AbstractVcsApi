@@ -1,12 +1,7 @@
 package net.praqma.vcs.model.mercurial;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 
 import net.praqma.vcs.model.AbstractBranch;
@@ -109,9 +104,16 @@ public class MercurialReplay extends AbstractReplay{
 						success = false;
 					}
 					
-					cleanRename( oldfile );
+					//cleanRename( oldfile );
 					
 					break;
+				}
+				
+				try {
+					logger.debug( "STATUS: " + Mercurial.status( branch.getPath() ) );
+				} catch (MercurialException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 			

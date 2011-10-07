@@ -31,6 +31,8 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	private File inputPath;
 	private File outputPath;
 	
+	private File developmentPath;
+	
 	public ClearCaseConfiguration( File path, String viewtag, String vobname, String pvobname, String foundationBaselineName, String parentStreamName, String streamName ) throws ConfigurationException {
 		super( path );
 
@@ -108,6 +110,10 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 		this.outputPath = path;
 	}
 	
+	public void setDevelopmentPath( File path ) {
+		this.developmentPath = path;
+	}
+	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		
@@ -135,6 +141,11 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 			/* Set output path */
 			if( outputPath != null ) {
 				branch.setOutputPath( outputPath );
+			}
+			
+			/* Set the development path */
+			if( developmentPath != null ) {
+				branch.setDevelopmentPath( developmentPath );
 			}
 			
 			branch.get(true);

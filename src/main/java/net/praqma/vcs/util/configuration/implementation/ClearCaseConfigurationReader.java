@@ -61,6 +61,13 @@ public class ClearCaseConfigurationReader extends AbstractConfigurationReader {
 			/* no op */
 		}
 		
+		try {
+			String dpath = getFirstElement( element, "developmentpath" ).getTextContent();
+			config.setOutputPath( new File( dpath ) );
+		} catch( Exception e ) {
+			/* no op */
+		}
+		
 		return config;
 	}
 

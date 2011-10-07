@@ -112,7 +112,7 @@ public class Mercurial {
 					dateString = datetimeformat.format( to );
 				}
 			}
-			return CommandLine.run( "hg log --rev 0: --template '{node}\\n'" + ( dateString.length() > 0 ? " --date=\"" + dateString : "" ), viewContext ).stdoutList;
+			return CommandLine.run( "hg log --rev 0: --template=\"{node}\\n\"" + ( dateString.length() > 0 ? " --date=\"" + dateString : "" ), viewContext ).stdoutList;
 		} catch( AbnormalProcessTerminationException e ) {
 			if( e.getMessage().matches( "^fatal: bad default revision 'HEAD'$" ) ) {
 				throw new MercurialException( "Could not get hashes: " + e.getMessage(), FailureType.NO_OUTPUT );
@@ -200,5 +200,13 @@ public class Mercurial {
 	
 	public static boolean repositoryExists( File viewContext ) {
 		return new File( viewContext, ".hg" ).exists();
+	}
+	
+	public static List<String> status( File viewContext ) throws MercurialException {
+		try {
+			return CommandLine.run( "hg status", viewContext ).stdoutList; // What about directories? -r
+		} catch( AbnormalProcessTerminationException e ) {
+			throw new MercurialException( "Could not get status : " + e.getMessage() );
+		}
 	}
 }

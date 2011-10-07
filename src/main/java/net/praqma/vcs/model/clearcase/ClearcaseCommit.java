@@ -65,9 +65,15 @@ public class ClearcaseCommit extends AbstractCommit {
 				
 				List<ChangeSetElement2> elements = changeset.getElementsAsList();
 				
-				int length = ccbranch.getSnapshotView().getViewRoot().getAbsoluteFile().toString().length();
+				//int length = ccbranch.getSnapshotView().getViewRoot().getAbsoluteFile().toString().length();
+				int length = ccbranch.getDevelopmentPath().toString().length();
+				//int length = ccbranch.getPath().toString().length();
+				
+				logger.debug( "PATH: " + ccbranch.getDevelopmentPath().toString() );
 				
 				for( ChangeSetElement2 element : elements ) {
+					
+					logger.debug( "FILE: " + element.getFile() + "(" + element.getFile().getAbsoluteFile().toString().substring( length ) + "(" + length + "))" );
 					
 					/* Plain change */
 					if( element.getStatus().equals( net.praqma.clearcase.ucm.entities.Version.Status.CHANGED ) ) {

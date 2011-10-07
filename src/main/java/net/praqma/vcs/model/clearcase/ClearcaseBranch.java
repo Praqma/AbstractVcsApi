@@ -60,14 +60,11 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	/**
 	 * The root of the development view,
-	 * basically the folder of the component
-	 * @deprecated
+	 * basically the folder of the component.
+	 * By default this is path/vob/component
 	 */
 	private File developmentPath_in;
 	
-	/**
-	 * @deprecated
-	 */
 	private File developmentPath_out;
 	
 	/**
@@ -503,7 +500,7 @@ public class ClearcaseBranch extends AbstractBranch{
 	@Override
 	public void checkoutCommit( AbstractCommit commit ) throws UnableToCheckoutCommitException {
 		this.currentCommit = commit;
-		/* TODO how to checkout a commit i CC? */
+		
 		if( commit instanceof ClearcaseCommit ) {
 			ClearcaseCommit cccommit = (ClearcaseCommit)commit;
 			this.devStream_out.rebase( this.snapshot_out, cccommit.getBaseline(), true );
@@ -572,13 +569,18 @@ public class ClearcaseBranch extends AbstractBranch{
 		return baseline;
 	}
 	
-	@Deprecated
 	public File getDevelopmentPath() {
 		return this.developmentPath_in;
 	}
 	
+	public void setDevelopmentPath( File path ) {
+		this.developmentPath_in = path;
+	}
+	
 	public void setInputPath( File path ) {
 		this.viewroot_in = path;
+		/* Update development path as well */
+		this.developmentPath_in = new File( viewroot_in, vob + "/" + this.component.getShortname() );
 	}
 	
 	public File getInputPath() {
@@ -595,7 +597,7 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	@Override
 	public File getPath() {
-		return this.viewroot_out;
+		return this.developmentPath_out;
 	}
 	
 	public Component getComponent() {

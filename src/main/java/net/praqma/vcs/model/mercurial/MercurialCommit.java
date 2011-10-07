@@ -57,7 +57,7 @@ public class MercurialCommit extends AbstractCommit {
 			logger.debug( "Mercurial: perform load" );
 			
 			
-			String cmd = "hg log --rev " + MercurialCommit.this.key +  " --template '{parents}\\n{author}\\n{date|isodate}\\n{rev}\\n{desc}' ";
+			String cmd = "hg log --rev " + MercurialCommit.this.key +  " --template=\"{parents}\\n{author}\\n{date|isodate}\\n{rev}\\n{desc}\"";
 			List<String> result = CommandLine.run( cmd, branch.getPath() ).stdoutList;
 			
 			MercurialCommit.this.parentKey = result.get( 0 );

@@ -72,8 +72,8 @@ public class ClearcaseReplay extends AbstractReplay {
 			}
 			
 			try {
-				logger.debug( "I suspect this to go wrong...." );
-				Version.checkOut( ccBranch.getPath(), ccBranch.getPath() );
+				logger.debug( "I suspect this to go wrong.... Not anymore!" );
+				Version.checkOut( ccBranch.getDevelopmentPath(), ccBranch.getPath() );
 			} catch (UCMException e1) {
 				logger.error( "ClearCase could not checkout path " + ccBranch.getDevelopmentPath() + ": " + e1.getMessage() );
 				return false;
@@ -88,8 +88,8 @@ public class ClearcaseReplay extends AbstractReplay {
 			boolean success = true;
 			
 			for( ChangeSetElement cse : cs ) {
-				//File file = new File( ccBranch.getDevelopmentPath(), cse.getFile().toString() );
-				File file = new File( ccBranch.getInputPath(), cse.getFile().toString() );
+				File file = new File( ccBranch.getDevelopmentPath(), cse.getFile().toString() );
+				//File file = new File( ccBranch.getInputPath(), cse.getFile().toString() );
 				logger.debug( "File: " + file.isFile() );
 				logger.debug( "CSE : " + cse.getFile().isFile() );
 				logger.debug( "File(" + cse.getStatus() + "): " + file );
