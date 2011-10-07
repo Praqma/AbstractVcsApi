@@ -111,6 +111,9 @@ public class GitReplay extends AbstractReplay{
 						logger.warning( e.getMessage() );
 						success = false;
 					}
+					
+					cleanRename( oldfile );
+					
 					break;
 				}
 			}

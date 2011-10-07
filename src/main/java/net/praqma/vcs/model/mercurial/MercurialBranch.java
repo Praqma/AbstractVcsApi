@@ -13,11 +13,10 @@ import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.mercurial.api.Mercurial;
 import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
-import net.praqma.vcs.util.Utils;
 
 public class MercurialBranch extends AbstractBranch{
 	
-	private String defaultMasterBranch = "master";
+	private String defaultMasterBranch = "default";
 
 	public MercurialBranch( File localRepositoryPath, String name ) throws ElementNotCreatedException {
 		super( localRepositoryPath, name );

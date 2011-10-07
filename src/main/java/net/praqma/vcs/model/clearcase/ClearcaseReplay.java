@@ -135,9 +135,6 @@ public class ClearcaseReplay extends AbstractReplay {
 					        out.write(buf, 0, len);
 					    }
 						
-						//ps = new PrintStream( new BufferedOutputStream(new FileOutputStream(version.getVersion(), true) ) );
-						//ps.println( commit.getKey() + " - " + commit.getAuthorDate() );
-						//ps.close();
 					} catch (FileNotFoundException e) {
 						success = false;
 						logger.error( "Could not write to file(" + version.getFile().getAbsolutePath() + "): " + e );

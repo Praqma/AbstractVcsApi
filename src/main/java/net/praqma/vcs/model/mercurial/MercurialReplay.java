@@ -77,34 +77,7 @@ public class MercurialReplay extends AbstractReplay{
 					
 				case CHANGED:
 					logger.debug( "Change element" );
-					InputStream in = null;
-					OutputStream out = null;
-					try {
-						in = new FileInputStream( sourcefile );
-						out = new FileOutputStream( targetfile );
-						
-					    byte[] buf = new byte[1024];
-					    int len;
-					    while ((len = in.read(buf)) > 0) {
-					        out.write(buf, 0, len);
-					    }
-						
-					} catch (FileNotFoundException e) {
-						success = false;
-						logger.error( "Could not write to file(" + sourcefile + "): " + e );
-					} catch (IOException e) {
-						success = false;
-						logger.error( "Could not write to file(" + sourcefile + "): " + e );
-					} finally {
-						try {
-							in.close();
-							out.close();
-						} catch (Exception e) {
-							logger.warning( "Could not close files: " + e.getMessage() );
-						}
-						
-					}
-					
+					IO.write( sourcefile, targetfile );
 					break;
 					
 				case DELETED:
@@ -136,15 +109,7 @@ public class MercurialReplay extends AbstractReplay{
 						success = false;
 					}
 					
-					/* Check if the old file still lives */
-					if( oldfile.exists() ) {
-						logger.debug( "The file still lives, let's kill it" );
-						try {
-							oldfile.delete();
-						} catch( Exception e ) {
-							logger.warning( "Could not delete " + oldfile + ": " + e.getMessage() );
-						}
-					}
+					cleanRename( oldfile );
 					
 					break;
 				}

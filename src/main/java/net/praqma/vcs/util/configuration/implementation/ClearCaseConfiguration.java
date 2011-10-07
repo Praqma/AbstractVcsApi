@@ -125,25 +125,27 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 
 	@Override
 	public AbstractBranch getBranch() throws ElementNotCreatedException, ElementDoesNotExistException {
-		ClearcaseBranch branch = new ClearcaseBranch( pvob, vob, parentStream, foundationBaseline, path, viewtag, streamName );
-		/* Set input path */
-		if( inputPath != null ) {
-			branch.setInputPath( inputPath );
+		if( branch == null ) {
+			ClearcaseBranch branch = new ClearcaseBranch( pvob, vob, parentStream, foundationBaseline, path, viewtag, streamName );
+			/* Set input path */
+			if( inputPath != null ) {
+				branch.setInputPath( inputPath );
+			}
+			
+			/* Set output path */
+			if( outputPath != null ) {
+				branch.setOutputPath( outputPath );
+			}
+			
+			branch.get(true);
+			this.branch = branch;
 		}
-		
-		/* Set output path */
-		if( outputPath != null ) {
-			branch.setOutputPath( outputPath );
-		}
-		
-		branch.get(true);
-		this.branch = branch;
 		return branch;
 	}
 
 	@Override
-	public AbstractReplay getReplay() throws UnsupportedBranchException {
-		return new ClearcaseReplay( branch );
+	public AbstractReplay getReplay() throws UnsupportedBranchException, ElementNotCreatedException, ElementDoesNotExistException {
+		return new ClearcaseReplay( getBranch() );
 	}
 
 }

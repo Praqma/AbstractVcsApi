@@ -1,5 +1,6 @@
 package net.praqma.vcs.model;
 
+import java.io.File;
 import java.util.List;
 
 import net.praqma.util.debug.Logger;
@@ -60,6 +61,25 @@ public abstract class AbstractReplay {
 		
 		public boolean replay() {
 			logger.debug( "Abstract replay" );
+			return true;
+		}
+		
+		/**
+		 * Removes a file, if it exists
+		 * @param file
+		 * @return
+		 */
+		public boolean cleanRename( File file ) {
+			if( file.exists() ) {
+				logger.debug( "The file still lives, let's kill it" );
+				try {
+					file.delete();
+					return true;
+				} catch( Exception e ) {
+					logger.warning( "Could not delete " + file + ": " + e.getMessage() );
+					return false;
+				}
+			}
 			return true;
 		}
 		
