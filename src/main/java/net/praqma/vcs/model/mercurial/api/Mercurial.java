@@ -92,7 +92,7 @@ public class Mercurial {
 			if( revision == 0 ) {
 				return CommandLine.run( "hg status --copies --rev null:0", viewContext ).stdoutList;
 			} else {
-				return CommandLine.run( "hg status --copies --rev 'p1(" + revision + "):" + revision + "'", viewContext ).stdoutList;
+				return CommandLine.run( "hg status --copies --rev \"p1(" + revision + "):" + revision + "\"", viewContext ).stdoutList;
 			}
 		} catch( AbnormalProcessTerminationException e ) {
 			throw new MercurialException( "Could not get changeset: " + e.getMessage() );
@@ -112,7 +112,7 @@ public class Mercurial {
 					dateString = datetimeformat.format( to );
 				}
 			}
-			return CommandLine.run( "hg log --rev 0: --template=\"{node}\\n\"" + ( dateString.length() > 0 ? " --date=\"" + dateString : "" ), viewContext ).stdoutList;
+			return CommandLine.run( "hg log --rev 0: --template=\"{node}\\n\"" + ( dateString.length() > 0 ? " --date=\">" + dateString : "" ), viewContext ).stdoutList;
 		} catch( AbnormalProcessTerminationException e ) {
 			if( e.getMessage().matches( "^fatal: bad default revision 'HEAD'$" ) ) {
 				throw new MercurialException( "Could not get hashes: " + e.getMessage(), FailureType.NO_OUTPUT );

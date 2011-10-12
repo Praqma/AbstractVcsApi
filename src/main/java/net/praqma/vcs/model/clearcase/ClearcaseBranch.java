@@ -487,7 +487,7 @@ public class ClearcaseBranch extends AbstractBranch{
 		
 		public boolean update() {
 			try {
-				snapshot_in.Update( true, true, true, false, COMP.MODIFIABLE, null );
+				snapshot_in.Update( true, true, true, false, COMP.ALL, null );
 			} catch (UCMException e) {
 	        	logger.error("Error while updating view: " + e.getMessage());
 	        	return false;
@@ -600,6 +600,10 @@ public class ClearcaseBranch extends AbstractBranch{
 		return this.developmentPath_out;
 	}
 	
+	public File getPathIn() {
+		return this.developmentPath_in;
+	}
+		
 	public Component getComponent() {
 		return this.component;
 	}

@@ -1,15 +1,12 @@
 package net.praqma.vcs.model.clearcase;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.List;
 
 import net.praqma.clearcase.ucm.UCMException;
@@ -71,9 +68,12 @@ public class ClearcaseReplay extends AbstractReplay {
 				return false;
 			}
 			
+			/* Update? */
+			ccBranch.update();
+			
+			/* Checkout component */
 			try {
-				logger.debug( "I suspect this to go wrong.... Not anymore!" );
-				Version.checkOut( ccBranch.getDevelopmentPath(), ccBranch.getPath() );
+				Version.checkOut( ccBranch.getDevelopmentPath(), ccBranch.getInputPath() );
 			} catch (UCMException e1) {
 				logger.error( "ClearCase could not checkout path " + ccBranch.getDevelopmentPath() + ": " + e1.getMessage() );
 				return false;
@@ -154,7 +154,7 @@ public class ClearcaseReplay extends AbstractReplay {
 					break;
 					
 				case RENAMED:
-					File oldfile = new File( ccBranch.getPath(), cse.getRenameFromFile().toString() );
+					File oldfile = new File( ccBranch.getPathIn(), cse.getRenameFromFile().toString() );
 					version = getFile( oldfile, false );
 					
 					/* Write before rename? */
@@ -241,7 +241,7 @@ public class ClearcaseReplay extends AbstractReplay {
 				}
 			} else {
 				try {
-					version = Version.getUnextendedVersion( file, ccBranch.getPath() );
+					version = Version.getUnextendedVersion( file, ccBranch.getPathIn() );
 					version.setView( ccBranch.getSnapshotView() );
 					version.checkOut();
 				} catch (UCMException e1) {
@@ -258,9 +258,9 @@ public class ClearcaseReplay extends AbstractReplay {
 			boolean success = true;
 			
 			try {
-				List<File> files = Version.getUncheckedIn( ccBranch.getPath() );
+				List<File> files = Version.getUncheckedIn( ccBranch.getPathIn() );
 				for( File f : files ) {
-					Version.checkIn( f, true, ccBranch.getPath() );
+					Version.checkIn( f, true, ccBranch.getPathIn() );
 				}
 			} catch (UCMException e) {
 				logger.error( e.getMessage() );
@@ -270,7 +270,8 @@ public class ClearcaseReplay extends AbstractReplay {
 			String baselineName = ClearcaseReplayListener.runSelectBaselineName( commit );
 			
 			try {
-				Baseline.create( baselineName, ccBranch.getComponent(), ccBranch.getDevelopmentPath(), true, true );
+				//Baseline.create( baselineName, ccBranch.getComponent(), ccBranch.getDevelopmentPath(), true, true );
+				Baseline.create( baselineName, ccBranch.getComponent(), ccBranch.getDevelopmentPath(), true, false );
 			} catch (UCMException e1) {
 				logger.error( "ClearCase could not create baseline: " + e1.getMessage() );
 				success = false;
