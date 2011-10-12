@@ -12,7 +12,9 @@ import java.util.List;
 import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Activity;
 import net.praqma.clearcase.ucm.entities.Baseline;
+import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.entities.Version;
+import net.praqma.clearcase.ucm.utils.BaselineList;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
@@ -68,7 +70,21 @@ public class ClearcaseReplay extends AbstractReplay {
 				return false;
 			}
 			
-			/* Update? */
+			/* Update? Yes, but we must rebase first! */
+			try{
+				Stream parent = ccBranch.getInputStream().getDefaultTarget();
+				logger.debug( "Trying to rebase against " + parent );
+				if( parent != null ) {
+					BaselineList baselines = parent.getLatestBaselines();
+					if( baselines != null && baselines.size() > 0 ) {
+						ccBranch.getInputStream().rebase( ccBranch.getSnapshotView(), baselines.get( 0 ), true );
+					} else {
+						logger.warning( "Unable to rebase to latest baseline!!!" );
+					}
+				}
+			} catch( Exception e ) {
+				logger.warning( "I tried to rebase, but got the error: " + e.getMessage() );
+			}
 			ccBranch.update();
 			
 			/* Checkout component */

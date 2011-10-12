@@ -59,12 +59,17 @@ public class ClearcaseBranch extends AbstractBranch{
 	private File viewroot_out;
 	
 	/**
-	 * The root of the development view,
+	 * The root of the development input view,
 	 * basically the folder of the component.
 	 * By default this is path/vob/component
 	 */
 	private File developmentPath_in;
 	
+	/**
+	 * The root of the development output view,
+	 * basically the folder of the component.
+	 * By default this is path/vob/component
+	 */
 	private File developmentPath_out;
 	
 	/**
@@ -117,7 +122,9 @@ public class ClearcaseBranch extends AbstractBranch{
 	 */
 	private PVob pvob;
 	
-	
+	/**
+	 * The component
+	 */
 	private Component component;
 	
 	private static Logger logger = Logger.getLogger();
@@ -144,15 +151,10 @@ public class ClearcaseBranch extends AbstractBranch{
 		this.viewtag_out = viewtag + "_out";
 		this.baseline = baseline;
 		
-		logger.debug( "VIEWTAG=" + this.viewtag_in );
-		logger.debug( "VIEWTAG=" + this.viewtag_out );
-		
 		this.parent = parent;
 		
 		this.vob = vob;
 		this.pvob = pvob;
-		//this.ccVCS = ccVCS;
-		
 		
 		try {
 			this.component = baseline.getComponent();
@@ -167,34 +169,46 @@ public class ClearcaseBranch extends AbstractBranch{
 		/* Set this to the view root of the out view */
 		this.localRepositoryPath = viewroot_out;
 	}
-
-	/**
-	 * Create and initializes a Clearcase branch(stream) and a corresponding view(not updated).
-	 * @param vob {@link Vob}
-	 * @param pvob {@link PVob}
-	 * @param parent The parent {@link Stream} 
-	 * @param baseline The {@link Baseline} the branch is initialized from
-	 * @param viewroot The view root as a {@link File}
-	 * @param viewtag The view tag of the {@link SnapshotView}
-	 * @param name The name of the {@link Stream} given as a basename.
-	 * @return
-	 * @throws ElementNotCreatedException
-	 * @throws ElementAlreadyExistsException 
-	 */
-	public static ClearcaseBranch create( PVob pvob, Vob vob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementNotCreatedException, ElementAlreadyExistsException {
-		ClearcaseBranch branch = new ClearcaseBranch( pvob, vob, parent, baseline, viewroot, viewtag, name );
-		branch.initialize();
-		//branch.get();
-		return branch;
-	}
 	
+	/**
+	 * Constructor used for branches where everything is created.
+	 * @param pvob
+	 * @param vob
+	 * @param component
+	 * @param viewroot
+	 * @param viewtag
+	 * @param name
+	 * @throws ElementNotCreatedException
+	 */
+	public ClearcaseBranch( PVob pvob, Vob vob, Component component, File viewroot, String viewtag, String name ) throws ElementNotCreatedException {
+		super(viewroot, name);
+		this.name_in = name;
+		this.name_out = name + "_out";
+		this.viewroot = viewroot;
+		this.viewroot_in = new File( viewroot, "in" );
+		this.viewroot_out = new File( viewroot, "out" );
+		this.viewtag_in = viewtag;
+		this.viewtag_out = viewtag + "_out";
+		
+		this.vob = vob;
+		this.pvob = pvob;
+		
+		this.component = component;
+		
+		this.developmentPath_in = new File( viewroot_in, vob + "/" + this.component.getShortname() );
+		this.developmentPath_out = new File( viewroot_out, vob + "/" + this.component.getShortname() );
+		
+		/* Set this to the view root of the out view */
+		this.localRepositoryPath = viewroot_out;
+	}
+
 	
 	
 	@Override
 	public void initialize() throws ElementNotCreatedException, ElementAlreadyExistsException {
 		try {
-			initialize(false);
-		} catch (ElementDoesNotExistException e) {
+			initialize( false );
+		} catch( ElementDoesNotExistException e ) {
 			/* This shouldn't be possible */
 			logger.fatal( "FAIL!! Shouldn't throw exist exceptions!!!" );
 		}
@@ -214,7 +228,7 @@ public class ClearcaseBranch extends AbstractBranch{
 
 		public boolean initialize() throws ElementDoesNotExistException, ElementNotCreatedException, ElementAlreadyExistsException {
 
-			/* Create input stream */
+			/* Create or get input stream */
 			if( get ) {
 				try {
 					devStream_in = UCMEntity.getStream( name_in, pvob, false );
@@ -225,14 +239,12 @@ public class ClearcaseBranch extends AbstractBranch{
 						try {
 							devStream_in = Stream.create( parent, name_in + "@" + pvob, false, baseline );
 						} catch (UCMException e1) {
-							logger.error( "Error while creating input stream: " + e.getMessage() );
+							logger.error( "Error while creating input stream: " + e1.getMessage() );
+							throw new ElementNotCreatedException( "Error while creating Development input Stream: " + e1.getMessage() );
 						}
 					} else {
 						logger.debug( "Unable to create the stream " + name_in + ". Parent is null" );
-					}
-				} finally {
-					if( devStream_in == null ) {
-						throw new ElementDoesNotExistException( "Could not find input stream" );
+						throw new ElementNotCreatedException( "Error while creating Development input Stream, parent is null" );
 					}
 				}
 			} else {
@@ -240,40 +252,45 @@ public class ClearcaseBranch extends AbstractBranch{
 					logger.info( "Creating development input stream"  );
 					devStream_in = Stream.create( parent, name_in + "@" + pvob, false, baseline );
 				} catch (UCMException e) {
-					if( get ) {
-						try {
-							devStream_in = UCMEntity.getStream( name_in, pvob, false );
-							logger.info( "Input stream already exists" );
-						} catch (UCMException e1) {
-							logger.error( "Error while initializing input stream: " + e.getMessage() );
-							throw new ElementDoesNotExistException( "Could not find input stream: " + e.getMessage() );
-						}
-					} else {
-						logger.error( "Error while creating Development input Stream: " + e.getMessage() );
-						throw new ElementNotCreatedException( "Error while creating Development input Stream: " + e.getMessage() );
-					}
-				}
-			}
-			
-			/* Create output stream
-			 * This is a read only stream, allowing rebasing. */
-			try {
-				logger.info( "Creating development output stream"  );
-				devStream_out = Stream.create( devStream_in, name_out + "@" + pvob, true, baseline );
-			} catch (UCMException e) {
-				if( get ) {
-					try {
-						devStream_out = UCMEntity.getStream( name_out, pvob, false );
-						logger.info( "Output stream already exists" );
-					} catch (UCMException e1) {
-						logger.error( "Could not find output stream: " + e.getMessage() );
-						throw new ElementDoesNotExistException( "Could not find input stream: " + e.getMessage() );
-					}
-				} else {
-					logger.error("Error while creating Development output Stream: " + e.getMessage());
+					logger.error( "Error while creating Development input Stream: " + e.getMessage() );
 					throw new ElementNotCreatedException( "Error while creating Development input Stream: " + e.getMessage() );
 				}
 			}
+			
+			/* We got this far, let's set the baseline if null */
+			if( baseline == null ) {
+				try {
+					baseline = devStream_in.getFoundationBaseline();
+				} catch( UCMException e ) {
+					logger.warning( "Unable to get foundation baseline. I wonder why?! " + e.getMessage() );
+				}
+			}
+			
+			/* Create or get output stream
+			 * This is a read only stream, allowing rebasing. */
+			if( get ) {
+				try {
+					devStream_out = UCMEntity.getStream( name_out, pvob, false );
+				} catch ( UCMException e ) {
+					logger.debug( "Trying to create the stream " + name_out );
+					try {
+						devStream_out = Stream.create( devStream_in, name_out + "@" + pvob, false, baseline );
+					} catch( UCMException e1 ) {
+						logger.error( "Error while creating output stream: " + e1.getMessage() );
+						throw new ElementNotCreatedException( "Error while creating Development output Stream: " + e1.getMessage() );
+					}
+				}
+			} else {
+				try {
+					logger.info( "Creating development output stream"  );
+					devStream_out = Stream.create( devStream_in, name_out + "@" + pvob, true, baseline );
+				} catch (UCMException e) {
+					logger.error("Error while creating Development output Stream: " + e.getMessage());
+					throw new ElementNotCreatedException( "Error while creating Development output Stream: " + e.getMessage() );
+				}
+			}
+			
+			
 			
 			/* Creating input view */
 			if( get ) {
@@ -345,6 +362,7 @@ public class ClearcaseBranch extends AbstractBranch{
 			UCMEntity.getStream( name_in, pvob, false );
 		} catch (UCMException e1) {
 			logger.error( "Input stream does not exist" );
+			result = false;
 		}
 		
 		/* Test output stream */
@@ -352,6 +370,7 @@ public class ClearcaseBranch extends AbstractBranch{
 			UCMEntity.getStream( name_out, pvob, false );
 		} catch (UCMException e1) {
 			logger.error( "Output stream does not exist" );
+			result = false;
 		}
 
 		/* Test input view */
@@ -511,6 +530,7 @@ public class ClearcaseBranch extends AbstractBranch{
 			}
 		} else {
 			logger.warning( "I don't know how to do this!!!" );
+			throw new UnableToCheckoutCommitException( "This is not a ClearCase commit!" );
 		}
 	}
 	
@@ -531,11 +551,6 @@ public class ClearcaseBranch extends AbstractBranch{
 				
 		try {
 			List<Baseline> baselines = this.devStream_in.getBaselines( getComponent(), null, offset );
-			
-			/* TODO Clear out baselines before offset */
-			if( offset != null ) {
-				
-			}
 			
 			for( int i = 0 ; i < baselines.size() ; i++ ) {				
 				ClearcaseCommit commit = new ClearcaseCommit( baselines.get( i ), ClearcaseBranch.this, i );
@@ -606,6 +621,14 @@ public class ClearcaseBranch extends AbstractBranch{
 		
 	public Component getComponent() {
 		return this.component;
+	}
+	
+	public Stream getInputStream() {
+		return devStream_in;
+	}
+	
+	public Stream getOutputStream() {
+		return devStream_out;
 	}
 
 	@Override
