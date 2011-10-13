@@ -63,13 +63,6 @@ public class ClearcaseReplay extends AbstractReplay {
 		}
 
 		public boolean setup() {
-			try {
-				Activity.create( null, ccBranch.getPVob(), true, "CCReplay: " + commit.getKey(), ccBranch.getSnapshotView().getViewRoot() );
-			} catch (UCMException e1) {
-				logger.error( "ClearCase Activity could not be created: " + e1.getMessage() );
-				return false;
-			}
-			
 			/* Update? Yes, but we must rebase first! */
 			try{
 				Stream parent = ccBranch.getInputStream().getDefaultTarget();
@@ -86,6 +79,14 @@ public class ClearcaseReplay extends AbstractReplay {
 				logger.warning( "I tried to rebase, but got the error: " + e.getMessage() );
 			}
 			ccBranch.update();
+			
+			try {
+				Activity.create( null, ccBranch.getPVob(), true, "CCReplay: " + commit.getKey(), ccBranch.getSnapshotView().getViewRoot() );
+			} catch (UCMException e1) {
+				logger.error( "ClearCase Activity could not be created: " + e1.getMessage() );
+				return false;
+			}
+
 			
 			/* Checkout component */
 			try {
@@ -276,7 +277,7 @@ public class ClearcaseReplay extends AbstractReplay {
 			try {
 				List<File> files = Version.getUncheckedIn( ccBranch.getPathIn() );
 				for( File f : files ) {
-					Version.checkIn( f, true, ccBranch.getPathIn() );
+					Version.checkIn( f, false, ccBranch.getPathIn() );
 				}
 			} catch (UCMException e) {
 				logger.error( e.getMessage() );
