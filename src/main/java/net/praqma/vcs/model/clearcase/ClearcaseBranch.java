@@ -604,6 +604,8 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	public void setOutputPath( File path ) {
 		this.viewroot_out = path;
+		/* Update development path as well */
+		this.developmentPath_out = new File( viewroot_out, vob + "/" + this.component.getShortname() );
 	}
 	
 	public File getOutputPath() {

@@ -49,6 +49,19 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 		setParentStream( parentStreamName );
 	}
 	
+	public ClearCaseConfiguration( File path, String viewtag, Vob vob, PVob pvob, Baseline baseline, Stream parentStream, Stream stream ) throws ConfigurationException {
+		super( path );
+
+		this.pvob = pvob;
+
+		this.vob = vob;
+
+		this.viewtag = viewtag;
+		this.foundationBaseline = baseline;
+		this.streamName = stream.getFullyQualifiedName();
+		this.parentStream = parentStream;
+	}	
+	
 	public static void parse() {
 		
 	}
