@@ -89,6 +89,7 @@ public class ClearcaseReplay extends AbstractReplay {
 
 			
 			/* Checkout component */
+			/* Is this needed? */
 			try {
 				Version.checkOut( ccBranch.getDevelopmentPath(), ccBranch.getInputPath() );
 			} catch (UCMException e1) {
@@ -99,13 +100,18 @@ public class ClearcaseReplay extends AbstractReplay {
 			return true;
 		}
 		
+		protected File getChangeSetFile( ChangeSetElement cse ) {
+			return new File( ccBranch.getDevelopmentPath(), cse.getFile().toString() );
+		}
+		
 		public boolean replay() {
 			List<ChangeSetElement> cs = commit.getChangeSet().asList();
 			
 			boolean success = true;
 			
 			for( ChangeSetElement cse : cs ) {
-				File file = new File( ccBranch.getDevelopmentPath(), cse.getFile().toString() );
+				//File file = new File( ccBranch.getDevelopmentPath(), cse.getFile().toString() );
+				File file = getChangeSetFile( cse );
 				//File file = new File( ccBranch.getInputPath(), cse.getFile().toString() );
 				logger.debug( "File: " + file.isFile() );
 				logger.debug( "CSE : " + cse.getFile().isFile() );
