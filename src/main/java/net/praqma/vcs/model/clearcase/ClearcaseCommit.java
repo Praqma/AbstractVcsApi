@@ -16,8 +16,8 @@ import net.praqma.vcs.model.ChangeSetElement.Status;
 public class ClearcaseCommit extends AbstractCommit {
 	
 	private Logger logger = Logger.getLogger();
-	private Baseline baseline;
-	private ClearcaseBranch ccbranch;
+	protected Baseline baseline;
+	protected ClearcaseBranch ccbranch;
 
 	public ClearcaseCommit( Baseline baseline, ClearcaseBranch branch, int number ) {
 		super( baseline.getFullyQualifiedName(), branch, number );
@@ -40,6 +40,14 @@ public class ClearcaseCommit extends AbstractCommit {
 		public LoadImpl() {
 			super();
 		}
+		
+		protected int getLength() {
+			return ccbranch.getDevelopmentPath().toString().length();
+		}
+		
+		protected void debug() {
+			logger.debug( "PATH: " + ccbranch.getDevelopmentPath().toString() );
+		}
 
 		public boolean perform() {
 			logger.debug( "CC: perform load" );
@@ -52,24 +60,17 @@ public class ClearcaseCommit extends AbstractCommit {
 				ClearcaseCommit.this.committerDate = baseline.getDate();
 	
 				ClearcaseCommit.this.title = ( baseline.getComment() != null ? baseline.getComment() : baseline.getFullyQualifiedName() );
-				//List<Version> versions = baseline.beforeBaselineDifferences( null, ccbranch.getSnapshotView() );
 				ChangeSet2 changeset = ChangeSet2.getChangeSet( baseline, null, ccbranch.getSnapshotView().getViewRoot() );
 				
 				logger.debug( "Changeset for " + ClearcaseCommit.this.baseline.getShortname() );
 				
-				/*
-				for( ChangeSetElement2 e : changeset.getElementsAsList() ) {
-					logger.debug( " " + e.getFile() + " " + e.getStatus() + ( e.getOldFile() != null ? " (Moved)" : "" ) );
-				}
-				*/
-				
 				List<ChangeSetElement2> elements = changeset.getElementsAsList();
 				
-				//int length = ccbranch.getSnapshotView().getViewRoot().getAbsoluteFile().toString().length();
-				int length = ccbranch.getDevelopmentPath().toString().length();
-				//int length = ccbranch.getPath().toString().length();
+				//int length = ccbranch.getDevelopmentPath().toString().length();
+				int length = getLength();
 				
-				logger.debug( "PATH: " + ccbranch.getDevelopmentPath().toString() );
+				debug();
+				
 				
 				for( ChangeSetElement2 element : elements ) {
 					

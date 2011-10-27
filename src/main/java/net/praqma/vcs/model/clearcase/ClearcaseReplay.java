@@ -27,7 +27,7 @@ import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
 
 public class ClearcaseReplay extends AbstractReplay {
 	
-	private ClearcaseBranch ccBranch;
+	protected ClearcaseBranch ccBranch;
 	
 	private Logger logger = Logger.getLogger();
 
@@ -204,7 +204,7 @@ public class ClearcaseReplay extends AbstractReplay {
 			return success;
 		}
 		
-		private void removeEmptyDirectories( File d ) {			
+		protected void removeEmptyDirectories( File d ) {			
 			logger.debug( d + " has " + d.list().length + " elements" );
 			while( d.list().length == 0 ) {
 				try {
@@ -218,7 +218,7 @@ public class ClearcaseReplay extends AbstractReplay {
 			}
 		}
 		
-		private void write( File src, File dst ) {
+		protected void write( File src, File dst ) {
 			InputStream in = null;
 			OutputStream out = null;
 			
@@ -251,7 +251,7 @@ public class ClearcaseReplay extends AbstractReplay {
 			}
 		}
 		
-		private Version getFile( File file, boolean mkdir ) {
+		protected Version getFile( File file, boolean mkdir ) {
 			logger.debug( "GETFILE: " + file );
 			Version version = null;
 			/* TODO Determine whether the file exists or not */
@@ -294,7 +294,7 @@ public class ClearcaseReplay extends AbstractReplay {
 			
 			try {
 				//Baseline.create( baselineName, ccBranch.getComponent(), ccBranch.getDevelopmentPath(), true, true );
-				Baseline.create( baselineName, ccBranch.getComponent(), ccBranch.getDevelopmentPath(), true, false );
+				Baseline.create( baselineName, ccBranch.getComponent(), ccBranch.getPathIn(), true, false );
 			} catch (UCMException e1) {
 				logger.error( "ClearCase could not create baseline: " + e1.getMessage() );
 				success = false;
