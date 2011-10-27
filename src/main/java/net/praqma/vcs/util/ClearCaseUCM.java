@@ -13,6 +13,18 @@ import net.praqma.vcs.util.configuration.exception.ConfigurationException;
 import net.praqma.vcs.util.configuration.implementation.ClearCaseConfiguration;
 
 public class ClearCaseUCM {
+	
+	private static final String fdel = System.getProperty( "file.separator" );
+	
+	public static AbstractConfiguration getConfigurationFromView( File view, String vobname ) throws ElementException, ConfigurationException, UCMException {
+		if( !vobname.startsWith( fdel ) ) {
+			vobname = fdel + vobname;
+		}
+		Vob vob = new Vob( vobname );
+		
+		return getConfigurationFromView( view, vob );
+	}
+	
 	public static AbstractConfiguration getConfigurationFromView( File view, Vob vob ) throws ElementException, ConfigurationException, UCMException {
 		SnapshotView snapview = null;
 		try {
