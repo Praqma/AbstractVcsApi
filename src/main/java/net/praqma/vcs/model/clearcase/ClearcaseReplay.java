@@ -54,11 +54,11 @@ public class ClearcaseReplay extends AbstractReplay {
 	@Override
 	public void replay( AbstractCommit commit ) throws UnableToReplayException {
 		ClearcaseReplayListener.runReplay( this, commit );
-		doReplay( new ReplayImpl( commit ) );
+		doReplay( new ClearCaseReplayImpl( commit ) );
 	}
 	
-	public class ReplayImpl extends Replay{
-		public ReplayImpl( AbstractCommit commit ) {
+	public class ClearCaseReplayImpl extends Replay{
+		public ClearCaseReplayImpl( AbstractCommit commit ) {
 			super( commit );
 		}
 
