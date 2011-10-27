@@ -2,7 +2,6 @@ package net.praqma.vcs.util;
 
 import java.io.File;
 
-import net.praqma.clearcase.Vob;
 import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.view.SnapshotView;
@@ -16,16 +15,7 @@ public class ClearCaseUCM {
 	
 	private static final String fdel = System.getProperty( "file.separator" );
 	
-	public static AbstractConfiguration getConfigurationFromView( File view, String vobname ) throws ElementException, ConfigurationException, UCMException {
-		if( !vobname.startsWith( fdel ) ) {
-			vobname = fdel + vobname;
-		}
-		Vob vob = new Vob( vobname );
-		
-		return getConfigurationFromView( view, vob );
-	}
-	
-	public static AbstractConfiguration getConfigurationFromView( File view, Vob vob ) throws ElementException, ConfigurationException, UCMException {
+	public static AbstractConfiguration getConfigurationFromView( File view ) throws ElementException, ConfigurationException, UCMException {
 		SnapshotView snapview = null;
 		try {
 			snapview = SnapshotView.getSnapshotViewFromPath( view );
@@ -42,7 +32,7 @@ public class ClearCaseUCM {
 		
 		File parentView = view.getParentFile();
 		
-		ClearCaseConfiguration config = new ClearCaseConfiguration( parentView, snapview.getViewtag(), vob, stream.getPVob(), stream.getFoundationBaseline(), null, stream );
+		ClearCaseConfiguration config = new ClearCaseConfiguration( parentView, snapview.getViewtag(), stream.getPVob(), stream.getFoundationBaseline(), null, stream );
 		
 		config.setInputPath( view );
 		

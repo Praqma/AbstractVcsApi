@@ -68,7 +68,7 @@ public class GitToClearcase3 {
 		logger.info( "Clearcase initialized" );
 		
 		/* Make number 1 stream */
-		final ClearcaseBranch ccbranch = new ClearcaseBranch( pvob, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_1" ), projectName + "_1_view", projectName + "_1_dev" );
+		final ClearcaseBranch ccbranch = new ClearcaseBranch( pvob, cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_1" ), projectName + "_1_view", projectName + "_1_dev" );
 		try {
 			ccbranch.get(true);
 		} catch( Exception e ) {
@@ -78,7 +78,7 @@ public class GitToClearcase3 {
 		ccbranch.update();
 
 		/* Make number 2 stream */
-		final ClearcaseBranch ccbranch2 = new ClearcaseBranch( pvob, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_2" ), projectName + "_2_view", projectName + "_2_dev" );
+		final ClearcaseBranch ccbranch2 = new ClearcaseBranch( pvob, cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_2" ), projectName + "_2_view", projectName + "_2_dev" );
 		try {
 			ccbranch2.get(true);
 		} catch( Exception e ) {

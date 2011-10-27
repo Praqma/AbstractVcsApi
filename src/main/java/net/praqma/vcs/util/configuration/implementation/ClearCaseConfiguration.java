@@ -20,7 +20,6 @@ import net.praqma.vcs.util.configuration.exception.ConfigurationException;
 
 public class ClearCaseConfiguration extends AbstractConfiguration {
 	private String viewtag;
-	private Vob vob;
 	private PVob pvob;
 
 	private Stream parentStream;
@@ -31,9 +30,7 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	private File inputPath;
 	private File outputPath;
 	
-	private File developmentPath;
-	
-	public ClearCaseConfiguration( File path, String viewtag, String vobname, String pvobname, String foundationBaselineName, String parentStreamName, String streamName ) throws ConfigurationException {
+	public ClearCaseConfiguration( File path, String viewtag, String pvobname, String foundationBaselineName, String parentStreamName, String streamName ) throws ConfigurationException {
 		super( path );
 
 		this.pvob = PVob.get( pvobname );
@@ -41,20 +38,16 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 			throw new ConfigurationException( "PVob " + pvobname + " does not exist" );
 		}
 
-		this.vob = new Vob( "\\" + vobname );
-
 		this.viewtag = viewtag;
 		setFoundationBaseline( foundationBaselineName );
 		this.streamName = streamName;
 		setParentStream( parentStreamName );
 	}
 	
-	public ClearCaseConfiguration( File path, String viewtag, Vob vob, PVob pvob, Baseline baseline, Stream parentStream, Stream stream ) throws ConfigurationException {
+	public ClearCaseConfiguration( File path, String viewtag, PVob pvob, Baseline baseline, Stream parentStream, Stream stream ) throws ConfigurationException {
 		super( path );
 
 		this.pvob = pvob;
-
-		this.vob = vob;
 
 		this.viewtag = viewtag;
 		this.foundationBaseline = baseline;
@@ -103,10 +96,6 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 		return foundationBaseline;
 	}
 
-	public Vob getVob() {
-		return vob;
-	}
-
 	public PVob getPVob() {
 		return pvob;
 	}
@@ -123,17 +112,12 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 		this.outputPath = path;
 	}
 	
-	public void setDevelopmentPath( File path ) {
-		this.developmentPath = path;
-	}
-	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		
 		sb.append( "Parent: " + super.toString() );
 		
 		sb.append( "View tag: " + viewtag + "\n" );
-		sb.append( "Vob: " + vob + "\n" );
 		sb.append( "PVob: " + pvob + "\n" );
 		
 		sb.append( "Stream name: " + streamName + "\n" );
@@ -145,7 +129,7 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	@Override
 	public AbstractBranch getBranch() throws ElementNotCreatedException, ElementDoesNotExistException {
 		if( branch == null ) {
-			ClearcaseBranch branch = new ClearcaseBranch( pvob, vob, parentStream, foundationBaseline, path, viewtag, streamName );
+			ClearcaseBranch branch = new ClearcaseBranch( pvob, parentStream, foundationBaseline, path, viewtag, streamName );
 			/* Set input path */
 			if( inputPath != null ) {
 				branch.setInputPath( inputPath );
@@ -154,11 +138,6 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 			/* Set output path */
 			if( outputPath != null ) {
 				branch.setOutputPath( outputPath );
-			}
-			
-			/* Set the development path */
-			if( developmentPath != null ) {
-				branch.setDevelopmentPath( developmentPath );
 			}
 			
 			branch.get(true);

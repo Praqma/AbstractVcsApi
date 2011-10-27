@@ -89,19 +89,21 @@ public class ClearcaseReplay extends AbstractReplay {
 
 			
 			/* Checkout component */
-			/* Is this needed? */
+			/* TODO Is this needed? */
+			/*
 			try {
 				Version.checkOut( ccBranch.getDevelopmentPath(), ccBranch.getInputPath() );
 			} catch (UCMException e1) {
 				logger.error( "ClearCase could not checkout path " + ccBranch.getDevelopmentPath() + ": " + e1.getMessage() );
 				return false;
 			}
+			*/
 			
 			return true;
 		}
 		
 		protected File getChangeSetFile( ChangeSetElement cse ) {
-			return new File( ccBranch.getDevelopmentPath(), cse.getFile().toString() );
+			return new File( ccBranch.getPath(), cse.getFile().toString() );
 		}
 		
 		public boolean replay() {

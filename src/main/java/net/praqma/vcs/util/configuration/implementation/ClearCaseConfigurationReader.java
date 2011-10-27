@@ -21,7 +21,6 @@ public class ClearCaseConfigurationReader extends AbstractConfigurationReader {
 		
 		String path = "";
 		String viewtag = "";
-		String vob = "";
 		String pvob = "";
 		String fbaseline = "";
 		String pstream = "";
@@ -30,7 +29,6 @@ public class ClearCaseConfigurationReader extends AbstractConfigurationReader {
 		try {
 			path = getFirstElement( element, "path" ).getTextContent();
 			viewtag = getFirstElement( element, "viewtag" ).getTextContent();
-			vob = getFirstElement( element, "vob" ).getTextContent();
 			pvob = getFirstElement( element, "pvob" ).getTextContent();
 			fbaseline = getFirstElement( element, "foundationBaseline" ).getTextContent();
 			streamName = getFirstElement( element, "streamName" ).getTextContent();
@@ -45,7 +43,7 @@ public class ClearCaseConfigurationReader extends AbstractConfigurationReader {
 			logger.debug( "No parent given" );
 		}
 		
-		ClearCaseConfiguration config = new ClearCaseConfiguration( new File( path ), viewtag, vob, pvob, fbaseline, pstream, streamName );
+		ClearCaseConfiguration config = new ClearCaseConfiguration( new File( path ), viewtag, pvob, fbaseline, pstream, streamName );
 		
 		try {
 			String inputPath = getFirstElement( element, "inputpath" ).getTextContent();
@@ -57,13 +55,6 @@ public class ClearCaseConfigurationReader extends AbstractConfigurationReader {
 		try {
 			String outputPath = getFirstElement( element, "outputpath" ).getTextContent();
 			config.setOutputPath( new File( outputPath ) );
-		} catch( Exception e ) {
-			/* no op */
-		}
-		
-		try {
-			String dpath = getFirstElement( element, "developmentpath" ).getTextContent();
-			config.setOutputPath( new File( dpath ) );
 		} catch( Exception e ) {
 			/* no op */
 		}

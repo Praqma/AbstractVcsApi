@@ -136,7 +136,7 @@ public class SiemensDemo {
 		Vob vob = new Vob( "\\" + ovobname.getString() );
 		Stream stream = UCMEntity.getStream( ostreamname.getString(), pvob, false );
 		
-		ClearcaseBranch ccbranch = new ClearcaseBranch( pvob, vob, stream, baseline, new File( oview.getString() ), oviewtag.getString(), ochildstreamname.getString() );
+		ClearcaseBranch ccbranch = new ClearcaseBranch( pvob, stream, baseline, new File( oview.getString() ), oviewtag.getString(), ochildstreamname.getString() );
 		ccbranch.initialize(true);
 		ccbranch.update();
 		

@@ -42,11 +42,11 @@ public class ClearcaseCommit extends AbstractCommit {
 		}
 		
 		protected int getLength() {
-			return ccbranch.getDevelopmentPath().toString().length();
+			return ccbranch.getPath().toString().length();
 		}
 		
 		protected void debug() {
-			logger.debug( "PATH: " + ccbranch.getDevelopmentPath().toString() );
+			logger.debug( "PATH: " + ccbranch.getPath().toString() );
 		}
 
 		public boolean perform() {

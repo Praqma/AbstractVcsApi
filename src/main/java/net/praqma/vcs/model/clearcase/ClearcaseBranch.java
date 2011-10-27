@@ -23,7 +23,6 @@ import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementException.FailureType;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
-import net.praqma.vcs.util.Utils;
 
 /**
  * An implementation of {@link AbstractBranch} for Clearcase, where {@link Baseline}'s are used as commit separator.
@@ -57,20 +56,6 @@ public class ClearcaseBranch extends AbstractBranch{
 	 * The view root of the output view
 	 */
 	protected File viewroot_out;
-	
-	/**
-	 * The root of the development input view,
-	 * basically the folder of the component.
-	 * By default this is path/vob/component
-	 */
-	protected File developmentPath_in;
-	
-	/**
-	 * The root of the development output view,
-	 * basically the folder of the component.
-	 * By default this is path/vob/component
-	 */
-	protected File developmentPath_out;
 	
 	/**
 	 * The view tag of the input view
@@ -111,12 +96,7 @@ public class ClearcaseBranch extends AbstractBranch{
 	 * The parent {@link Stream} of the branch
 	 */
 	protected Stream parent;
-	
-	/**
-	 * The {@link Project}s {@link Vob}
-	 */
-	protected Vob vob;
-	
+		
 	/**
 	 * The {@link Project}s {@link PVob}
 	 */
@@ -140,7 +120,7 @@ public class ClearcaseBranch extends AbstractBranch{
 	 * @param name
 	 * @throws ElementNotCreatedException
 	 */
-	public ClearcaseBranch( PVob pvob, Vob vob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementNotCreatedException {
+	public ClearcaseBranch( PVob pvob, Stream parent, Baseline baseline, File viewroot, String viewtag, String name ) throws ElementNotCreatedException {
 		super(viewroot, name);
 		this.name_in = name;
 		this.name_out = name + "_out";
@@ -153,7 +133,6 @@ public class ClearcaseBranch extends AbstractBranch{
 		
 		this.parent = parent;
 		
-		this.vob = vob;
 		this.pvob = pvob;
 		
 		try {
@@ -162,9 +141,6 @@ public class ClearcaseBranch extends AbstractBranch{
 			logger.error( "Could not create Clearcase branch: " + e.getMessage() );
 			throw new ElementNotCreatedException( "Could not create Clearcase branch: " + e.getMessage(), FailureType.DEPENDENCY );
 		}
-		
-		this.developmentPath_in = new File( viewroot_in, vob + "/" + this.component.getShortname() );
-		this.developmentPath_out = new File( viewroot_out, vob + "/" + this.component.getShortname() );
 		
 		/* Set this to the view root of the out view */
 		this.localRepositoryPath = viewroot_out;
@@ -180,7 +156,7 @@ public class ClearcaseBranch extends AbstractBranch{
 	 * @param name
 	 * @throws ElementNotCreatedException
 	 */
-	public ClearcaseBranch( PVob pvob, Vob vob, Component component, File viewroot, String viewtag, String name ) throws ElementNotCreatedException {
+	public ClearcaseBranch( PVob pvob, Component component, File viewroot, String viewtag, String name ) throws ElementNotCreatedException {
 		super(viewroot, name);
 		this.name_in = name;
 		this.name_out = name + "_out";
@@ -190,13 +166,9 @@ public class ClearcaseBranch extends AbstractBranch{
 		this.viewtag_in = viewtag;
 		this.viewtag_out = viewtag + "_out";
 		
-		this.vob = vob;
 		this.pvob = pvob;
 		
 		this.component = component;
-		
-		this.developmentPath_in = new File( viewroot_in, vob + "/" + this.component.getShortname() );
-		this.developmentPath_out = new File( viewroot_out, vob + "/" + this.component.getShortname() );
 		
 		/* Set this to the view root of the out view */
 		this.localRepositoryPath = viewroot_out;
@@ -576,26 +548,12 @@ public class ClearcaseBranch extends AbstractBranch{
 		return pvob;
 	}
 	
-	public Vob getVob() {
-		return vob;
-	}
-	
 	public Baseline getBaseline() {
 		return baseline;
 	}
 	
-	public File getDevelopmentPath() {
-		return this.developmentPath_in;
-	}
-	
-	public void setDevelopmentPath( File path ) {
-		this.developmentPath_in = path;
-	}
-	
 	public void setInputPath( File path ) {
 		this.viewroot_in = path;
-		/* Update development path as well */
-		this.developmentPath_in = new File( viewroot_in, vob + "/" + this.component.getShortname() );
 	}
 	
 	public File getInputPath() {
@@ -604,8 +562,6 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	public void setOutputPath( File path ) {
 		this.viewroot_out = path;
-		/* Update development path as well */
-		this.developmentPath_out = new File( viewroot_out, vob + "/" + this.component.getShortname() );
 	}
 	
 	public File getOutputPath() {
@@ -614,11 +570,13 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	@Override
 	public File getPath() {
-		return this.developmentPath_out;
+		//return this.developmentPath_out;
+		return this.viewroot_out;
 	}
 	
 	public File getPathIn() {
-		return this.developmentPath_in;
+		//return this.developmentPath_out;
+		return this.viewroot_in;
 	}
 		
 	public Component getComponent() {

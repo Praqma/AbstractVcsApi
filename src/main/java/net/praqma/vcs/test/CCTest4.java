@@ -55,7 +55,7 @@ public class CCTest4 {
                                                                    Project.POLICY_DELIVER_NCO_DEVSTR    |
                                                                    Project.POLICY_DELIVER_REQUIRE_REBASE, pvob );
 		
-		ClearcaseBranch branch = new ClearcaseBranch( pvob, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), path, name + "_view", name + "_dev");
+		ClearcaseBranch branch = new ClearcaseBranch( pvob, cc.getIntegrationStream(), cc.getInitialBaseline(), path, name + "_view", name + "_dev");
 		branch.get();
                                                                    
 	}
