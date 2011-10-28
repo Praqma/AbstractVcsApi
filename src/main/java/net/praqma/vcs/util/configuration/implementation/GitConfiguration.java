@@ -4,7 +4,6 @@ import java.io.File;
 
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractReplay;
-import net.praqma.vcs.model.clearcase.ClearcaseReplay;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
@@ -14,6 +13,7 @@ import net.praqma.vcs.util.configuration.AbstractConfiguration;
 
 public class GitConfiguration extends AbstractConfiguration {
 	
+	private static final long serialVersionUID = 4113405067586223732L;
 	private String branchName;
 	
 	public GitConfiguration( File path, String branchName ) {

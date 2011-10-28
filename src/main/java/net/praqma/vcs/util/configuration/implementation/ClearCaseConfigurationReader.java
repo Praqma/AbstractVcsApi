@@ -43,7 +43,7 @@ public class ClearCaseConfigurationReader extends AbstractConfigurationReader {
 			logger.debug( "No parent given" );
 		}
 		
-		ClearCaseConfiguration config = new ClearCaseConfiguration( new File( path ), viewtag, pvob, fbaseline, pstream, streamName );
+		ClearCaseConfiguration config = new ClearCaseConfiguration( path, viewtag, pvob, fbaseline, pstream, streamName );
 		
 		try {
 			String inputPath = getFirstElement( element, "inputpath" ).getTextContent();
@@ -58,6 +58,8 @@ public class ClearCaseConfigurationReader extends AbstractConfigurationReader {
 		} catch( Exception e ) {
 			/* no op */
 		}
+		
+		config.generate();
 		
 		return config;
 	}

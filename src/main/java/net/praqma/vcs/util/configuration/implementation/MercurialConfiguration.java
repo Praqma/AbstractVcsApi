@@ -13,6 +13,7 @@ import net.praqma.vcs.util.configuration.AbstractConfiguration;
 
 public class MercurialConfiguration extends AbstractConfiguration {
 	
+	private static final long serialVersionUID = 3461227245140962704L;
 	private String branchName;
 	
 	public MercurialConfiguration( File path, String branchName ) {

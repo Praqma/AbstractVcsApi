@@ -35,6 +35,7 @@ public class ClearCaseUCM {
 		ClearCaseConfiguration config = new ClearCaseConfiguration( parentView, snapview.getViewtag(), stream.getPVob(), stream.getFoundationBaseline(), null, stream );
 		
 		config.setInputPath( view );
+		config.setOutputPath( new File( parentView, view.getName() + "_out" ) );
 		
 		return config;
 	}

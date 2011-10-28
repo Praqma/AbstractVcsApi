@@ -3,7 +3,6 @@ package net.praqma.vcs.util.configuration.implementation;
 import java.io.File;
 
 import net.praqma.clearcase.PVob;
-import net.praqma.clearcase.Vob;
 import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Stream;
@@ -19,29 +18,34 @@ import net.praqma.vcs.util.configuration.AbstractConfiguration;
 import net.praqma.vcs.util.configuration.exception.ConfigurationException;
 
 public class ClearCaseConfiguration extends AbstractConfiguration {
+
+	private static final long serialVersionUID = -7104484491917047522L;
+	
+	/**/
+	
 	private String viewtag;
-	private PVob pvob;
-
-	private Stream parentStream;
 	private String streamName;
-
-	private Baseline foundationBaseline;
+	private String pvobName;
+	private String foundationBaselineName;
+	private String parentStreamName;
 	
-	private File inputPath;
-	private File outputPath;
+	/* Generated */
 	
-	public ClearCaseConfiguration( File path, String viewtag, String pvobname, String foundationBaselineName, String parentStreamName, String streamName ) throws ConfigurationException {
-		super( path );
+	transient private PVob pvob;
+	transient private Stream parentStream;
+	transient private Baseline foundationBaseline;
+	transient private File inputPath;
+	transient private File outputPath;
+	
+	public ClearCaseConfiguration( String pathName, String viewtag, String pvobName, String foundationBaselineName, String parentStreamName, String streamName ) throws ConfigurationException {
+		super( pathName );
 
-		this.pvob = PVob.get( pvobname );
-		if( this.pvob == null ) {
-			throw new ConfigurationException( "PVob " + pvobname + " does not exist" );
-		}
-
+		this.pvobName = pvobName;
+		
 		this.viewtag = viewtag;
-		setFoundationBaseline( foundationBaselineName );
+		this.foundationBaselineName = foundationBaselineName;
 		this.streamName = streamName;
-		setParentStream( parentStreamName );
+		this.parentStreamName = parentStreamName;
 	}
 	
 	public ClearCaseConfiguration( File path, String viewtag, PVob pvob, Baseline baseline, Stream parentStream, Stream stream ) throws ConfigurationException {
@@ -53,10 +57,23 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 		this.foundationBaseline = baseline;
 		this.streamName = stream.getFullyQualifiedName();
 		this.parentStream = parentStream;
-	}	
+	}
 	
-	public static void parse() {
+	@Override
+	public void generate() throws ConfigurationException {
+		super.generate();
 		
+		/* Generate the pvob */
+		this.pvob = PVob.get( pvobName );
+		if( this.pvob == null ) {
+			throw new ConfigurationException( "PVob " + pvobName + " does not exist" );
+		}
+		
+		/* Foundation baseline */
+		setFoundationBaseline( foundationBaselineName );
+		
+		/* Parent stream */
+		setParentStream( parentStreamName );
 	}
 
 	public void setParentStream( String stream ) throws ConfigurationException {
@@ -76,7 +93,7 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 		try {
 			foundationBaseline = UCMEntity.getBaseline( baseline, pvob, false );
 		} catch (UCMException e) {
-			throw new ConfigurationException( "Could not get foundation baseline: " + e.getMessage() );
+			/* Not that important */
 		}
 	}
 
@@ -150,5 +167,7 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	public AbstractReplay getReplay() throws UnsupportedBranchException, ElementNotCreatedException, ElementDoesNotExistException {
 		return new ClearcaseReplay( getBranch() );
 	}
+
+
 
 }

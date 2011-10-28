@@ -1,6 +1,11 @@
 package net.praqma.vcs.model;
 
-public class Repository {
+import java.io.Serializable;
+
+public class Repository implements Serializable {
+
+	private static final long serialVersionUID = 1610469854659236534L;
+
 	private String location;
 	
 	/**

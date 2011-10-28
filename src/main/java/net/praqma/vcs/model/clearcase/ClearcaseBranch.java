@@ -112,7 +112,6 @@ public class ClearcaseBranch extends AbstractBranch{
 	/**
 	 * If the Stream does not exist, it will be created as a child of the Stream parent.
 	 * @param pvob
-	 * @param vob
 	 * @param parent
 	 * @param baseline
 	 * @param viewroot
@@ -149,7 +148,6 @@ public class ClearcaseBranch extends AbstractBranch{
 	/**
 	 * Constructor used for branches where everything is created.
 	 * @param pvob
-	 * @param vob
 	 * @param component
 	 * @param viewroot
 	 * @param viewtag
