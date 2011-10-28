@@ -25,8 +25,11 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	
 	/**/
 	
-	private String viewtag;
-	private String streamName;
+	private String viewtagIn;
+	private String viewtagOut;
+	private String streamNameIn;
+	private String streamNameOut;
+	private String pathNameOut;
 	private String pvobName;
 	private String foundationBaselineName;
 	private String parentStreamName;
@@ -43,21 +46,25 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 		super( pathName );
 
 		this.pvobName = pvobName;
-		
-		this.viewtag = viewtag;
+		this.viewtagIn = viewtag;
 		this.foundationBaselineName = foundationBaselineName;
-		this.streamName = streamName;
+		this.streamNameIn = streamName;
 		this.parentStreamName = parentStreamName;
 	}
 	
-	public ClearCaseConfiguration( String pathNameIn, String viewtagIn, String streamNameIn, String viewtagOut, String streamNameOut, String pathNameOut, String pvobName, String foundationBaselineName, String parentStreamName ) throws ConfigurationException {
+	public ClearCaseConfiguration( String pathNameIn, String viewtagIn, String streamNameIn, String pathNameOut, String viewtagOut, String streamNameOut, String pvobName, String foundationBaselineName, String parentStreamName ) throws ConfigurationException {
 		super( pathNameIn );
+		
+		this.pathNameOut = pathNameOut;
+		this.viewtagIn = viewtagIn;
+		this.viewtagOut = viewtagOut;		
+		this.streamNameOut = streamNameOut;
+		this.streamNameIn = streamNameIn;
 
 		this.pvobName = pvobName;
 		
-		this.viewtag = viewtag;
 		this.foundationBaselineName = foundationBaselineName;
-		this.streamName = streamName;
+		
 		this.parentStreamName = parentStreamName;
 	}
 	
@@ -66,9 +73,9 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 
 		this.pvob = pvob;
 
-		this.viewtag = viewtag;
+		this.viewtagIn = viewtag;
 		this.foundationBaseline = baseline;
-		this.streamName = stream.getShortname();
+		this.streamNameIn = stream.getShortname();
 		this.parentStream = parentStream;
 	}
 	
@@ -121,11 +128,11 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	}
 
 	public void setStreamName( String streamName ) {
-		this.streamName = streamName;
+		this.streamNameIn = streamName;
 	}
 
 	public String getStreamName() {
-		return streamName;
+		return streamNameIn;
 	}
 
 	public Baseline getFoundationBaseline() {
@@ -137,7 +144,7 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	}
 
 	public String getViewtag() {
-		return viewtag;
+		return viewtagIn;
 	}
 	
 	public void setInputPath( File path ) {
@@ -153,10 +160,10 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 		
 		sb.append( "Parent: " + super.toString() );
 		
-		sb.append( "View tag: " + viewtag + "\n" );
+		sb.append( "View tag: " + viewtagIn + "\n" );
 		sb.append( "PVob: " + pvob + "\n" );
 		
-		sb.append( "Stream name: " + streamName + "\n" );
+		sb.append( "Stream name: " + streamNameIn + "\n" );
 		sb.append( "Parent stream: " + parentStream + "\n" );
 		
 		return sb.toString();
@@ -165,7 +172,12 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	@Override
 	public AbstractBranch getBranch() throws ElementNotCreatedException, ElementDoesNotExistException {
 		if( branch == null ) {
-			ClearcaseBranch branch = new ClearcaseBranch( pvob, parentStream, foundationBaseline, path, viewtag, streamName );
+			ClearcaseBranch branch = null;
+			if( streamNameOut == null || viewtagOut == null || pathNameOut == null ) {
+				branch = new ClearcaseBranch( pvob, parentStream, foundationBaseline, path, viewtagIn, streamNameIn );
+			} else {
+				branch = new ClearcaseBranch( pvob, parentStream, null, foundationBaseline, path, new File( pathNameOut ), viewtagIn, viewtagOut, streamNameIn, streamNameOut );
+			}
 			/* Set input path */
 			if( inputPath != null ) {
 				branch.setInputPath( inputPath );

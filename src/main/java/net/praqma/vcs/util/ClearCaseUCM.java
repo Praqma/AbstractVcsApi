@@ -32,14 +32,16 @@ public class ClearCaseUCM {
 		
 		File parentView = view.getParentFile();
 		
-		ClearCaseConfiguration config = new ClearCaseConfiguration( parentView, snapview.getViewtag(), stream.getPVob(), stream.getFoundationBaseline(), null, stream );
+		ClearCaseConfiguration config = null;
 		
 		if( input ) {
-			config.setInputPath( view );
-			config.setOutputPath( new File( parentView, view.getName() + "_out" ) );
+			config = new ClearCaseConfiguration( view.toString(), snapview.getViewtag(), stream.getShortname(), 
+					                             new File( parentView, view.getName() + "_out" ).toString(), snapview.getViewtag() + "_out", stream.getShortname() + "_out", 
+					                             stream.getPVob().getName(), stream.getFoundationBaseline().getShortname(), null );
 		} else {
-			config.setOutputPath( view );
-			config.setInputPath( new File( parentView, view.getName() + "_in" ) );
+			config = new ClearCaseConfiguration( new File( parentView, view.getName() + "_in" ).toString(), snapview.getViewtag() + "_in", stream.getShortname() + "_in",
+					                             view.toString(), snapview.getViewtag(), stream.getShortname(),                    
+                                                 stream.getPVob().getName(), stream.getFoundationBaseline().getShortname(), null );
 		}
 		
 		return config;
