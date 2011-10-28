@@ -160,11 +160,19 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 		
 		sb.append( "Parent: " + super.toString() );
 		
-		sb.append( "View tag: " + viewtagIn + "\n" );
+		sb.append( "Parent stream: " + parentStream + "\n" );
 		sb.append( "PVob: " + pvob + "\n" );
 		
+		sb.append( "INPUT:\n" );
+		sb.append( "View : " + pathName + "\n" );
+		sb.append( "View tag: " + viewtagIn + "\n" );
 		sb.append( "Stream name: " + streamNameIn + "\n" );
-		sb.append( "Parent stream: " + parentStream + "\n" );
+		
+		sb.append( "OUTPUT:\n" );
+		sb.append( "View : " + pathNameOut + "\n" );
+		sb.append( "View tag: " + viewtagOut + "\n" );
+		sb.append( "Stream name: " + streamNameOut + "\n" );
+		
 		
 		return sb.toString();
 	}
