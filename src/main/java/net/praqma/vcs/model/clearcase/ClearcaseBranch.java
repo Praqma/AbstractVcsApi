@@ -171,6 +171,23 @@ public class ClearcaseBranch extends AbstractBranch{
 		/* Set this to the view root of the out view */
 		this.localRepositoryPath = viewroot_out;
 	}
+	
+	public ClearcaseBranch( PVob pvob, Component component, File viewrootIn, File viewrootOut, String viewtagIn, String viewtagOut, String nameIn, String nameOut ) throws ElementNotCreatedException {
+		super(viewrootIn, nameIn);
+		this.name_in = nameIn;
+		this.name_out = nameOut;
+		this.viewroot_in = viewrootIn;
+		this.viewroot_out = viewrootOut;
+		this.viewtag_in = viewtagIn;
+		this.viewtag_out = viewtagOut;
+		
+		this.pvob = pvob;
+		
+		this.component = component;
+		
+		/* Set this to the view root of the out view */
+		this.localRepositoryPath = viewroot_out;
+	}
 
 	
 	
