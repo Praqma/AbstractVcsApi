@@ -50,6 +50,17 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 		this.parentStreamName = parentStreamName;
 	}
 	
+	public ClearCaseConfiguration( String pathNameIn, String viewtagIn, String streamNameIn, String viewtagOut, String streamNameOut, String pathNameOut, String pvobName, String foundationBaselineName, String parentStreamName ) throws ConfigurationException {
+		super( pathNameIn );
+
+		this.pvobName = pvobName;
+		
+		this.viewtag = viewtag;
+		this.foundationBaselineName = foundationBaselineName;
+		this.streamName = streamName;
+		this.parentStreamName = parentStreamName;
+	}
+	
 	public ClearCaseConfiguration( File path, String viewtag, PVob pvob, Baseline baseline, Stream parentStream, Stream stream ) throws ConfigurationException {
 		super( path );
 
