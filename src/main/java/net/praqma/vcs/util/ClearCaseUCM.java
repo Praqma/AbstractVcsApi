@@ -15,7 +15,7 @@ public class ClearCaseUCM {
 	
 	private static final String fdel = System.getProperty( "file.separator" );
 	
-	public static AbstractConfiguration getConfigurationFromView( File view ) throws ElementException, ConfigurationException, UCMException {
+	public static AbstractConfiguration getConfigurationFromView( File view, boolean input ) throws ElementException, ConfigurationException, UCMException {
 		SnapshotView snapview = null;
 		try {
 			snapview = SnapshotView.getSnapshotViewFromPath( view );
@@ -34,8 +34,13 @@ public class ClearCaseUCM {
 		
 		ClearCaseConfiguration config = new ClearCaseConfiguration( parentView, snapview.getViewtag(), stream.getPVob(), stream.getFoundationBaseline(), null, stream );
 		
-		config.setInputPath( view );
-		config.setOutputPath( new File( parentView, view.getName() + "_out" ) );
+		if( input ) {
+			config.setInputPath( view );
+			config.setOutputPath( new File( parentView, view.getName() + "_out" ) );
+		} else {
+			config.setOutputPath( view );
+			config.setInputPath( new File( parentView, view.getName() + "_in" ) );
+		}
 		
 		return config;
 	}

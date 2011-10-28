@@ -22,6 +22,12 @@ public class MercurialConfiguration extends AbstractConfiguration {
 		this.branchName = branchName;
 	}
 	
+	public MercurialConfiguration( String pathName, String branchName ) {
+		super( pathName );
+		
+		this.branchName = branchName;
+	}
+	
 	public MercurialConfiguration( File path, String branchName, String parentLocation, String parentName ) {
 		super( path, parentLocation, parentName );
 		

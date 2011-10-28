@@ -7,6 +7,7 @@ import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.entities.UCMEntity;
+import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractReplay;
 import net.praqma.vcs.model.clearcase.ClearcaseBranch;
@@ -20,6 +21,7 @@ import net.praqma.vcs.util.configuration.exception.ConfigurationException;
 public class ClearCaseConfiguration extends AbstractConfiguration {
 
 	private static final long serialVersionUID = -7104484491917047522L;
+	private static Logger logger = Logger.getLogger();
 	
 	/**/
 	
@@ -55,7 +57,7 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 
 		this.viewtag = viewtag;
 		this.foundationBaseline = baseline;
-		this.streamName = stream.getFullyQualifiedName();
+		this.streamName = stream.getShortname();
 		this.parentStream = parentStream;
 	}
 	
@@ -63,14 +65,20 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	public void generate() throws ConfigurationException {
 		super.generate();
 		
+		logger.debug( "Creating pvob " + pvobName );
+		
 		/* Generate the pvob */
 		this.pvob = PVob.get( pvobName );
 		if( this.pvob == null ) {
 			throw new ConfigurationException( "PVob " + pvobName + " does not exist" );
 		}
 		
+		logger.debug( "Setting foundation baseline " + foundationBaselineName );
+		
 		/* Foundation baseline */
 		setFoundationBaseline( foundationBaselineName );
+		
+		logger.debug( "Setting parent stream " + parentStreamName );
 		
 		/* Parent stream */
 		setParentStream( parentStreamName );
