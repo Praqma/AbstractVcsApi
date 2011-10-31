@@ -1,9 +1,6 @@
 package net.praqma.vcs.model.clearcase;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import net.praqma.clearcase.PVob;
 import net.praqma.clearcase.ucm.UCMException;
@@ -13,15 +10,12 @@ import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.clearcase.ucm.view.UCMView;
-import net.praqma.clearcase.ucm.view.SnapshotView.COMP;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementException.FailureType;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
 
 /**
  * An implementation of {@link AbstractBranch} for Clearcase, where {@link Baseline}'s are used as commit separator.
@@ -237,7 +231,40 @@ public class ClearcaseBranchPart {
 		return true;
 	}
 	
+	public boolean exists() {
+		boolean result = true;
+		
+		try {
+			UCMEntity.getStream( name, pvob, false );
+		} catch (UCMException e1) {
+			logger.error( "Stream does not exist" );
+			result = false;
+		}
+
+		/* Test input view */
+		if( !UCMView.viewExists( viewtag ) ) {
+			logger.debug( "Input view tag, " + viewtag + ", does not exist" );
+			result = false;
+		} else {
+			try {
+				UCMView.getSnapshotView( viewroot );
+			} catch (Exception e1) {
+				logger.debug( "View does not exist" );
+				result = false;
+			}
+		}
+		
+		return result;
+	}
 	
+	public void initializeView() throws ElementDoesNotExistException {
+		try {
+			snapshot = UCMView.getSnapshotView( viewroot );
+		} catch (UCMException e) {
+			logger.error( "Could not get view: " + e.getMessage() );
+			throw new ElementDoesNotExistException( "Could not get input clearcase view" );
+		}
+	}
 	
 	
 	
