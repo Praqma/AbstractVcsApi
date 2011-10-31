@@ -11,6 +11,7 @@ import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractReplay;
 import net.praqma.vcs.model.clearcase.ClearcaseBranch;
+import net.praqma.vcs.model.clearcase.ClearcaseBranchPart;
 import net.praqma.vcs.model.clearcase.ClearcaseReplay;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
@@ -184,7 +185,10 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 			if( streamNameOut == null || viewtagOut == null || pathNameOut == null ) {
 				branch = new ClearcaseBranch( pvob, parentStream, foundationBaseline, path, viewtagIn, streamNameIn );
 			} else {
-				branch = new ClearcaseBranch( pvob, parentStream, null, foundationBaseline, path, new File( pathNameOut ), viewtagIn, viewtagOut, streamNameIn, streamNameOut );
+				ClearcaseBranchPart input  = new ClearcaseBranchPart( pvob, parentStream, foundationBaseline, path, viewtagIn, streamNameIn );
+				ClearcaseBranchPart output = new ClearcaseBranchPart( pvob, parentStream, foundationBaseline, new File( pathNameOut ), viewtagOut, streamNameOut );
+				//branch = new ClearcaseBranch( pvob, parentStream, null, foundationBaseline, path, new File( pathNameOut ), viewtagIn, viewtagOut, streamNameIn, streamNameOut );
+				branch = new ClearcaseBranch( input, output );
 			}
 			/* Set input path */
 			if( inputPath != null ) {
