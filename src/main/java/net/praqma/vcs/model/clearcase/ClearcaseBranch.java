@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 
 import net.praqma.clearcase.PVob;
-import net.praqma.clearcase.Vob;
 import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Component;
