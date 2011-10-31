@@ -67,6 +67,6 @@ public abstract class AbstractConfiguration implements Serializable {
 	public abstract AbstractReplay getReplay() throws UnsupportedBranchException, ElementNotCreatedException, ElementDoesNotExistException;
 	
 	public String toString() {
-		return "Path: " + path.getAbsolutePath() + ( parent != null ? "\nParent: " + parent : "" );
+		return "Path: " + getPathName() + "\n";
 	}
 }

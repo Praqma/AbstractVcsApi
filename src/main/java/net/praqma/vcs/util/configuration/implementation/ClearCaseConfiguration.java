@@ -158,7 +158,7 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		
-		sb.append( "Parent: " + super.toString() );
+		sb.append( "Parent:\n" + super.toString() );
 		
 		sb.append( "Parent stream: " + parentStream + "\n" );
 		sb.append( "PVob: " + pvob + "\n" );

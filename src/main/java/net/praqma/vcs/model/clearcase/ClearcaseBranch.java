@@ -262,6 +262,8 @@ public class ClearcaseBranch extends AbstractBranch{
 					baseline = devStream_in.getFoundationBaseline();
 				} catch( UCMException e ) {
 					logger.warning( "Unable to get foundation baseline. I wonder why?! " + e.getMessage() );
+				} catch( NullPointerException e ) {
+					logger.debug( "Could not get foundation baseline, because input stream was null" );
 				}
 			}
 			
