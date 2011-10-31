@@ -345,7 +345,7 @@ public class ClearcaseBranch extends AbstractBranch{
 		try {
 			//List<Baseline> baselines = this.devStream_in.getBaselines( getComponent(), null, offset );
 			List<Baseline> baselines = this.output.getStream().getBaselines( getComponent(), null, offset );
-			logger.debug( "I got the baselines" );
+			logger.debug( "I got " + baselines.size() + " baselines" );
 			for( int i = 0 ; i < baselines.size() ; i++ ) {				
 				ClearcaseCommit commit = new ClearcaseCommit( baselines.get( i ), ClearcaseBranch.this, i );
 				
