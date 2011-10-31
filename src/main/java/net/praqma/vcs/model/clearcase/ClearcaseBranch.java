@@ -10,16 +10,14 @@ import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Component;
 import net.praqma.clearcase.ucm.entities.Stream;
-import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.clearcase.ucm.view.SnapshotView;
-import net.praqma.clearcase.ucm.view.UCMView;
 import net.praqma.clearcase.ucm.view.SnapshotView.COMP;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementException.FailureType;
+import net.praqma.vcs.model.exceptions.ElementException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
 
@@ -30,12 +28,35 @@ import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
  */
 public class ClearcaseBranch extends AbstractBranch{
 	
+	/**
+	 * The input part of the ClearCase branch
+	 */
 	protected ClearcaseBranchPart input;
+	
+	/**
+	 * The output part of the ClearCase branch
+	 */
 	protected ClearcaseBranchPart output;
 	
+	/**
+	 * The PVob
+	 */
 	protected PVob pvob;
+	
+	/**
+	 * The Component
+	 */
 	protected Component component;
+	
+	/**
+	 * The foundation baseline
+	 */
 	protected Baseline baseline;
+	
+	/**
+	 * Determines whether to care if one or the other part of the ClearCase branch fails its initialization
+	 */
+	protected boolean dontCare = false;
 	
 	protected static Logger logger = Logger.getLogger();
 	
@@ -143,6 +164,44 @@ public class ClearcaseBranch extends AbstractBranch{
 
 		public boolean initialize() throws ElementDoesNotExistException, ElementNotCreatedException, ElementAlreadyExistsException {
 
+			/* TODO Make exception handling less verbose! If possible */
+			try {
+				if( input != null ) {
+					logger.debug( "Initializing input" );
+					input.initialize( get );
+				}
+			} catch( ElementDoesNotExistException e ) {
+				if( !dontCare ) {
+					throw e;
+				}
+			} catch( ElementNotCreatedException e ) {
+				if( !dontCare ) {
+					throw e;
+				}
+			} catch( ElementAlreadyExistsException e ) {
+				if( !dontCare ) {
+					throw e;
+				}
+			}
+			
+			try {
+				if( output != null ) {
+					logger.debug( "Initializing output" );
+					output.initialize( get );
+				}
+			} catch( ElementDoesNotExistException e ) {
+				if( !dontCare ) {
+					throw e;
+				}
+			} catch( ElementNotCreatedException e ) {
+				if( !dontCare ) {
+					throw e;
+				}
+			} catch( ElementAlreadyExistsException e ) {
+				if( !dontCare ) {
+					throw e;
+				}
+			}
 			
 			return true;
 		}
@@ -296,6 +355,12 @@ public class ClearcaseBranch extends AbstractBranch{
 		return commits;
 	}
 	
+	/**
+	 * If the initialization of one of the ClearCase pars fails, we don't care
+	 */
+	public void iDontCare() {
+		dontCare = true;
+	}	
 	
 	public SnapshotView getSnapshotView() {
 		//return snapshot_in;
