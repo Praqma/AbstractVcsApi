@@ -262,7 +262,16 @@ public class ClearcaseBranchPart {
 			snapshot = UCMView.getSnapshotView( viewroot );
 		} catch (UCMException e) {
 			logger.error( "Could not get view: " + e.getMessage() );
-			throw new ElementDoesNotExistException( "Could not get input clearcase view" );
+			throw new ElementDoesNotExistException( "Could not get view" );
+		}
+	}
+	
+	public void initializeStream() throws ElementDoesNotExistException {
+		try {
+			this.devStream = UCMEntity.getStream( name, pvob, false );
+		} catch (UCMException e1) {
+			logger.error( "Stream does not exist" );
+			throw new ElementDoesNotExistException( "Could not get stream" );
 		}
 	}
 	
@@ -294,5 +303,32 @@ public class ClearcaseBranchPart {
 	
 	public Stream getStream() {
 		return devStream;
+	}
+	
+	public String getStreamName() {
+		return name;
+	}
+	
+	public void setParentStream( Stream parent ) {
+		this.parent = parent;
+	}
+	
+	public Stream getParent() {
+		return parent;
+	}
+	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		
+		sb.append( "Name     : " + name + "\n" );
+		sb.append( "Path     : " + viewroot + "\n" );
+		sb.append( "View tag : " + viewtag + "\n" );
+		sb.append( "Stream   : " + devStream + "\n" );
+		sb.append( "Parent   : " + parent + "\n" );
+		sb.append( "PVob     : " + pvob + "\n" );
+		sb.append( "Component: " + component + "\n" );
+		sb.append( "Baseline : " + baseline + "\n" );
+		
+		return sb.toString();
 	}
 }

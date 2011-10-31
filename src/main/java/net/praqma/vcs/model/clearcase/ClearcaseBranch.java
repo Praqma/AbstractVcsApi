@@ -122,7 +122,7 @@ public class ClearcaseBranch extends AbstractBranch{
 	}
 	
 	public ClearcaseBranch( ClearcaseBranchPart input, boolean isInput ) throws ElementNotCreatedException {
-		super(input.getPath(), input.getStream().getShortname());
+		super(input.getPath(), input.getStreamName());
 		
 		if( isInput ) {
 			this.input = input;
@@ -138,8 +138,6 @@ public class ClearcaseBranch extends AbstractBranch{
 		this.localRepositoryPath = input.getPath();
 	}
 
-	
-	
 	@Override
 	public void initialize() throws ElementNotCreatedException, ElementAlreadyExistsException {
 		try {
@@ -186,6 +184,10 @@ public class ClearcaseBranch extends AbstractBranch{
 			
 			try {
 				if( output != null ) {
+					if( output.getParent() == null && output.getParent() == null && input.getStream() != null ) {
+						logger.debug( "The ouput parent was null, setting it to input stream" );
+						output.setParentStream( input.getStream() );
+					}
 					logger.debug( "Initializing output" );
 					output.initialize( get );
 				}
@@ -254,10 +256,12 @@ public class ClearcaseBranch extends AbstractBranch{
 			logger.debug( "DONT initialize" );
 			if( input != null ) {
 				input.initializeView();
+				input.initializeStream();
 			}
 			
 			if( output != null ) {
 				output.initializeView();
+				output.initializeStream();
 			}
 		}
 	}
@@ -335,11 +339,13 @@ public class ClearcaseBranch extends AbstractBranch{
 	public List<AbstractCommit> getCommits( boolean load, Date offset ) {
 		
 		List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
+		
+		logger.debug( "Getting CC commits after " + null );
 				
 		try {
 			//List<Baseline> baselines = this.devStream_in.getBaselines( getComponent(), null, offset );
-			List<Baseline> baselines = this.input.getStream().getBaselines( getComponent(), null, offset );
-			
+			List<Baseline> baselines = this.output.getStream().getBaselines( getComponent(), null, offset );
+			logger.debug( "I got the baselines" );
 			for( int i = 0 ; i < baselines.size() ; i++ ) {				
 				ClearcaseCommit commit = new ClearcaseCommit( baselines.get( i ), ClearcaseBranch.this, i );
 				
@@ -351,6 +357,8 @@ public class ClearcaseBranch extends AbstractBranch{
 		} catch (UCMException e) {
 			logger.error( "Could not list baselines: " + e.getMessage() );
 		}
+		
+		logger.debug( "Done" );
 		
 		return commits;
 	}
@@ -425,6 +433,26 @@ public class ClearcaseBranch extends AbstractBranch{
 	@Override
 	public boolean cleanup() {
 		return true;
+	}
+	
+	public String toString() { 
+		StringBuffer sb = new StringBuffer();
+		
+		sb.append( "Input:\n" );
+		if( input != null ) {
+			sb.append( input.toString() );
+		} else {
+			sb.append( "Null\n" );
+		}
+		
+		sb.append( "Ouput:\n" );
+		if( output != null ) {
+			sb.append( output.toString() );
+		} else {
+			sb.append( "Null\n" );
+		}
+		
+		return sb.toString();
 	}
 
 }

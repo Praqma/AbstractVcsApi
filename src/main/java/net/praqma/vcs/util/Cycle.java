@@ -20,7 +20,9 @@ public class Cycle {
 	
 	public static void cycle( AbstractBranch branch, AbstractReplay replay, Integer interval ) throws UnableToCheckoutCommitException, UnableToReplayException, IOException, InterruptedException {
 		BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+		logger.debug( "Before" );
 		Date now = AVA.getInstance().getLastCommitDate();
+		logger.debug( "After" );
 		Date before = null;
 		
 		while( true ) {
@@ -30,9 +32,9 @@ public class Cycle {
 			
 			/* Just to make sure, that now is really now, because we need now in getCommits, which can be lengthy */
 			before = new Date();
-			
+			logger.debug( "BEFORE IS " + before );
 			List<AbstractCommit> commits = branch.getCommits(false, now);
-
+			logger.debug( "I got commits" );
 			for( int i = 0 ; i < commits.size() ; ++i ) {
 				System.out.print( "\rCommit " + ( i + 1 ) + "/" + commits.size() + ": " + commits.get( i ).getKey() );
 

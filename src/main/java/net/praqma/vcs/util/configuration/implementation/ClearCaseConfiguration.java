@@ -35,6 +35,8 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	private String foundationBaselineName;
 	private String parentStreamName;
 	
+	private boolean dontCare = false;
+	
 	/* Generated */
 	
 	transient private PVob pvob;
@@ -156,6 +158,10 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 		this.outputPath = path;
 	}
 	
+	public void iDontCare() {
+		this.dontCare = true;
+	}
+	
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		
@@ -188,7 +194,15 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 				ClearcaseBranchPart input  = new ClearcaseBranchPart( pvob, parentStream, foundationBaseline, path, viewtagIn, streamNameIn );
 				ClearcaseBranchPart output = new ClearcaseBranchPart( pvob, parentStream, foundationBaseline, new File( pathNameOut ), viewtagOut, streamNameOut );
 				//branch = new ClearcaseBranch( pvob, parentStream, null, foundationBaseline, path, new File( pathNameOut ), viewtagIn, viewtagOut, streamNameIn, streamNameOut );
-				branch = new ClearcaseBranch( input, output );
+				
+				logger.debug( "I've created the parts" );
+				try {
+					branch = new ClearcaseBranch( input, output );
+				} catch( NullPointerException e ) {
+					logger.debug( "Ok, some of the fields in the input was null, let's try the output stream" );
+					branch = new ClearcaseBranch( output, false );
+				}
+				logger.debug( "I've created the branch" );
 			}
 			/* Set input path */
 			if( inputPath != null ) {
@@ -200,9 +214,16 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 				branch.setOutputPath( outputPath );
 			}
 			
+			if( dontCare ) {
+				branch.iDontCare();
+			}
+			
+			logger.debug( "Getting branch" );
 			branch.get(true);
+			logger.debug( "WHOOP!" );
 			this.branch = branch;
 		}
+		
 		return branch;
 	}
 
