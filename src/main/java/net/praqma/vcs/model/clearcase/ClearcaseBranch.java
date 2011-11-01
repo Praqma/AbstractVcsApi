@@ -456,14 +456,16 @@ public class ClearcaseBranch extends AbstractBranch{
 	public String toString() { 
 		StringBuffer sb = new StringBuffer();
 		
-		sb.append( "Input:\n" );
+		sb.append( "ClearCase UCM branch\n-------------------\n" );
+		
+		sb.append( "Input:\n-------------------\n" );
 		if( input != null ) {
 			sb.append( input.toString() );
 		} else {
 			sb.append( "Null\n" );
 		}
 		
-		sb.append( "Ouput:\n" );
+		sb.append( "\nOuput:\n-------------------\n" );
 		if( output != null ) {
 			sb.append( output.toString() );
 		} else {

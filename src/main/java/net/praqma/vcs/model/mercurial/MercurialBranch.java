@@ -14,7 +14,7 @@ import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.mercurial.api.Mercurial;
 import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
 
-public class MercurialBranch extends AbstractBranch{
+public class MercurialBranch extends AbstractBranch {
 	
 	private String defaultMasterBranch = "default";
 
@@ -181,5 +181,14 @@ public class MercurialBranch extends AbstractBranch{
 	@Override
 	public boolean cleanup() {
 		return true;
+	}
+	
+	
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append( "Mercurial branch\n-------------------\n" );
+		sb.append( "Branch name: " +  name + "\n" );
+		sb.append( "Path       : " +  localRepositoryPath + "\n" );
+		return sb.toString();
 	}
 }

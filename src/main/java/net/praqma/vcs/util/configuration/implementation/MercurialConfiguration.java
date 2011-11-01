@@ -55,5 +55,15 @@ public class MercurialConfiguration extends AbstractConfiguration {
 	public AbstractReplay getReplay() throws UnsupportedBranchException, ElementNotCreatedException, ElementDoesNotExistException {
 		return new MercurialReplay( getBranch() );
 	}
+	
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		
+		sb.append( "Mercurial configuration:\n-------------------\n" );
+		sb.append( "Path       :" + path + "\n" );
+		sb.append( "Branch name: " + branchName + "\n" );
+
+		return sb.toString();
+	}
 
 }

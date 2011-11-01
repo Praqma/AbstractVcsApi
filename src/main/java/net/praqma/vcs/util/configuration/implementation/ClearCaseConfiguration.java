@@ -173,20 +173,18 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		
-		sb.append( "Parent:\n" + super.toString() );
-		
+		sb.append( "ClearCase UCM configuration:\n-------------------\n" );
+		sb.append( "PVob         : " + pvob + "\n" );
 		sb.append( "Parent stream: " + parentStream + "\n" );
-		sb.append( "PVob: " + pvob + "\n" );
-		
-		sb.append( "INPUT:\n" );
-		sb.append( "View : " + pathName + "\n" );
-		sb.append( "View tag: " + viewtagIn + "\n" );
-		sb.append( "Stream name: " + streamNameIn + "\n" );
-		
-		sb.append( "OUTPUT:\n" );
-		sb.append( "View : " + pathNameOut + "\n" );
-		sb.append( "View tag: " + viewtagOut + "\n" );
-		sb.append( "Stream name: " + streamNameOut + "\n" );
+		sb.append( "Baseline     : " + foundationBaseline + "\n" );
+		sb.append( "--- INPUT ---\n" );
+		sb.append( "View         : " + pathName + "\n" );
+		sb.append( "View tag     : " + viewtagIn + "\n" );
+		sb.append( "Stream name  : " + streamNameIn + "\n" );
+		sb.append( "--- OUTPUT ---\n" );
+		sb.append( "View         : " + pathNameOut + "\n" );
+		sb.append( "View tag     : " + viewtagOut + "\n" );
+		sb.append( "Stream name  : " + streamNameOut + "\n" );
 		
 		
 		return sb.toString();
