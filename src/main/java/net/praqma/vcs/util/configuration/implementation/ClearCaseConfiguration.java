@@ -118,6 +118,10 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 		}
 	}
 	
+	public void setParentStream( Stream parent ) {
+		this.parentStream = parent;
+	}
+	
 	public void setFoundationBaseline( String baseline ) throws ConfigurationException {
 		try {
 			foundationBaseline = UCMEntity.getBaseline( baseline, pvob, false );
@@ -133,9 +137,13 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	public void setStreamName( String streamName ) {
 		this.streamNameIn = streamName;
 	}
-
+	
 	public String getStreamName() {
 		return streamNameIn;
+	}
+	
+	public void setOutputStreamName( String name ) {
+		this.streamNameOut = name;
 	}
 
 	public Baseline getFoundationBaseline() {

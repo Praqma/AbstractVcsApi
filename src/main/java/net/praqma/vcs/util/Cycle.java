@@ -19,6 +19,10 @@ public class Cycle {
 	private static Logger logger = Logger.getLogger();
 	
 	public static void cycle( AbstractBranch branch, AbstractReplay replay, Integer interval ) throws UnableToCheckoutCommitException, UnableToReplayException, IOException, InterruptedException {
+		cycle( branch, replay, interval, true );
+	}
+	
+	public static void cycle( AbstractBranch branch, AbstractReplay replay, Integer interval, boolean checkoutCommit ) throws UnableToCheckoutCommitException, UnableToReplayException, IOException, InterruptedException {
 		BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
 		Date now = AVA.getInstance().getLastCommitDate();
 		logger.debug( "LAST IS " + now );

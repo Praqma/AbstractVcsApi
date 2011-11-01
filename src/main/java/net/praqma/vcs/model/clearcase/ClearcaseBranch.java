@@ -344,7 +344,21 @@ public class ClearcaseBranch extends AbstractBranch{
 				
 		try {
 			//List<Baseline> baselines = this.devStream_in.getBaselines( getComponent(), null, offset );
-			List<Baseline> baselines = this.output.getStream().getBaselines( getComponent(), null, offset );
+			List<Baseline> baselines = null;
+			if( output.getParent() != null ) {
+				logger.debug( "Getting baselines from parent" );
+				baselines = this.output.getParent().getBaselines( getComponent(), null, offset );
+			} else if( input.getStream() != null ) {
+				logger.debug( "Getting baselines from input" );
+				baselines = this.input.getStream().getBaselines( getComponent(), null, offset );
+			} else if( output.getStream() != null ) {
+				logger.debug( "Getting baselines from output" );
+				baselines = this.output.getStream().getBaselines( getComponent(), null, offset );
+			} else {
+				logger.debug( "Couldn't get any baselines" );
+				return commits;
+			}
+			
 			logger.debug( "I got " + baselines.size() + " baselines" );
 			for( int i = 0 ; i < baselines.size() ; i++ ) {				
 				ClearcaseCommit commit = new ClearcaseCommit( baselines.get( i ), ClearcaseBranch.this, i );
@@ -372,7 +386,7 @@ public class ClearcaseBranch extends AbstractBranch{
 	
 	public SnapshotView getSnapshotView() {
 		//return snapshot_in;
-		return input.getSnapshotView();
+		return output.getSnapshotView();
 	}
 	
 	public PVob getPVob() {
@@ -428,6 +442,10 @@ public class ClearcaseBranch extends AbstractBranch{
 	public Stream getOutputStream() {
 		//return devStream_out;
 		return this.input.getStream();
+	}
+	
+	public Stream getParentOutputStream() {
+		return output.getStream();
 	}
 
 	@Override
