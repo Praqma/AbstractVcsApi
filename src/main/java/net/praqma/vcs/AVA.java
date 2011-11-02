@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.persistence.PersistenceStrategy;
 
 public class AVA {
@@ -32,12 +33,12 @@ public class AVA {
 		return persistence;
 	}
 	
-	public Date getLastCommitDate() {
-		return persistence.getLastCommitDate();
+	public Date getLastCommitDate( AbstractBranch branch ) {
+		return persistence.getLastCommitDate( branch );
 	}
 	
-	public void setLastCommitDate( Date date ) {
-		persistence.setLastCommitDate( date );
+	public void setLastCommitDate( AbstractBranch branch, Date date ) {
+		persistence.setLastCommitDate( branch, date );
 		persistence.save();
 	}
 	

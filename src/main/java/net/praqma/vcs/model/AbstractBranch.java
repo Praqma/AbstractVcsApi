@@ -136,4 +136,8 @@ public abstract class AbstractBranch implements Cleanable {
 	public String toString() {
 		return name;
 	}
+	
+	public int hashCode() {
+		return this.localRepositoryPath.hashCode();
+	}
 }
