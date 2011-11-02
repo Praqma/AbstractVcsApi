@@ -125,9 +125,13 @@ public class MercurialReplay extends AbstractReplay{
 		public boolean cleanup( boolean status ) {
 			if( status ) {
 				try {
-					Mercurial.createCommit( commit.getTitle(), commit.getAuthor(), commit.getAuthorDate(), branch.getPath() );
+					if( Mercurial.createCommit( commit.getTitle(), commit.getAuthor(), commit.getAuthorDate(), branch.getPath() ) ) {
+						logger.info( "New Mercurial commit created" );
+					} else {
+						logger.info( "no Mercurial commit created, nothing new" );
+					}
 					return true;
-				} catch (MercurialException e) {
+				} catch( MercurialException e ) {
 					return false;
 				}
 			} else {

@@ -108,7 +108,7 @@ public class ClearcaseBranch extends AbstractBranch{
 	}
 	
 	public ClearcaseBranch( ClearcaseBranchPart input, ClearcaseBranchPart output ) throws ElementNotCreatedException {
-		super(input.getPath(), input.getStream().getShortname());
+		super(input.getPath(), input.getStreamName());
 		
 		this.input = input;
 		this.output = output;
@@ -158,11 +158,13 @@ public class ClearcaseBranch extends AbstractBranch{
 	protected class InitializeImpl extends Initialize {
 		public InitializeImpl( boolean get ) {
 			super( get );
+			logger.debug( "InitializeIMPL" );
 		}
 
 		public boolean initialize() throws ElementDoesNotExistException, ElementNotCreatedException, ElementAlreadyExistsException {
 
 			/* TODO Make exception handling less verbose! If possible */
+			logger.debug( "Trying to initialize input" );
 			try {
 				if( input != null ) {
 					logger.debug( "Initializing input" );
@@ -182,6 +184,7 @@ public class ClearcaseBranch extends AbstractBranch{
 				}
 			}
 			
+			logger.debug( "Trying to initialize output" );
 			try {
 				if( output != null ) {
 					if( output.getParent() == null && output.getParent() == null && input.getStream() != null ) {
@@ -384,9 +387,12 @@ public class ClearcaseBranch extends AbstractBranch{
 		dontCare = true;
 	}	
 	
-	public SnapshotView getSnapshotView() {
-		//return snapshot_in;
+	public SnapshotView getOuputSnapshotView() {
 		return output.getSnapshotView();
+	}
+	
+	public SnapshotView getInputSnapshotView() {
+		return input.getSnapshotView();
 	}
 	
 	public PVob getPVob() {
@@ -424,6 +430,10 @@ public class ClearcaseBranch extends AbstractBranch{
 		return this.output.getPath();
 	}
 	
+	/**
+	 * @deprecated
+	 * @return
+	 */
 	public File getPathIn() {
 		//return this.developmentPath_out;
 		//return this.viewroot_in;

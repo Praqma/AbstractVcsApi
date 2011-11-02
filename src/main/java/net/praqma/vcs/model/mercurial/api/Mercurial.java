@@ -42,10 +42,15 @@ public class Mercurial {
 	
 	private static final Pattern rx_branchExists = Pattern.compile( "^.*?branch \\w+ already exists.*?$" );
 	
-	public static void createCommit( String message, String author, Date date, File viewContext ) throws MercurialException {
+	public static boolean createCommit( String message, String author, Date date, File viewContext ) throws MercurialException {
 		try {
 			CommandLine.run( "hg commit -m \"" + message + "\"" + ( author != null ? " --user=\"" + author + "\"" : "" ) + ( date != null ? " --date=\"" + datetimeformat.format( date ) + "\"" : "" ), viewContext );
+			return true;
 		} catch( AbnormalProcessTerminationException e ) {
+			if( e.getMessage().matches( "^Nothing changed$" ) ) {
+				return false;
+			}
+			
 			throw new MercurialException( "Could not commit " + message + ": " + e.getMessage() );
 		}	
 	}

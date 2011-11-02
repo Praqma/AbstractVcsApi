@@ -60,7 +60,7 @@ public class ClearcaseCommit extends AbstractCommit {
 				ClearcaseCommit.this.committerDate = baseline.getDate();
 	
 				ClearcaseCommit.this.title = ( baseline.getComment() != null ? baseline.getComment() : baseline.getFullyQualifiedName() );
-				ChangeSet2 changeset = ChangeSet2.getChangeSet( baseline, null, ccbranch.getSnapshotView().getViewRoot() );
+				ChangeSet2 changeset = ChangeSet2.getChangeSet( baseline, null, ccbranch.getOuputSnapshotView().getViewRoot() );
 				
 				logger.debug( "Changeset for " + ClearcaseCommit.this.baseline.getShortname() );
 				

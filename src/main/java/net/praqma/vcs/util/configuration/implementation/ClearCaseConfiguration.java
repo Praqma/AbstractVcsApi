@@ -86,23 +86,27 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	public void generate() throws ConfigurationException {
 		super.generate();
 		
-		logger.debug( "Creating pvob " + pvobName );
-		
-		/* Generate the pvob */
-		this.pvob = PVob.get( pvobName );
-		if( this.pvob == null ) {
-			throw new ConfigurationException( "PVob " + pvobName + " does not exist" );
+		try {
+			logger.debug( "Creating pvob " + pvobName );
+			
+			/* Generate the pvob */
+			this.pvob = PVob.get( pvobName );
+			if( this.pvob == null ) {
+				throw new ConfigurationException( "PVob " + pvobName + " does not exist" );
+			}
+			
+			logger.debug( "Setting foundation baseline " + foundationBaselineName );
+			
+			/* Foundation baseline */
+			setFoundationBaseline( foundationBaselineName );
+			
+			logger.debug( "Setting parent stream " + parentStreamName );
+			
+			/* Parent stream */
+			setParentStream( parentStreamName );
+		} catch( NullPointerException e ) {
+			logger.debug( "This must be a null part" );
 		}
-		
-		logger.debug( "Setting foundation baseline " + foundationBaselineName );
-		
-		/* Foundation baseline */
-		setFoundationBaseline( foundationBaselineName );
-		
-		logger.debug( "Setting parent stream " + parentStreamName );
-		
-		/* Parent stream */
-		setParentStream( parentStreamName );
 	}
 
 	public void setParentStream( String stream ) throws ConfigurationException {
@@ -197,8 +201,21 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 			if( streamNameOut == null || viewtagOut == null || pathNameOut == null ) {
 				branch = new ClearcaseBranch( pvob, parentStream, foundationBaseline, path, viewtagIn, streamNameIn );
 			} else {
-				ClearcaseBranchPart input  = new ClearcaseBranchPart( pvob, parentStream, foundationBaseline, path, viewtagIn, streamNameIn );
-				ClearcaseBranchPart output = new ClearcaseBranchPart( pvob, parentStream, foundationBaseline, new File( pathNameOut ), viewtagOut, streamNameOut );
+				ClearcaseBranchPart input = null;
+				try {
+					input  = new ClearcaseBranchPart( pvob, parentStream, foundationBaseline, path, viewtagIn, streamNameIn );
+				} catch( Exception e ) {
+					logger.debug( "Input part is null" );
+					/* No op */
+				}
+				
+				ClearcaseBranchPart output = null;
+				try {
+					output = new ClearcaseBranchPart( pvob, parentStream, foundationBaseline, new File( pathNameOut ), viewtagOut, streamNameOut );
+				} catch( Exception e ) {
+					logger.debug( "Output part is null" );
+					/* No op */
+				}
 				//branch = new ClearcaseBranch( pvob, parentStream, null, foundationBaseline, path, new File( pathNameOut ), viewtagIn, viewtagOut, streamNameIn, streamNameOut );
 				
 				logger.debug( "I've created the parts" );

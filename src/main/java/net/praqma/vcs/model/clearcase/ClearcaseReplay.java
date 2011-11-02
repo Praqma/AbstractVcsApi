@@ -66,14 +66,16 @@ public class ClearcaseReplay extends AbstractReplay {
 			/* Update? Yes, but we must rebase first! */
 			try{
 				Stream parent = ccBranch.getInputStream().getDefaultTarget();
-				logger.debug( "Trying to rebase against " + parent );
 				if( parent != null ) {
+					logger.debug( "Trying to rebase against " + parent );
 					BaselineList baselines = parent.getLatestBaselines();
 					if( baselines != null && baselines.size() > 0 ) {
-						ccBranch.getInputStream().rebase( ccBranch.getSnapshotView(), baselines.get( 0 ), true );
+						ccBranch.getInputStream().rebase( ccBranch.getInputSnapshotView(), baselines.get( 0 ), true );
 					} else {
 						logger.warning( "Unable to rebase to latest baseline!!!" );
 					}
+				} else {
+					logger.debug( "Could not rebase stream, no parent stream given" );
 				}
 			} catch( Exception e ) {
 				logger.warning( "I tried to rebase, but got the error: " + e.getMessage() );
@@ -81,7 +83,7 @@ public class ClearcaseReplay extends AbstractReplay {
 			ccBranch.update();
 			
 			try {
-				Activity.create( null, ccBranch.getPVob(), true, "CCReplay: " + commit.getKey(), ccBranch.getSnapshotView().getViewRoot() );
+				Activity.create( null, ccBranch.getPVob(), true, "CCReplay: " + commit.getKey(), ccBranch.getInputSnapshotView().getViewRoot() );
 			} catch (UCMException e1) {
 				logger.error( "ClearCase Activity could not be created: " + e1.getMessage() );
 				return false;
@@ -103,7 +105,7 @@ public class ClearcaseReplay extends AbstractReplay {
 		}
 		
 		protected File getChangeSetFile( ChangeSetElement cse ) {
-			return new File( ccBranch.getPath(), cse.getFile().toString() );
+			return new File( ccBranch.getInputPath(), cse.getFile().toString() );
 		}
 		
 		public boolean replay() {
@@ -179,7 +181,7 @@ public class ClearcaseReplay extends AbstractReplay {
 					break;
 					
 				case RENAMED:
-					File oldfile = new File( ccBranch.getPathIn(), cse.getRenameFromFile().toString() );
+					File oldfile = new File( ccBranch.getInputPath(), cse.getRenameFromFile().toString() );
 					version = getFile( oldfile, false );
 					
 					/* Write before rename? */
@@ -210,7 +212,7 @@ public class ClearcaseReplay extends AbstractReplay {
 			logger.debug( d + " has " + d.list().length + " elements" );
 			while( d.list().length == 0 ) {
 				try {
-					Version.removeName( d, ccBranch.getSnapshotView().getViewRoot() );
+					Version.removeName( d, ccBranch.getInputSnapshotView().getViewRoot() );
 					//Version.removeVersion( d, ccBranch.getSnapshotView().GetViewRoot() );
 				} catch (UCMException e) {
 					logger.warning( "Could not remove version " + d );
@@ -258,16 +260,16 @@ public class ClearcaseReplay extends AbstractReplay {
 			Version version = null;
 			/* TODO Determine whether the file exists or not */
 			
-			if( !file.exists() || !Version.isUnderSourceControl( file, ccBranch.getSnapshotView().getViewRoot() ) ) {
+			if( !file.exists() || !Version.isUnderSourceControl( file, ccBranch.getInputSnapshotView().getViewRoot() ) ) {
 				try {
-					version = Version.create( file, mkdir, ccBranch.getSnapshotView() );
+					version = Version.create( file, mkdir, ccBranch.getInputSnapshotView() );
 				} catch (UCMException e1) {
 					logger.error( "ClearCase could not create version: " + e1.getMessage() );
 				}
 			} else {
 				try {
-					version = Version.getUnextendedVersion( file, ccBranch.getPathIn() );
-					version.setView( ccBranch.getSnapshotView() );
+					version = Version.getUnextendedVersion( file, ccBranch.getInputPath() );
+					version.setView( ccBranch.getInputSnapshotView() );
 					version.checkOut();
 				} catch (UCMException e1) {
 					logger.error( "ClearCase could not get version: " + e1.getMessage() );
