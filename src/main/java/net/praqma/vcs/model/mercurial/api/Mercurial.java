@@ -44,10 +44,11 @@ public class Mercurial {
 	
 	public static boolean createCommit( String message, String author, Date date, File viewContext ) throws MercurialException {
 		try {
-			CommandLine.run( "hg commit -m \"" + message + "\"" + ( author != null ? " --user=\"" + author + "\"" : "" ) + ( date != null ? " --date=\"" + datetimeformat.format( date ) + "\"" : "" ), viewContext );
+			CommandLine.run( "hg commit -m \"" + message + "\"" + ( author != null ? " --user=\"" + author + "\"" : "" ) + ( date != null ? " --date=\"" + datetimeformat.format( date ) + "\"" : "" ), viewContext, true, false );
 			return true;
 		} catch( AbnormalProcessTerminationException e ) {
-			if( e.getMessage().matches( "^Nothing changed$" ) ) {
+			logger.debug( "ERROR: \"" + e.getMessage() + "\"" );
+			if( e.getMessage().matches( "^(?i)nothing changed$" ) ) {
 				throw new MercurialException( "Nothing changed", FailureType.NOTHING_CHANGED );
 			}
 			
