@@ -84,8 +84,18 @@ public class MercurialBranch extends AbstractBranch {
 			super( get );
 		}
 
-		public boolean initialize() throws ElementNotCreatedException, ElementAlreadyExistsException {
+		public boolean initialize() throws ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException {
 
+			/* Try to switch branch */
+			try {
+				logger.debug( "Switching to branch " + MercurialBranch.this.name );
+				Mercurial.changeBranch( MercurialBranch.this.name, localRepositoryPath );
+			} catch( MercurialException e ) {
+				/* TODO Should we just fall back to the default branch? */
+				logger.warning( "The branch " + MercurialBranch.this.name + " does not seem to exist" );
+				throw new ElementDoesNotExistException( "The branch " + MercurialBranch.this.name + " does not seem to exist" );
+			}
+			
 			/* Only do anything if a parent is given */
 			if( parent != null ) {
 				
