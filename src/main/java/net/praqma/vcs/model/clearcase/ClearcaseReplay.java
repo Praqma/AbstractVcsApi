@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 import net.praqma.clearcase.ucm.UCMException;
+import net.praqma.clearcase.ucm.UCMException.UCMType;
 import net.praqma.clearcase.ucm.entities.Activity;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Stream;
@@ -281,29 +282,35 @@ public class ClearcaseReplay extends AbstractReplay {
 		
 		public boolean cleanup( boolean status ) {
 			logger.debug( "Cleaning up Clearcase" );
-			
+
 			boolean success = true;
-			
+
 			try {
-				List<File> files = Version.getUncheckedIn( ccBranch.getPathIn() );
+				List<File> files = Version.getUncheckedIn( ccBranch.getInputPath() );
 				for( File f : files ) {
-					Version.checkIn( f, false, ccBranch.getPathIn() );
+					Version.checkIn( f, false, ccBranch.getInputPath() );
 				}
-			} catch (UCMException e) {
+			} catch( UCMException e ) {
 				logger.error( e.getMessage() );
 				success = false;
 			}
-			
+
 			String baselineName = ClearcaseReplayListener.runSelectBaselineName( commit );
-			
+
 			try {
-				//Baseline.create( baselineName, ccBranch.getComponent(), ccBranch.getDevelopmentPath(), true, true );
-				Baseline.create( baselineName, ccBranch.getComponent(), ccBranch.getPathIn(), true, false );
-			} catch (UCMException e1) {
-				logger.error( "ClearCase could not create baseline: " + e1.getMessage() );
-				success = false;
+				// Baseline.create( baselineName, ccBranch.getComponent(),
+				// ccBranch.getDevelopmentPath(), true, true );
+				Baseline.create( baselineName, ccBranch.getComponent(), ccBranch.getInputPath(), true, false );
+				logger.info( "New baseline created" );
+			} catch( UCMException e1 ) {
+				if( e1.type.equals( UCMType.NOTHING_CHANGED ) ) {
+					logger.info( "No new baseline created, nothing changed" );
+				} else {
+					logger.error( "ClearCase could not create baseline: " + e1.getMessage() );
+					success = false;
+				}
 			}
-			
+
 			return success;
 		}
 	}
