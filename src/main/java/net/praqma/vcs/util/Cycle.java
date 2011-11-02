@@ -37,7 +37,7 @@ public class Cycle {
 			before = new Date();
 			List<AbstractCommit> commits = branch.getCommits(false, now);
 			for( int i = 0 ; i < commits.size() ; ++i ) {
-				System.out.print( "\rCommit " + ( i + 1 ) + "/" + commits.size() + ": " + commits.get( i ).getKey() );
+				logger.info( "Commit " + ( i + 1 ) + "/" + commits.size() + ": " + commits.get( i ).getKey() );
 
 				/* Load the commit */
 				commits.get( i ).load();
