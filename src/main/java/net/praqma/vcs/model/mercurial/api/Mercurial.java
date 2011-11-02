@@ -127,6 +127,14 @@ public class Mercurial {
 		}
 	}
 	
+	public static String getCurrentBranch( File viewContext ) throws MercurialException {
+		try {
+			return CommandLine.run( "hg branch", viewContext ).stdoutBuffer.toString().trim();
+		} catch( AbnormalProcessTerminationException e ) {
+			throw new MercurialException( "Could not fetch: " + e.getMessage() );
+		}
+	}
+	
 
 	public static void initialize( File viewContext ) throws MercurialException {
 		try {

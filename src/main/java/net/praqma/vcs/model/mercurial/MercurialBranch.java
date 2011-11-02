@@ -16,8 +16,8 @@ import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
 
 public class MercurialBranch extends AbstractBranch {
 	
-	private String defaultMasterBranch = "default";
-
+	protected String defaultBranch = "default";
+	
 	public MercurialBranch( File localRepositoryPath, String name ) throws ElementNotCreatedException {
 		super( localRepositoryPath, name );
 	}

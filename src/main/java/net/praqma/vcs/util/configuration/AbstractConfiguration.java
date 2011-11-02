@@ -46,6 +46,13 @@ public abstract class AbstractConfiguration implements Serializable {
 		this.path = new File( pathName );
 	}
 	
+	public void setPath( File path ) {
+		this.path = path;
+	}
+	
+	public void setPathName( String path ) {
+		this.pathName = path;
+	}
 	
 	public File getPath() {
 		return path;

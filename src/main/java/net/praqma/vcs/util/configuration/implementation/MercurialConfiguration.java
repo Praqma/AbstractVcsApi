@@ -9,7 +9,10 @@ import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
 import net.praqma.vcs.model.mercurial.MercurialBranch;
 import net.praqma.vcs.model.mercurial.MercurialReplay;
+import net.praqma.vcs.model.mercurial.api.Mercurial;
+import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
 import net.praqma.vcs.util.configuration.AbstractConfiguration;
+import net.praqma.vcs.util.configuration.exception.ConfigurationException;
 
 public class MercurialConfiguration extends AbstractConfiguration {
 	
@@ -50,6 +53,19 @@ public class MercurialConfiguration extends AbstractConfiguration {
 		}
 		return branch;
 	}
+	
+	@Override
+	public void generate() throws ConfigurationException {
+		super.generate();
+		
+		if( branchName == null || branchName.length() == 0 ) {
+			try {
+				branchName = Mercurial.getCurrentBranch( getPath() );
+			} catch( MercurialException e ) {
+				branchName = "default";
+			}
+		}
+	}
 
 	@Override
 	public AbstractReplay getReplay() throws UnsupportedBranchException, ElementNotCreatedException, ElementDoesNotExistException {
@@ -60,7 +76,7 @@ public class MercurialConfiguration extends AbstractConfiguration {
 		StringBuffer sb = new StringBuffer();
 		
 		sb.append( "Mercurial configuration:\n-------------------\n" );
-		sb.append( "Path       :" + path + "\n" );
+		sb.append( "Path       : " + path + "\n" );
 		sb.append( "Branch name: " + branchName + "\n" );
 
 		return sb.toString();

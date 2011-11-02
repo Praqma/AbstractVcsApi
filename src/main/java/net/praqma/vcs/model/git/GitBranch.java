@@ -24,7 +24,7 @@ import net.praqma.vcs.util.Utils;
 
 public class GitBranch extends AbstractBranch{
 	
-	private String defaultMasterBranch = "master";
+	protected String defaultBranch = "master";
 	
 	public GitBranch( File localRepositoryPath, String name ) throws ElementNotCreatedException {
 		super( localRepositoryPath, name );

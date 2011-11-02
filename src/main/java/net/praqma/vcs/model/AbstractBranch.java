@@ -23,6 +23,11 @@ public abstract class AbstractBranch implements Cleanable {
 	protected AbstractCommit lastCommit;
 	protected AbstractCommit currentCommit;
 	
+	/**
+	 * The default branch of this type
+	 */
+	protected String defaultBranch;
+	
 	protected List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
 	
 	protected Logger logger = Logger.getLogger();
@@ -72,6 +77,11 @@ public abstract class AbstractBranch implements Cleanable {
 		protected boolean get = false;
 		public Initialize( boolean get ) {
 			this.get = get;
+			
+			if( defaultBranch != null && ( AbstractBranch.this.name == null || AbstractBranch.this.name.length() == 0 ) ) {
+				AbstractBranch.this.name = defaultBranch;
+				logger.debug( "Defaulting to " + defaultBranch );
+			}			
 		}
 		
 		public boolean initialize() throws ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException {
@@ -135,6 +145,10 @@ public abstract class AbstractBranch implements Cleanable {
 	
 	public String toString() {
 		return name;
+	}
+	
+	public String getDefaultBranch() {
+		return defaultBranch;
 	}
 	
 	public int hashCode() {
