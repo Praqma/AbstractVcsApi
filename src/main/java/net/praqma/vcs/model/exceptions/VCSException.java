@@ -6,7 +6,8 @@ public class VCSException extends Exception {
 
 	public enum FailureType {
 		UNKNOWN,
-		NO_OUTPUT
+		NO_OUTPUT,
+		NOTHING_CHANGED
 	}
 
 	public FailureType type = FailureType.UNKNOWN;

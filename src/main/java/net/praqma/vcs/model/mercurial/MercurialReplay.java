@@ -10,6 +10,7 @@ import net.praqma.vcs.model.AbstractReplay;
 import net.praqma.vcs.model.ChangeSetElement;
 import net.praqma.vcs.model.exceptions.UnableToReplayException;
 import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
+import net.praqma.vcs.model.exceptions.VCSException.FailureType;
 import net.praqma.vcs.model.mercurial.api.Mercurial;
 import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
 import net.praqma.vcs.util.IO;
@@ -125,14 +126,17 @@ public class MercurialReplay extends AbstractReplay{
 		public boolean cleanup( boolean status ) {
 			if( status ) {
 				try {
-					if( Mercurial.createCommit( commit.getTitle(), commit.getAuthor(), commit.getAuthorDate(), branch.getPath() ) ) {
-						logger.info( "New Mercurial commit created" );
-					} else {
-						logger.info( "no Mercurial commit created, nothing new" );
-					}
+					Mercurial.createCommit( commit.getTitle(), commit.getAuthor(), commit.getAuthorDate(), branch.getPath() );
+					logger.info( "New Mercurial commit created" );
 					return true;
 				} catch( MercurialException e ) {
-					return false;
+					if( e.getType().equals( FailureType.NOTHING_CHANGED ) ) {
+						logger.info( "No Mercurial commit created, nothing changed" );
+						return true;
+					} else {
+						logger.error( "No Mercurial commit created, " + e.getMessage() );
+						return false;
+					}
 				}
 			} else {
 				return false;

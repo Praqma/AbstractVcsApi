@@ -48,7 +48,7 @@ public class Mercurial {
 			return true;
 		} catch( AbnormalProcessTerminationException e ) {
 			if( e.getMessage().matches( "^Nothing changed$" ) ) {
-				return false;
+				throw new MercurialException( "Nothing changed", FailureType.NOTHING_CHANGED );
 			}
 			
 			throw new MercurialException( "Could not commit " + message + ": " + e.getMessage() );
