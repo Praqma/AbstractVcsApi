@@ -35,6 +35,8 @@ public class Cycle {
 			
 			/* Just to make sure, that now is really now, because we need now in getCommits, which can be lengthy */
 			before = new Date();
+			/* Retrieve all the latest changes for the source branch */
+			branch.update();
 			List<AbstractCommit> commits = branch.getCommits(false, now);
 			for( int i = 0 ; i < commits.size() ; ++i ) {
 				logger.info( "Commit " + ( i + 1 ) + "/" + commits.size() + ": " + commits.get( i ).getKey() );

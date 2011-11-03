@@ -98,7 +98,6 @@ public abstract class AbstractBranch implements Cleanable {
 	
 	/**
 	 * Pulls from the previously specified repository location
-	 * @throws OperationNotSupportedException
 	 */
 	public abstract void update();
 	

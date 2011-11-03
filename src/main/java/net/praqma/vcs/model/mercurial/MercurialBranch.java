@@ -91,9 +91,14 @@ public class MercurialBranch extends AbstractBranch {
 				logger.debug( "Switching to branch " + MercurialBranch.this.name );
 				Mercurial.changeBranch( MercurialBranch.this.name, localRepositoryPath );
 			} catch( MercurialException e ) {
-				/* TODO Should we just fall back to the default branch? */
-				logger.warning( "The branch " + MercurialBranch.this.name + " does not seem to exist" );
-				throw new ElementDoesNotExistException( "The branch " + MercurialBranch.this.name + " does not seem to exist" );
+				/* Try to create the branch */
+				try {
+					logger.debug( name + " does not exist, let's create it" );
+					Mercurial.createBranch( name, localRepositoryPath );
+				} catch( MercurialException e2 ) {
+					logger.warning( "Could not create branch " + name );
+					throw new ElementNotCreatedException( "Could not create branch " + name + ": " + e2.getMessage() );
+				}
 			}
 			
 			/* Only do anything if a parent is given */
@@ -123,20 +128,21 @@ public class MercurialBranch extends AbstractBranch {
 		public boolean update() {
 			logger.debug( "Mercurial: perform checkout" );
 			
+			/* No need for updating if there's no parent */
 			if( parent == null ) {
-				logger.info( "No parent given, nothing to check out" );
+				logger.debug( "No parent given, nothing to check out" );
 				return false;
+			} else {
+				try {
+					Mercurial.pull( parent.getLocation(), name, localRepositoryPath );
+				} catch (MercurialException e) {
+					System.err.println( "Could not pull Mercurial branch" );
+					logger.warning( "Could not pull Mercurial branch" );
+					return false;
+				}
+	
+				return true;
 			}
-			
-			try {
-				Mercurial.pull( parent.getLocation(), name, localRepositoryPath );
-			} catch (MercurialException e) {
-				System.err.println( "Could not pull Mercurial branch" );
-				logger.warning( "Could not pull Mercurial branch" );
-				return false;
-			}
-
-			return true;
 		}
 	}
 	

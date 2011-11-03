@@ -140,7 +140,7 @@ public class ClearcaseReplay extends AbstractReplay {
 					
 				case CREATED:
 					try {
-						logger.info( "Creating file: " + file );
+						logger.debug( "Creating file: " + file );
 						version = getFile( file, file.isDirectory() );
 						version.getFile().createNewFile();
 					} catch (IOException e1) {

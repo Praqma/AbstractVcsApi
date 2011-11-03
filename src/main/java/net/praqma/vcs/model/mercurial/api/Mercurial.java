@@ -34,7 +34,7 @@ public class Mercurial {
 	
 	public static void changeBranch( String branchName, File viewContext ) throws MercurialException {
 		try {
-			CommandLine.run( "hg update -C " + branchName, viewContext );
+			CommandLine.run( "hg update --clean " + branchName, viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
 			throw new MercurialException( "Could not change to branch " + branchName + ": " + e.getMessage() );
 		}	
@@ -53,6 +53,15 @@ public class Mercurial {
 			}
 			
 			throw new MercurialException( "Could not commit " + message + ": " + e.getMessage() );
+		}	
+	}
+	
+	public static boolean createBranch( String name, File viewContext ) throws MercurialException {
+		try {
+			CommandLine.run( "hg branch " + name, viewContext, true, false );
+			return true;
+		} catch( AbnormalProcessTerminationException e ) {
+			throw new MercurialException( "Unable to create branch " + name + ": " + e.getMessage() );
 		}	
 	}
 		

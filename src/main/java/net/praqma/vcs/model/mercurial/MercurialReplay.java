@@ -40,6 +40,11 @@ public class MercurialReplay extends AbstractReplay{
 			super( commit );
 		}
 		
+		public boolean setup() {
+			branch.update();
+			return true;
+		}
+		
 		public boolean replay() {
 			List<ChangeSetElement> cs = commit.getChangeSet().asList();
 			
