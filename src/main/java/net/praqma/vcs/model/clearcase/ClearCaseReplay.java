@@ -115,11 +115,7 @@ public class ClearCaseReplay extends AbstractReplay {
 			boolean success = true;
 			
 			for( ChangeSetElement cse : cs ) {
-				//File file = new File( ccBranch.getDevelopmentPath(), cse.getFile().toString() );
 				File file = getChangeSetFile( cse );
-				//File file = new File( ccBranch.getInputPath(), cse.getFile().toString() );
-				logger.debug( "File: " + file.isFile() );
-				logger.debug( "CSE : " + cse.getFile().isFile() );
 				logger.debug( "File(" + cse.getStatus() + "): " + file );
 				
 				Version version = null;
@@ -140,7 +136,6 @@ public class ClearCaseReplay extends AbstractReplay {
 					
 				case CREATED:
 					try {
-						logger.debug( "Creating file: " + file );
 						version = getFile( file, file.isDirectory() );
 						version.getFile().createNewFile();
 					} catch (IOException e1) {
@@ -286,6 +281,7 @@ public class ClearCaseReplay extends AbstractReplay {
 			try {
 				List<File> files = Version.getUncheckedIn( ccBranch.getInputPath() );
 				for( File f : files ) {
+					logger.debug( "Checking in " + f );
 					Version.checkIn( f, false, ccBranch.getInputPath() );
 				}
 			} catch( UCMException e ) {
