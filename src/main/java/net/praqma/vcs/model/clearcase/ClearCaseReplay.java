@@ -280,10 +280,8 @@ public class ClearCaseReplay extends AbstractReplay {
 			return version;
 		}
 		
-		public boolean cleanup( boolean status ) {
-			logger.debug( "Cleaning up Clearcase" );
-
-			boolean success = true;
+		public boolean commit() {
+			logger.debug( "Committing ClearCase baseline" );
 
 			try {
 				List<File> files = Version.getUncheckedIn( ccBranch.getInputPath() );
@@ -292,7 +290,7 @@ public class ClearCaseReplay extends AbstractReplay {
 				}
 			} catch( UCMException e ) {
 				logger.error( e.getMessage() );
-				success = false;
+				
 			}
 
 			String baselineName = ClearcaseReplayListener.runSelectBaselineName( commit );
@@ -300,16 +298,16 @@ public class ClearCaseReplay extends AbstractReplay {
 			try {
 				Baseline.create( baselineName, ccBranch.getComponent(), ccBranch.getInputPath(), true, false );
 				logger.info( "New baseline created" );
+				return true;
 			} catch( UCMException e1 ) {
 				if( e1.type.equals( UCMType.NOTHING_CHANGED ) ) {
 					logger.info( "No new baseline created, nothing changed" );
+					return false;
 				} else {
 					logger.error( "ClearCase could not create baseline: " + e1.getMessage() );
-					success = false;
+					return false;
 				}
 			}
-
-			return success;
 		}
 	}
 	

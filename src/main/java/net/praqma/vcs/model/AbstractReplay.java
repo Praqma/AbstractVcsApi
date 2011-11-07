@@ -42,6 +42,12 @@ public abstract class AbstractReplay {
 			status = replay.replay();
 		}
 		
+		if( status ) {
+			if( replay.commit() ) {
+				ReplayListener.runCommitCreatedListener( this, replay.getCommit() );
+			}
+		}
+		
 		replay.cleanup( status );
 		
 		ReplayListener.runPostReplayListener( this, replay.getCommit(), status );
@@ -82,6 +88,8 @@ public abstract class AbstractReplay {
 			}
 			return true;
 		}
+		
+		public abstract boolean commit();
 		
 		public boolean cleanup( boolean status ) {
 			logger.debug( "Abstract replay cleanup: " + status );

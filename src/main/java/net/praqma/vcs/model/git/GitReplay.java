@@ -121,15 +121,11 @@ public class GitReplay extends AbstractReplay{
 			return success;
 		}
 				
-		public boolean cleanup( boolean status ) {
-			if( status ) {
-				try {
-					Git.createCommit( commit.getTitle(), commit.getAuthor(), commit.getAuthorDate(), branch.getPath() );
-					return true;
-				} catch (GitException e) {
-					return false;
-				}
-			} else {
+		public boolean commit() {
+			try {
+				Git.createCommit( commit.getTitle(), commit.getAuthor(), commit.getAuthorDate(), branch.getPath() );
+				return true;
+			} catch (GitException e) {
 				return false;
 			}
 		}
