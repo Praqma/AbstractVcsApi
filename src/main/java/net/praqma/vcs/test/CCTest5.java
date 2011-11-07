@@ -21,9 +21,9 @@ import net.praqma.util.debug.PraqmaLogger;
 import net.praqma.util.debug.PraqmaLogger.Logger;
 import net.praqma.vcs.AVA;
 import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.clearcase.ClearcaseBranch;
-import net.praqma.vcs.model.clearcase.ClearcaseReplay;
-import net.praqma.vcs.model.clearcase.ClearcaseVCS;
+import net.praqma.vcs.model.clearcase.ClearCaseBranch;
+import net.praqma.vcs.model.clearcase.ClearCaseReplay;
+import net.praqma.vcs.model.clearcase.ClearCaseVCS;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
@@ -58,7 +58,7 @@ public class CCTest5 {
 		
 		Vob myvob = new Vob( "\\" + vname );
 		
-		PVob pvob = ClearcaseVCS.bootstrap();
+		PVob pvob = ClearCaseVCS.bootstrap();
 
 		/*ClearcaseVCS cc = new ClearcaseVCS( null, vname, cname, projectName, streamName, 
                 Project.POLICY_INTERPROJECT_DELIVER  | 
@@ -72,7 +72,7 @@ public class CCTest5 {
 		Baseline baseline = UCMEntity.getBaseline( "etteren", pvob, true );
 		
 		//ClearcaseBranch ccbranch = new ClearcaseBranch( cc, cc.getLastCreatedVob(), cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_1" ), projectName + "_1_view", projectName + "_1_dev" );
-		ClearcaseBranch ccbranch = new ClearcaseBranch( pvob, stream, baseline, new File( path, projectName ), projectName + "_test6_view", projectName );
+		ClearCaseBranch ccbranch = new ClearCaseBranch( pvob, stream, baseline, new File( path, projectName ), projectName + "_test6_view", projectName );
 		ccbranch.initialize(true);
 		ccbranch.getCommits(true);
                                                                    

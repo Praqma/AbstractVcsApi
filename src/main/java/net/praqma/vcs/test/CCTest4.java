@@ -21,9 +21,9 @@ import net.praqma.util.debug.PraqmaLogger;
 import net.praqma.util.debug.PraqmaLogger.Logger;
 import net.praqma.vcs.AVA;
 import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.clearcase.ClearcaseBranch;
-import net.praqma.vcs.model.clearcase.ClearcaseReplay;
-import net.praqma.vcs.model.clearcase.ClearcaseVCS;
+import net.praqma.vcs.model.clearcase.ClearCaseBranch;
+import net.praqma.vcs.model.clearcase.ClearCaseReplay;
+import net.praqma.vcs.model.clearcase.ClearCaseVCS;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
@@ -48,14 +48,14 @@ public class CCTest4 {
 		File path = new File( "C:/Temp/views/" + append );
 		String name = "Wolle1014";
 		
-		PVob pvob = ClearcaseVCS.bootstrap();
+		PVob pvob = ClearCaseVCS.bootstrap();
 
-		ClearcaseVCS cc = ClearcaseVCS.create( path, name, Project.POLICY_INTERPROJECT_DELIVER  | 
+		ClearCaseVCS cc = ClearCaseVCS.create( path, name, Project.POLICY_INTERPROJECT_DELIVER  | 
                                                                    Project.POLICY_CHSTREAM_UNRESTRICTED | 
                                                                    Project.POLICY_DELIVER_NCO_DEVSTR    |
                                                                    Project.POLICY_DELIVER_REQUIRE_REBASE, pvob );
 		
-		ClearcaseBranch branch = new ClearcaseBranch( pvob, cc.getIntegrationStream(), cc.getInitialBaseline(), path, name + "_view", name + "_dev");
+		ClearCaseBranch branch = new ClearCaseBranch( pvob, cc.getIntegrationStream(), cc.getInitialBaseline(), path, name + "_view", name + "_dev");
 		branch.get();
                                                                    
 	}

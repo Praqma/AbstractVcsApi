@@ -18,9 +18,9 @@ import net.praqma.util.debug.PraqmaLogger.Logger;
 import net.praqma.vcs.AVA;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
-import net.praqma.vcs.model.clearcase.ClearcaseBranch;
-import net.praqma.vcs.model.clearcase.ClearcaseReplay;
-import net.praqma.vcs.model.clearcase.ClearcaseVCS;
+import net.praqma.vcs.model.clearcase.ClearCaseBranch;
+import net.praqma.vcs.model.clearcase.ClearCaseReplay;
+import net.praqma.vcs.model.clearcase.ClearCaseVCS;
 import net.praqma.vcs.model.clearcase.listeners.ClearcaseReplayListener;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
@@ -54,11 +54,11 @@ public class GitToClearcase4 {
 		
 		/* Setup the logger */
 		
-		PVob pvob = ClearcaseVCS.bootstrap();
+		PVob pvob = ClearCaseVCS.bootstrap();
 		//PVob pvob = new PVob( "\\AVA_PVOB" );
 
 		
-		ClearcaseVCS cc = new ClearcaseVCS( null, vname, cname, projectName, streamName, 
+		ClearCaseVCS cc = new ClearCaseVCS( null, vname, cname, projectName, streamName, 
 				                                           Project.POLICY_INTERPROJECT_DELIVER  | 
                                                            Project.POLICY_CHSTREAM_UNRESTRICTED | 
                                                            Project.POLICY_DELIVER_NCO_DEVSTR, pvob );
@@ -67,7 +67,7 @@ public class GitToClearcase4 {
 		logger.info( "Clearcase initialized" );
 		
 		/* Make number 1 stream */
-		final ClearcaseBranch ccbranch = new ClearcaseBranch( pvob, cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_1" ), projectName + "_1_view", projectName + "_1_dev" );
+		final ClearCaseBranch ccbranch = new ClearCaseBranch( pvob, cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_1" ), projectName + "_1_view", projectName + "_1_dev" );
 		try {
 			ccbranch.get(true);
 		} catch( Exception e ) {
@@ -77,7 +77,7 @@ public class GitToClearcase4 {
 		ccbranch.update();
 
 		/* Make number 2 stream */
-		final ClearcaseBranch ccbranch2 = new ClearcaseBranch( pvob, cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_2" ), projectName + "_2_view", projectName + "_2_dev" );
+		final ClearCaseBranch ccbranch2 = new ClearCaseBranch( pvob, cc.getIntegrationStream(), cc.getInitialBaseline(), new File( path, projectName + "_2" ), projectName + "_2_view", projectName + "_2_dev" );
 		try {
 			ccbranch2.get(true);
 		} catch( Exception e ) {
@@ -86,7 +86,7 @@ public class GitToClearcase4 {
 		}
 		ccbranch2.update();
 
-		ClearcaseReplay cr = new ClearcaseReplay( ccbranch );
+		ClearCaseReplay cr = new ClearCaseReplay( ccbranch );
 		
 		//GitBranch branch = new GitBranch( new File( "C:/projects/monkit/branches" ), "master" );
 		GitBranch branch = new GitBranch( grepo, "master" );

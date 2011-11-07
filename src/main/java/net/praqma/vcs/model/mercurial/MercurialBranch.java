@@ -18,8 +18,8 @@ public class MercurialBranch extends AbstractBranch {
 	
 	protected String defaultBranch = "default";
 	
-	public MercurialBranch( File localRepositoryPath, String name ) throws ElementNotCreatedException {
-		super( localRepositoryPath, name );
+	public MercurialBranch( File repositoryPath, String name ) throws ElementNotCreatedException {
+		super( repositoryPath, name );
 	}
 	
 	public MercurialBranch( File localRepositoryPath, String name, Repository parent ) {
@@ -27,9 +27,9 @@ public class MercurialBranch extends AbstractBranch {
 	}
 
 	public static MercurialBranch create( File localRepository, String name, Repository parent ) throws ElementNotCreatedException, ElementAlreadyExistsException {
-		MercurialBranch gb = new MercurialBranch( localRepository, name, parent );
-		gb.initialize();
-		return gb;
+		MercurialBranch hb = new MercurialBranch( localRepository, name, parent );
+		hb.initialize();
+		return hb;
 	}
 	
 	public void initialize() throws ElementNotCreatedException, ElementAlreadyExistsException {
@@ -202,7 +202,7 @@ public class MercurialBranch extends AbstractBranch {
 	
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append( "Mercurial branch\n-------------------\n" );
+		sb.append( "Mercurial branch\n" );
 		sb.append( "Branch name: " +  name + "\n" );
 		sb.append( "Path       : " +  localRepositoryPath + "\n" );
 		return sb.toString();

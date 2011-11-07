@@ -13,7 +13,7 @@ import net.praqma.util.debug.appenders.StreamAppender;
 import net.praqma.util.option.Option;
 import net.praqma.util.option.Options;
 import net.praqma.vcs.AVA;
-import net.praqma.vcs.model.clearcase.ClearcaseVCS;
+import net.praqma.vcs.model.clearcase.ClearCaseVCS;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
@@ -70,9 +70,9 @@ public class CreateClearCaseRepository {
 		new AVA( null );
 		
 		/* Setup ClearCase */
-		PVob pvob = ClearcaseVCS.bootstrap();
+		PVob pvob = ClearCaseVCS.bootstrap();
 		
-		ClearcaseVCS cc = new ClearcaseVCS( null, ovobname.getString(), ocomponent.getString(), oprojectname.getString(), ostreamname.getString(), 
+		ClearCaseVCS cc = new ClearCaseVCS( null, ovobname.getString(), ocomponent.getString(), oprojectname.getString(), ostreamname.getString(), 
                 Project.POLICY_INTERPROJECT_DELIVER  | 
                 Project.POLICY_CHSTREAM_UNRESTRICTED | 
                 Project.POLICY_DELIVER_NCO_DEVSTR, pvob );

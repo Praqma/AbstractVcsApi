@@ -5,7 +5,7 @@ import java.io.File;
 import net.praqma.clearcase.ucm.entities.Project;
 import net.praqma.clearcase.ucm.entities.UCM;
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.clearcase.ClearcaseVCS;
+import net.praqma.vcs.model.clearcase.ClearCaseVCS;
 
 public class CCTest1 {
 	

@@ -10,8 +10,8 @@ import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractReplay;
-import net.praqma.vcs.model.clearcase.ClearcaseBranch;
-import net.praqma.vcs.model.clearcase.ClearcaseReplay;
+import net.praqma.vcs.model.clearcase.ClearCaseBranch;
+import net.praqma.vcs.model.clearcase.ClearCaseReplay;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
@@ -146,7 +146,7 @@ public class ClearCaseVobComponentConfiguration extends AbstractConfiguration {
 	public AbstractBranch getBranch() throws ElementNotCreatedException, ElementDoesNotExistException {
 		if( branch == null ) {
 			//ClearcaseBranch branch = new ClearcaseBranch( pvob, vob, parentStream, foundationBaseline, path, viewtag, streamName );
-			ClearcaseBranch branch = new ClearcaseBranch( pvob, parentStream, foundationBaseline, path, viewtag, streamName );
+			ClearCaseBranch branch = new ClearCaseBranch( pvob, parentStream, foundationBaseline, path, viewtag, streamName );
 			/* Set input path */
 			if( inputPath != null ) {
 				branch.setInputPath( inputPath );
@@ -171,7 +171,7 @@ public class ClearCaseVobComponentConfiguration extends AbstractConfiguration {
 
 	@Override
 	public AbstractReplay getReplay() throws UnsupportedBranchException, ElementNotCreatedException, ElementDoesNotExistException {
-		return new ClearcaseReplay( getBranch() );
+		return new ClearCaseReplay( getBranch() );
 	}
 
 }

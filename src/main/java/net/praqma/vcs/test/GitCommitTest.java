@@ -21,7 +21,7 @@ import net.praqma.util.debug.PraqmaLogger.Logger;
 import net.praqma.vcs.AVA;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.Repository;
-import net.praqma.vcs.model.clearcase.ClearcaseReplay;
+import net.praqma.vcs.model.clearcase.ClearCaseReplay;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
 import net.praqma.vcs.model.exceptions.OperationNotSupportedException;

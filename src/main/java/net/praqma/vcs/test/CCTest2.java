@@ -12,7 +12,7 @@ import net.praqma.clearcase.ucm.entities.UCM;
 import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.util.debug.Logger;
 import net.praqma.util.debug.PraqmaLogger;
-import net.praqma.vcs.model.clearcase.ClearcaseBranch;
+import net.praqma.vcs.model.clearcase.ClearCaseBranch;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 

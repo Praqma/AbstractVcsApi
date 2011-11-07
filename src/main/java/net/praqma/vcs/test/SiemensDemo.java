@@ -23,9 +23,9 @@ import net.praqma.util.option.Option;
 import net.praqma.util.option.Options;
 import net.praqma.vcs.AVA;
 import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.clearcase.ClearcaseBranch;
-import net.praqma.vcs.model.clearcase.ClearcaseReplay;
-import net.praqma.vcs.model.clearcase.ClearcaseVCS;
+import net.praqma.vcs.model.clearcase.ClearCaseBranch;
+import net.praqma.vcs.model.clearcase.ClearCaseReplay;
+import net.praqma.vcs.model.clearcase.ClearCaseVCS;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
@@ -111,11 +111,11 @@ public class SiemensDemo {
 		new AVA(null);
 		
 		/* Setup ClearCase */
-		PVob pvob = ClearcaseVCS.bootstrap();
+		PVob pvob = ClearCaseVCS.bootstrap();
 		
 		Baseline baseline = null;
 		if( ocomponent.isUsed() ) {
-			ClearcaseVCS cc = new ClearcaseVCS( null, ovobname.getString(), ocomponent.getString(), oprojectname.getString(), ostreamname.getString(), 
+			ClearCaseVCS cc = new ClearCaseVCS( null, ovobname.getString(), ocomponent.getString(), oprojectname.getString(), ostreamname.getString(), 
 	                Project.POLICY_INTERPROJECT_DELIVER  | 
 	                Project.POLICY_CHSTREAM_UNRESTRICTED | 
 	                Project.POLICY_DELIVER_NCO_DEVSTR, pvob );
@@ -136,7 +136,7 @@ public class SiemensDemo {
 		Vob vob = new Vob( "\\" + ovobname.getString() );
 		Stream stream = UCMEntity.getStream( ostreamname.getString(), pvob, false );
 		
-		ClearcaseBranch ccbranch = new ClearcaseBranch( pvob, stream, baseline, new File( oview.getString() ), oviewtag.getString(), ochildstreamname.getString() );
+		ClearCaseBranch ccbranch = new ClearCaseBranch( pvob, stream, baseline, new File( oview.getString() ), oviewtag.getString(), ochildstreamname.getString() );
 		ccbranch.initialize(true);
 		ccbranch.update();
 		
@@ -151,7 +151,7 @@ public class SiemensDemo {
         Date now = null;
         
         GitReplay gr = new GitReplay( gitbranch );
-        ClearcaseReplay cr = new ClearcaseReplay( ccbranch );
+        ClearCaseReplay cr = new ClearCaseReplay( ccbranch );
 		
 		while( true ) {
 			if( now != null ) {
