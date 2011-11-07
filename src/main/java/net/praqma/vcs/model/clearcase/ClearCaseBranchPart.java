@@ -71,7 +71,7 @@ public class ClearCaseBranchPart implements Serializable {
 	 */
 	protected Component component;
 	
-	protected static Logger logger = Logger.getLogger();
+	transient protected static Logger logger = Logger.getLogger();
 	
 	/**
 	 * If the Stream does not exist, it will be created as a child of the Stream parent.

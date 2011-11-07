@@ -22,8 +22,8 @@ public abstract class AbstractBranch implements Cleanable, Serializable {
 	protected File localRepositoryPath;
 	protected Repository parent;
 	
-	protected AbstractCommit lastCommit;
-	protected AbstractCommit currentCommit;
+	transient protected AbstractCommit lastCommit;
+	transient protected AbstractCommit currentCommit;
 	
 	/**
 	 * The default branch of this type

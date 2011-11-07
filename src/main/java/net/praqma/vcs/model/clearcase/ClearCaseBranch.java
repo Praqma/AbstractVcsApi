@@ -59,7 +59,7 @@ public class ClearCaseBranch extends AbstractBranch{
 	 */
 	protected boolean dontCare = false;
 	
-	protected static Logger logger = Logger.getLogger();
+	transient protected static Logger logger = Logger.getLogger();
 	
 	/**
 	 * If the Stream does not exist, it will be created as a child of the Stream parent.
