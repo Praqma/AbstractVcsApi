@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 import net.praqma.util.execute.AbnormalProcessTerminationException;
+import net.praqma.vcs.VersionControlSystems;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.Repository;
@@ -227,5 +228,10 @@ public class GitBranch extends AbstractBranch{
 	@Override
 	public boolean cleanup() {
 		return true;
+	}
+	
+	@Override
+	public VersionControlSystems getVersionControlSystem() {
+		return VersionControlSystems.Git;
 	}
 }

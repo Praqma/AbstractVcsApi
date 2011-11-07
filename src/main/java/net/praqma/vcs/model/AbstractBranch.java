@@ -1,11 +1,13 @@
 package net.praqma.vcs.model;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import net.praqma.util.debug.Logger;
+import net.praqma.vcs.VersionControlSystems;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
@@ -14,7 +16,7 @@ import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
 import net.praqma.vcs.model.extensions.PullListener;
 import net.praqma.vcs.model.interfaces.Cleanable;
 
-public abstract class AbstractBranch implements Cleanable {
+public abstract class AbstractBranch implements Cleanable, Serializable {
 	
 	protected String name;
 	protected File localRepositoryPath;
@@ -28,9 +30,9 @@ public abstract class AbstractBranch implements Cleanable {
 	 */
 	protected String defaultBranch;
 	
-	protected List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
+	transient protected List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
 	
-	protected Logger logger = Logger.getLogger();
+	transient protected Logger logger = Logger.getLogger();
 	
 	public AbstractBranch() throws ElementNotCreatedException {}
 	
@@ -149,6 +151,8 @@ public abstract class AbstractBranch implements Cleanable {
 	public String getDefaultBranch() {
 		return defaultBranch;
 	}
+	
+	public abstract VersionControlSystems getVersionControlSystem();
 	
 	public int hashCode() {
 		return this.localRepositoryPath.hashCode();

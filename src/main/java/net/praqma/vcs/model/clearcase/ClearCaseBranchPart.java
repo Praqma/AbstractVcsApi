@@ -1,6 +1,7 @@
 package net.praqma.vcs.model.clearcase;
 
 import java.io.File;
+import java.io.Serializable;
 
 import net.praqma.clearcase.PVob;
 import net.praqma.clearcase.ucm.UCMException;
@@ -22,7 +23,7 @@ import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
  * @author wolfgang
  *
  */
-public class ClearCaseBranchPart {
+public class ClearCaseBranchPart implements Serializable {
 
 	/**
 	 * The out most view root, ideally containing the
@@ -307,6 +308,10 @@ public class ClearCaseBranchPart {
 	
 	public String getStreamName() {
 		return name;
+	}
+	
+	public String getViewtag() {
+		return viewtag;
 	}
 	
 	public void setParentStream( Stream parent ) {

@@ -13,6 +13,7 @@ import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.clearcase.ucm.view.SnapshotView.COMP;
 import net.praqma.util.debug.Logger;
+import net.praqma.vcs.VersionControlSystems;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
@@ -423,6 +424,14 @@ public class ClearCaseBranch extends AbstractBranch{
 		return this.output.getPath();
 	}
 	
+	public ClearCaseBranchPart getInput() {
+		return input;
+	}
+	
+	public ClearCaseBranchPart getOutput() {
+		return output;
+	}
+	
 	@Override
 	public File getPath() {
 		//return this.developmentPath_out;
@@ -457,6 +466,14 @@ public class ClearCaseBranch extends AbstractBranch{
 	public Stream getParentOutputStream() {
 		return output.getStream();
 	}
+	
+	public String getInputViewtag() {
+		return input.getViewtag();
+	}
+	
+	public String getOutputViewtag() {
+		return output.getViewtag();
+	}
 
 	@Override
 	public boolean cleanup() {
@@ -483,6 +500,11 @@ public class ClearCaseBranch extends AbstractBranch{
 		}
 		
 		return sb.toString();
+	}
+
+	@Override
+	public VersionControlSystems getVersionControlSystem() {
+		return VersionControlSystems.ClearCase;
 	}
 
 }

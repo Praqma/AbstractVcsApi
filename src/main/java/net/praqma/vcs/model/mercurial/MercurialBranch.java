@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.praqma.vcs.VersionControlSystems;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.Repository;
@@ -206,5 +207,10 @@ public class MercurialBranch extends AbstractBranch {
 		sb.append( "Branch name: " +  name + "\n" );
 		sb.append( "Path       : " +  localRepositoryPath + "\n" );
 		return sb.toString();
+	}
+	
+	@Override
+	public VersionControlSystems getVersionControlSystem() {
+		return VersionControlSystems.Mercurial;
 	}
 }
