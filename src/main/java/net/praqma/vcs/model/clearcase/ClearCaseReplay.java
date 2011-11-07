@@ -298,8 +298,6 @@ public class ClearCaseReplay extends AbstractReplay {
 			String baselineName = ClearcaseReplayListener.runSelectBaselineName( commit );
 
 			try {
-				// Baseline.create( baselineName, ccBranch.getComponent(),
-				// ccBranch.getDevelopmentPath(), true, true );
 				Baseline.create( baselineName, ccBranch.getComponent(), ccBranch.getInputPath(), true, false );
 				logger.info( "New baseline created" );
 			} catch( UCMException e1 ) {

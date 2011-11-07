@@ -1,24 +1,26 @@
 package net.praqma.vcs.model.extensions;
 
-import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
-import net.praqma.vcs.util.IO;
 
-public class CleanupEmptyFolders extends ReplayListener {
+public class CommitCounter extends ReplayListener {
 
-	private Logger logger = Logger.getLogger();
+	private int commitCount = 0;
 	
 	@Override
 	public void onPostReplay( AbstractReplay replay, AbstractCommit commit, boolean status ) {
-		/* Only do this if the replay went well */
-		if( status ) {
-			IO.removeEmptyFolders( replay.getBranch().getPath() );
-		}
 	}
 
 	@Override
 	public void onCommitCreated( AbstractReplay replay, AbstractCommit commit ) {
+		commitCount++;
 	}
 
+	public int getCommitCount() {
+		return commitCount;
+	}
+	
+	public void reset() {
+		commitCount = 0;
+	}
 }
