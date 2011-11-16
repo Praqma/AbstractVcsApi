@@ -11,7 +11,7 @@ import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Component;
 import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.view.SnapshotView;
-import net.praqma.clearcase.ucm.view.SnapshotView.COMP;
+import net.praqma.clearcase.ucm.view.SnapshotView.Components;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.VersionControlSystems;
 import net.praqma.vcs.model.AbstractBranch;
@@ -299,7 +299,7 @@ public class ClearCaseBranch extends AbstractBranch{
 		
 		public boolean update() {
 			try {
-				input.getSnapshotView().Update( true, true, true, false, COMP.ALL, null );
+				input.getSnapshotView().Update( true, true, true, false, Components.ALL, null );
 			} catch (UCMException e) {
 	        	logger.error("Error while updating view: " + e.getMessage());
 	        	return false;
@@ -319,7 +319,7 @@ public class ClearCaseBranch extends AbstractBranch{
 			this.output.getStream().rebase( this.output.getSnapshotView(), cccommit.getBaseline(), true );
 			try {
 				//this.snapshot_out.Update(true, true, true, false, COMP.ALL, null);
-				this.output.getSnapshotView().Update(true, true, true, false, COMP.ALL, null);
+				this.output.getSnapshotView().Update(true, true, true, false, Components.ALL, null);
 			} catch (UCMException e) {
 				throw new UnableToCheckoutCommitException( "Could not checkout " + cccommit.getBaseline() );
 			}
