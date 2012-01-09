@@ -18,6 +18,13 @@
 		</repository>
 	</distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>praqma-repo</id>
+            <url>http://code.praqma.net/repo/maven/</url>
+        </repository>
+    </repositories>
+
 	<build>
 
 		<plugins>
@@ -124,20 +131,17 @@
         <dependency>
             <groupId>net.praqma</groupId>
             <artifactId>praqmajutils</artifactId>
-            <version>0.1.16-SNAPSHOT</version>
+            <version>0.1.17</version>
         </dependency>
         
         <dependency>
             <groupId>net.praqma</groupId>
             <artifactId>COOL</artifactId>
-            <version>0.3.36-SNAPSHOT</version>
+            <version>0.3.37</version>
         </dependency>
         
 	</dependencies>
 
-	<repositories>
-
-	</repositories>
 
 	<scm>
 		<connection>scm:git:ssh://github.com/Praqma/openscm.git</connection>

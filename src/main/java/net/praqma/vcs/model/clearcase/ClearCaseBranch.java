@@ -316,7 +316,11 @@ public class ClearCaseBranch extends AbstractBranch{
 		if( commit instanceof ClearCaseCommit ) {
 			ClearCaseCommit cccommit = (ClearCaseCommit)commit;
 			//this.devStream_out.rebase( this.snapshot_out, cccommit.getBaseline(), true );
-			this.output.getStream().rebase( this.output.getSnapshotView(), cccommit.getBaseline(), true );
+			try {
+				this.output.getStream().rebase( this.output.getSnapshotView(), cccommit.getBaseline(), true );
+			} catch( UCMException e1 ) {
+				throw new UnableToCheckoutCommitException( "Could not rebase " + cccommit.getBaseline() + ": " + e1.getMessage() );
+			}
 			try {
 				//this.snapshot_out.Update(true, true, true, false, COMP.ALL, null);
 				this.output.getSnapshotView().Update(true, true, true, false, Components.ALL, null);

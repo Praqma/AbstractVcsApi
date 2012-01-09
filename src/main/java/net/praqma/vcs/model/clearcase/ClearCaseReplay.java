@@ -69,7 +69,7 @@ public class ClearCaseReplay extends AbstractReplay {
 				Stream parent = ccBranch.getInputStream().getDefaultTarget();
 				if( parent != null ) {
 					logger.debug( "Trying to rebase against " + parent );
-					BaselineList baselines = parent.getLatestBaselines();
+					List<Baseline> baselines = parent.getLatestBaselines();
 					if( baselines != null && baselines.size() > 0 ) {
 						ccBranch.getInputStream().rebase( ccBranch.getInputSnapshotView(), baselines.get( 0 ), true );
 					} else {
