@@ -64,8 +64,9 @@ public class ClearCaseReplay extends AbstractReplay {
 		}
 
 		public boolean setup() {
-			/* Update? Yes, but we must rebase first! */
-			try{
+			/* Update? Yes, but we must rebase first! NO! */
+			/*
+			try {
 				Stream parent = ccBranch.getInputStream().getDefaultTarget();
 				if( parent != null ) {
 					logger.debug( "Trying to rebase against " + parent );
@@ -81,6 +82,7 @@ public class ClearCaseReplay extends AbstractReplay {
 			} catch( Exception e ) {
 				logger.warning( "I tried to rebase, but got the error: " + e.getMessage() );
 			}
+			*/
 			ccBranch.update();
 			
 			try {
@@ -282,7 +284,12 @@ public class ClearCaseReplay extends AbstractReplay {
 				List<File> files = Version.getUncheckedIn( ccBranch.getInputPath() );
 				for( File f : files ) {
 					logger.debug( "Checking in " + f );
-					Version.checkIn( f, false, ccBranch.getInputPath() );
+					try {
+						Version.checkIn( f, false, ccBranch.getInputPath() );
+					} catch( UCMException e ) {
+						logger.debug( "Unable to checkin " + f );
+						/* No op */
+					}
 				}
 			} catch( UCMException e ) {
 				logger.error( e.getMessage() );

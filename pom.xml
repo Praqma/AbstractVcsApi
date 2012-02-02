@@ -137,7 +137,7 @@
         <dependency>
             <groupId>net.praqma</groupId>
             <artifactId>COOL</artifactId>
-            <version>0.3.37</version>
+            <version>0.3.39-SNAPSHOT</version>
         </dependency>
         
 	</dependencies>
