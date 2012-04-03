@@ -14,9 +14,6 @@ import net.praqma.vcs.AVA;
 import net.praqma.vcs.Extension;
 import net.praqma.vcs.util.configuration.exception.ConfigurationDoesNotExistException;
 import net.praqma.vcs.util.configuration.exception.ConfigurationException;
-import net.praqma.vcs.util.configuration.implementation.ClearCaseConfigurationReader;
-import net.praqma.vcs.util.configuration.implementation.GitConfigurationReader;
-import net.praqma.vcs.util.configuration.implementation.MercurialConfigurationReader;
 
 public abstract class AbstractConfigurationReader extends XML {
 	
@@ -31,13 +28,7 @@ public abstract class AbstractConfigurationReader extends XML {
 	}
 	
 	private static Map<String, Class<? extends AbstractConfigurationReader>> readers = new HashMap<String, Class<? extends AbstractConfigurationReader>>();
-	
-	/* Default readers */
-	static {
-		readers.put( "clearcase", ClearCaseConfigurationReader.class );
-		readers.put( "git", GitConfigurationReader.class );
-		readers.put( "mercurial", MercurialConfigurationReader.class );
-	}
+
 	
 	/**
 	 * Add/substitute other readers
