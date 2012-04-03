@@ -9,6 +9,7 @@
 	<modules>
 		<module>core</module>
 		<module>mercurial</module>
+		<module>subversion</module>
 		<module>util</module>
 	</modules>
 

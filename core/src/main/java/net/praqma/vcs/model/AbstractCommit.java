@@ -98,23 +98,7 @@ public abstract class AbstractCommit implements Comparable<AbstractCommit> {
 	}
 	
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
-
-		if( title != null ) {
-			sb.append( " -- " + title + " --\n" );
-			sb.append( " " + authorDate + "\n" );
-		}
-		
-		sb.append( "Key: " + key + "\n" );
-		
-		for(ChangeSetElement cs : changeSet.asList()) {
-			sb.append( " * " + cs.getFile() + "(" + cs.getStatus() + ")\n" );
-			if( cs.getRenameFromFile() != null ) {
-				sb.append( "   " + cs.getRenameFromFile() + "\n" );
-			}
-		}
-		
-		return sb.toString();
+		return title + " @ " + authorDate;
 	}
 	
 	public int compareTo( AbstractCommit other ) {
