@@ -17,11 +17,7 @@ import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.git.api.Git;
 import net.praqma.vcs.model.git.exceptions.GitException;
 import net.praqma.vcs.model.interfaces.Cleanable;
-import net.praqma.vcs.model.mercurial.MercurialBranch;
-import net.praqma.vcs.model.mercurial.api.Mercurial;
-import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
 import net.praqma.vcs.util.CommandLine;
-import net.praqma.vcs.util.Utils;
 
 public class GitBranch extends AbstractBranch{
 	
