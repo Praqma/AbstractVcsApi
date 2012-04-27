@@ -33,7 +33,7 @@ public class ClearCaseConfigurationReader extends AbstractConfigurationReader {
 			fbaseline = getFirstElement( element, "foundationBaseline" ).getTextContent();
 			streamName = getFirstElement( element, "streamName" ).getTextContent();
 		} catch( Exception e ) {
-			throw new ConfigurationException( "Missing element: " + e.getMessage() );
+			throw new ConfigurationException( "Missing element", e );
 		}
 
 		try {

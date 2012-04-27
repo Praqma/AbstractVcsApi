@@ -327,13 +327,13 @@ public class ClearCaseBranch extends AbstractBranch {
 				Rebase rebase = new Rebase( this.output.getStream(), this.output.getSnapshotView(), cccommit.getBaseline() );
 				rebase.rebase( true );
 			} catch( RebaseException e1 ) {
-				throw new UnableToCheckoutCommitException( "Could not rebase " + cccommit.getBaseline() + ": " + e1.getMessage() );
+				throw new UnableToCheckoutCommitException( "Could not rebase " + cccommit.getBaseline(), e1 );
 			}
 			try {
 				//this.snapshot_out.Update(true, true, true, false, COMP.ALL, null);
 				this.output.getSnapshotView().Update( true, true, true, false, new LoadRules( input.getSnapshotView(), Components.ALL ) );
 			} catch( ClearCaseException e ) {
-				throw new UnableToCheckoutCommitException( "Could not checkout " + cccommit.getBaseline() );
+				throw new UnableToCheckoutCommitException( "Could not checkout " + cccommit.getBaseline(), e );
 			}
 		} else {
 			logger.warning( "I don't know how to do this!!!" );

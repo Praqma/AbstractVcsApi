@@ -1,6 +1,6 @@
 package net.praqma.ava.model.exceptions;
 
-public class ElementException extends Exception {
+public class ElementException extends AVAException {
 
 	private static final long serialVersionUID = 5511630514361323388L;
 
@@ -10,12 +10,12 @@ public class ElementException extends Exception {
 
 	public FailureType type = FailureType.UNKNOWN;
 
-	public ElementException() {
-		super();
-	}
-
 	public ElementException( String s ) {
 		super( s );
+	}
+	
+	public ElementException( Exception e ) {
+		super( e );
 	}
 
 	public ElementException( String s, Exception e ) {

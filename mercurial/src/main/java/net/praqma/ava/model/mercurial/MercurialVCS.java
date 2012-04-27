@@ -8,6 +8,7 @@ import net.praqma.util.debug.Logger;
 import net.praqma.ava.model.AbstractVCS;
 import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
 import net.praqma.ava.model.exceptions.ElementException;
+import net.praqma.ava.model.exceptions.ElementException.FailureType;
 import net.praqma.ava.model.exceptions.ElementNotCreatedException;
 
 public class MercurialVCS extends AbstractVCS {
@@ -51,7 +52,7 @@ public class MercurialVCS extends AbstractVCS {
 				Mercurial.initialize( location.getAbsoluteFile() );
 			} catch( MercurialException e ) {
 				logger.warning( "Could not initialize repository at " + location.getAbsolutePath() );
-				throw new ElementNotCreatedException( "Could not initialize Mercurial repository: " + e.getMessage() );
+				throw new ElementNotCreatedException( "Could not initialize Mercurial repository", FailureType.INITIALIZATON, e );
 			}
 			return true;
 		}

@@ -114,7 +114,7 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 			try {
 				parentStream = Stream.get( stream, pvob ).load();
 			} catch( ClearCaseException e ) {
-				throw new ConfigurationException( "Could not get parent stream: " + e.getMessage() );
+				throw new ConfigurationException( "Could not get parent stream", e );
 			}
 		} else {
 			/* No parent */

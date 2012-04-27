@@ -11,7 +11,7 @@ import net.praqma.ava.model.mercurial.exceptions.MercurialException;
 import net.praqma.util.debug.Logger;
 import net.praqma.util.execute.AbnormalProcessTerminationException;
 import net.praqma.ava.model.Repository;
-import net.praqma.ava.model.exceptions.VCSException.FailureType;
+import net.praqma.ava.model.exceptions.APIException.FailureType;
 import net.praqma.ava.util.CommandLine;
 
 public class Mercurial {
@@ -23,7 +23,7 @@ public class Mercurial {
 		try {
 			CommandLine.run( "hg add " + file, viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new MercurialException( "Could add " + file + ": " + e.getMessage() );
+			throw new MercurialException( "Could add " + file, e );
 		}
 	}
 	
@@ -35,7 +35,7 @@ public class Mercurial {
 		try {
 			CommandLine.run( "hg update --clean " + branchName, viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new MercurialException( "Could not change to branch " + branchName + ": " + e.getMessage() );
+			throw new MercurialException( "Could not change to branch " + branchName, e );
 		}	
 	}
 	
@@ -48,10 +48,10 @@ public class Mercurial {
 		} catch( AbnormalProcessTerminationException e ) {
 			logger.debug( "ERROR: \"" + e.getMessage() + "\"" );
 			if( e.getMessage().matches( "^(?i)nothing changed$" ) ) {
-				throw new MercurialException( "Nothing changed", FailureType.NOTHING_CHANGED );
+				throw new MercurialException( "Nothing changed", FailureType.NOTHING_CHANGED, e );
 			}
 			
-			throw new MercurialException( "Could not commit " + message + ": " + e.getMessage() );
+			throw new MercurialException( "Could not commit " + message, e );
 		}	
 	}
 	
@@ -60,7 +60,7 @@ public class Mercurial {
 			CommandLine.run( "hg branch " + name, viewContext, true, false );
 			return true;
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new MercurialException( "Unable to create branch " + name + ": " + e.getMessage() );
+			throw new MercurialException( "Unable to create branch " + name, e );
 		}	
 	}
 		
@@ -74,7 +74,7 @@ public class Mercurial {
 		try {
 			CommandLine.run( "hg update --rev " + key, viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new MercurialException( "Could not checkout commit: " + e.getMessage() );
+			throw new MercurialException( "Could not checkout commit " + key, e );
 		}
 	}
 	
@@ -82,7 +82,7 @@ public class Mercurial {
 		try {
 			CommandLine.run( "hg clone " + parentLocation + " .", viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new MercurialException( "Could not clone " + parentLocation + ": " + e.getMessage() );
+			throw new MercurialException( "Could not clone " + parentLocation, e );
 		}
 	}
 	
@@ -97,7 +97,7 @@ public class Mercurial {
 		try {
 			CommandLine.run( "hg pull" + ( location != null ? " " + location : "" ), viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new MercurialException( "Could not fetch: " + e.getMessage() );
+			throw new MercurialException( "Could not fetch " + location, e );
 		}		
 	}
 	
@@ -109,7 +109,7 @@ public class Mercurial {
 				return CommandLine.run( "hg status --copies --rev \"p1(" + revision + "):" + revision + "\"", viewContext ).stdoutList;
 			}
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new MercurialException( "Could not get changeset: " + e.getMessage() );
+			throw new MercurialException( "Could not get changeset for " + revision, e );
 		}	
 	}
 	
@@ -129,9 +129,9 @@ public class Mercurial {
 			return CommandLine.run( "hg log --rev 0: --template=\"{node}\\n\"" + ( dateString.length() > 0 ? " --date=\">" + dateString : "" ), viewContext ).stdoutList;
 		} catch( AbnormalProcessTerminationException e ) {
 			if( e.getMessage().matches( "^fatal: bad default revision 'HEAD'$" ) ) {
-				throw new MercurialException( "Could not get hashes: " + e.getMessage(), FailureType.NO_OUTPUT );
+				throw new MercurialException( "Could not get hashes", FailureType.NO_OUTPUT, e );
 			}
-			throw new MercurialException( "Could not get hashes: " + e.getMessage() );
+			throw new MercurialException( "Could not get hashes", e );
 		}
 	}
 	
@@ -139,7 +139,7 @@ public class Mercurial {
 		try {
 			return CommandLine.run( "hg branch", viewContext ).stdoutBuffer.toString().trim();
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new MercurialException( "Could not fetch: " + e.getMessage() );
+			throw new MercurialException( "Could not fetch", e );
 		}
 	}
 	
@@ -148,7 +148,7 @@ public class Mercurial {
 		try {
 			CommandLine.run( "hg init", viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new MercurialException( "Could not initialize repository: " + e.getMessage() );
+			throw new MercurialException( "Could not initialize repository at " + viewContext, e );
 		}
 	}
 		
@@ -161,7 +161,7 @@ public class Mercurial {
 				branches.add( s.trim() );
 			}
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new MercurialException( "Could not list Mercurial branches: " + e.getMessage() );
+			throw new MercurialException( "Could not list Mercurial branches", e );
 		}
 		
 		return branches;
@@ -178,7 +178,7 @@ public class Mercurial {
 		try {
 			CommandLine.run( "hg rename \"" + file + "\" \"" + destination + "\"", viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new MercurialException( "Could not move " + file + " : " + e.getMessage() );
+			throw new MercurialException( "Could not move " + file, e );
 		}
 	}
 	
@@ -193,7 +193,7 @@ public class Mercurial {
 		try {
 			CommandLine.run( "hg pull --branch " + branch + " " + location, viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new MercurialException( "Could not pull " + branch + " from " + location + " : " + e.getMessage() );
+			throw new MercurialException( "Could not pull " + branch + " from " + location, e );
 		}
 	}
 	
@@ -208,7 +208,7 @@ public class Mercurial {
 		try {
 			CommandLine.run( "hg push " + ( newBranch ? "--new-branch" : "" ) + repository.getLocation(), viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new MercurialException( "Could not push to " + repository.getLocation() + " : " + e.getMessage() );
+			throw new MercurialException( "Could not push to " + repository.getLocation(), e );
 		}
 	}
 	
@@ -216,7 +216,7 @@ public class Mercurial {
 		try {
 			CommandLine.run( "hg remove " + file, viewContext ); // What about directories? -r
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new MercurialException( "Could not remove " + file + " : " + e.getMessage() );
+			throw new MercurialException( "Could not remove " + file, e );
 		}
 	}
 	
@@ -228,7 +228,7 @@ public class Mercurial {
 		try {
 			return CommandLine.run( "hg status", viewContext ).stdoutList; // What about directories? -r
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new MercurialException( "Could not get status : " + e.getMessage() );
+			throw new MercurialException( "Could not get status", e );
 		}
 	}
 }

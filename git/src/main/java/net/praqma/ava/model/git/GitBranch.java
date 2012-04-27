@@ -13,6 +13,7 @@ import net.praqma.ava.model.AbstractCommit;
 import net.praqma.ava.model.Repository;
 import net.praqma.ava.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
+import net.praqma.ava.model.exceptions.ElementException.FailureType;
 import net.praqma.ava.model.exceptions.ElementNotCreatedException;
 import net.praqma.ava.model.git.api.Git;
 import net.praqma.ava.model.git.exceptions.GitException;
@@ -98,7 +99,7 @@ public class GitBranch extends AbstractBranch{
 			} catch( GitException e ) {
 				/* TODO Should we just fall back to the default branch? */
 				logger.warning( "The branch " + GitBranch.this.name + " does not seem to exist" );
-				throw new ElementDoesNotExistException( "The branch " + GitBranch.this.name + " does not seem to exist" );
+				throw new ElementDoesNotExistException( "The branch " + GitBranch.this.name + " does not seem to exist", e );
 			}
 			
 			/* Only do anything if a parent is given */
@@ -114,7 +115,7 @@ public class GitBranch extends AbstractBranch{
 						logger.debug( e1.getMessage() );
 					}
 				} catch (GitException e) {
-					throw new ElementNotCreatedException( "Could not initialize Git branch" );
+					throw new ElementNotCreatedException( "Could not initialize Git branch", FailureType.DEPENDENCY, e );
 				}
 				
 				try {
@@ -122,7 +123,7 @@ public class GitBranch extends AbstractBranch{
 					Git.checkoutRemoteBranch( name, parent.getName() + "/" + name, localRepositoryPath );
 				} catch( GitException e ) {
 					logger.warning( "Could not initialize Git branch " + name + " from remote " + parent.getName() + ": " + e.getMessage() );
-					throw new ElementNotCreatedException( "Could not initialize Git branch: " + e.getMessage() );
+					throw new ElementNotCreatedException( "Could not initialize Git branch", FailureType.DEPENDENCY, e );
 				} catch (ElementAlreadyExistsException e) {
 					if( get ) {
 						throw e;

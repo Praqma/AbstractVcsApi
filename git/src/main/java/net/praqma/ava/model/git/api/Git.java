@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import net.praqma.util.debug.Logger;
 import net.praqma.util.execute.AbnormalProcessTerminationException;
 import net.praqma.ava.model.exceptions.ElementAlreadyExistsException;
-import net.praqma.ava.model.exceptions.VCSException.FailureType;
+import net.praqma.ava.model.exceptions.APIException.FailureType;
 import net.praqma.ava.model.git.exceptions.GitException;
 import net.praqma.ava.util.CommandLine;
 
@@ -27,7 +27,7 @@ public class Git {
 		try {
 			CommandLine.run( "git add " + file, viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new GitException( "Could add " + file + ": " + e.getMessage() );
+			throw new GitException( "Could add " + file, e );
 		}
 	}
 	
@@ -37,9 +37,9 @@ public class Git {
 		} catch( AbnormalProcessTerminationException e ) {
 			Matcher m = rx_remoteExists.matcher( e.getMessage() );
 			if( m.find() ) {
-				throw new ElementAlreadyExistsException( "Remote " + name + " already exists" );
+				throw new ElementAlreadyExistsException( "Remote " + name + " already exists", e );
 			}
-			throw new GitException( "Could add remote: " + e.getMessage() );
+			throw new GitException( "Could not add remote " + name, e );
 		}
 	}
 	
@@ -51,7 +51,7 @@ public class Git {
 		try {
 			CommandLine.run( "git checkout " + branchName, viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new GitException( "Could not change to branch " + branchName + ": " + e.getMessage() );
+			throw new GitException( "Could not change to branch " + branchName, e );
 		}	
 	}
 	
@@ -63,9 +63,9 @@ public class Git {
 		} catch( AbnormalProcessTerminationException e ) {
 			Matcher m = rx_branchExists.matcher( e.getMessage() );
 			if( m.find() ) {
-				throw new ElementAlreadyExistsException( "Branch " + branchName + " already exists" );
+				throw new ElementAlreadyExistsException( "Branch " + branchName + " already exists", e );
 			}
-			throw new GitException( "Could not checkout remote branch " + branchName + ": " + e.getMessage() );
+			throw new GitException( "Could not checkout remote branch " + branchName, e );
 		}	
 	}
 	
@@ -94,7 +94,7 @@ public class Git {
 			}
 			CommandLine.run( "git commit -a -m \"" + message + "\"" + ( author != null ? " --author=\"" + author + "\"" : "" ), viewContext, true, false, vars );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new GitException( "Could not commit " + message + ": " + e.getMessage() );
+			throw new GitException( "Could not commit " + message, e );
 		}	
 	}
 	
@@ -102,7 +102,7 @@ public class Git {
 		try {
 			CommandLine.run( "git checkout " + key, viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new GitException( "Could not checkout commit: " + e.getMessage() );
+			throw new GitException( "Could not checkout commit " + key, e );
 		}
 	}
 	
@@ -110,7 +110,7 @@ public class Git {
 		try {
 			CommandLine.run( "git clone " + parentLocation + " .", viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new GitException( "Could not clone " + parentLocation + ": " + e.getMessage() );
+			throw new GitException( "Could not clone " + parentLocation, e );
 		}
 	}
 	
@@ -118,7 +118,7 @@ public class Git {
 		try {
 			CommandLine.run( "git fetch", viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new GitException( "Could not fetch: " + e.getMessage() );
+			throw new GitException( "Could not fetch", e );
 		}		
 	}
 	
@@ -128,9 +128,9 @@ public class Git {
 					                                            ( to   != null ? " --until=\"" + datetimeformat.format( to ) + "\"" : "" ), viewContext ).stdoutList;
 		} catch( AbnormalProcessTerminationException e ) {
 			if( e.getMessage().matches( "^fatal: bad default revision 'HEAD'$" ) ) {
-				throw new GitException( "Could not get hashes: " + e.getMessage(), FailureType.NO_OUTPUT );
+				throw new GitException( "Could not get hashes", FailureType.NO_OUTPUT, e );
 			}
-			throw new GitException( "Could not get hashes: " + e.getMessage() );
+			throw new GitException( "Could not get hashes", e );
 		}
 	}
 	
@@ -140,7 +140,7 @@ public class Git {
 		try {
 			CommandLine.run( "git init", viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new GitException( "Could not initialize repository: " + e.getMessage() );
+			throw new GitException( "Could not initialize repository at " + viewContext, e);
 		}
 	}
 	
@@ -155,7 +155,7 @@ public class Git {
 				branches.add( s.substring( 2 ).trim() );
 			}
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new GitException( "Could not list Git branches: " + e.getMessage() );
+			throw new GitException( "Could not list Git branches", e );
 		}
 		
 		return branches;
@@ -172,7 +172,7 @@ public class Git {
 		try {
 			CommandLine.run( "git mv \"" + file + "\" \"" + destination + "\"", viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new GitException( "Could not move " + file + " : " + e.getMessage() );
+			throw new GitException( "Could not move " + file, e );
 		}
 	}
 	
@@ -187,7 +187,7 @@ public class Git {
 		try {
 			CommandLine.run( "git pull " + location + " " + branch, viewContext );
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new GitException( "Could not pull " + branch + " from " + location + " : " + e.getMessage() );
+			throw new GitException( "Could not pull " + branch + " from " + location, e );
 		}
 	}
 	
@@ -195,7 +195,7 @@ public class Git {
 		try {
 			CommandLine.run( "git rm " + file, viewContext ); // What about directories? -r
 		} catch( AbnormalProcessTerminationException e ) {
-			throw new GitException( "Could not remove " + file + " : " + e.getMessage() );
+			throw new GitException( "Could not remove " + file, e );
 		}
 	}
 	

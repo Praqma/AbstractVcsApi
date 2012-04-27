@@ -135,7 +135,7 @@ public class MercurialReplay extends AbstractReplay{
 				logger.info( "New Mercurial commit created" );
 				return true;
 			} catch( MercurialException e ) {
-				if( e.getType().equals( FailureType.NOTHING_CHANGED ) ) {
+				if( e.getFailureType().equals( FailureType.NOTHING_CHANGED ) ) {
 					logger.info( "No Mercurial commit created, nothing changed" );
 				} else {
 					logger.error( "No Mercurial commit created, " + e.getMessage() );

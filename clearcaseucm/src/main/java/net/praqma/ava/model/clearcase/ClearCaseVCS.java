@@ -196,21 +196,21 @@ public class ClearCaseVCS extends AbstractVCS {
 				this.project = Project.get( ClearCaseVCS.this.projectName, pvob ).load();
 			} catch( ClearCaseException e1 ) {
 				logger.error( "Project does not exist" );
-				throw new ElementDoesNotExistException( "Project does not exist" );
+				throw new ElementDoesNotExistException( "The project " + ClearCaseVCS.this.projectName + " does not exist", e1 );
 			}
 
 			try {
 				this.integrationStream = Stream.get( ClearCaseVCS.this.streamName, pvob ).load();
 			} catch( ClearCaseException e1 ) {
 				logger.error( "Stream does not exist" );
-				throw new ElementDoesNotExistException( "Stream does not exist" );
+				throw new ElementDoesNotExistException( "The stream " + ClearCaseVCS.this.streamName + " does not exist", e1 );
 			}
 
 			try {
 				this.initialBaseline = Baseline.get( ClearCaseVCS.this.baselineName, pvob ).load();
 			} catch( ClearCaseException e1 ) {
 				logger.error( "Baseline does not exist" );
-				throw new ElementDoesNotExistException( "Baseline does not exist" );
+				throw new ElementDoesNotExistException( "The baseline " + ClearCaseVCS.this.baselineName + " does not exist", e1 );
 			}
 		}
 	}
@@ -345,7 +345,7 @@ public class ClearCaseVCS extends AbstractVCS {
 				pvob = PVob.create( pvobName, null, "PVOB" );
 			} catch( ClearCaseException e ) {
 				logger.error( "Error while creating PVOB: " + e.getMessage() );
-				throw new ElementNotCreatedException( "Could not create PVob: " + e.getMessage(), FailureType.INITIALIZATON );
+				throw new ElementNotCreatedException( "Could not create PVob: " + e.getMessage(), FailureType.INITIALIZATON, e );
 			}
 		}
 
@@ -355,14 +355,14 @@ public class ClearCaseVCS extends AbstractVCS {
 				baseView = DynamicView.create( null, dynView, null );
 			} catch( Exception e ) {
 				logger.error( "Error while creating baseview: " + e.getMessage() );
-				throw new ElementNotCreatedException( "Could not create base view: " + e.getMessage(), FailureType.INITIALIZATON );
+				throw new ElementNotCreatedException( "Could not create base view: " + e.getMessage(), FailureType.INITIALIZATON, e );
 			}
 		} else {
 			try {
 				new DynamicView( null, dynView ).startView();
 			} catch( ClearCaseException e ) {
 				logger.error( "Error while starting baseview: " + e.getMessage() );
-				throw new ElementNotCreatedException( "Could not starting base view: " + e.getMessage(), FailureType.INITIALIZATON );
+				throw new ElementNotCreatedException( "Could not starting base view: " + e.getMessage(), FailureType.INITIALIZATON, e );
 			}
 		}
 

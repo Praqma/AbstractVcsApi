@@ -7,7 +7,6 @@ import net.praqma.clearcase.Vob;
 import net.praqma.clearcase.exceptions.ClearCaseException;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Stream;
-import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.ava.model.AbstractBranch;
 import net.praqma.ava.model.AbstractReplay;
 import net.praqma.ava.model.clearcase.ClearCaseBranch;
@@ -71,7 +70,7 @@ public class ClearCaseVobComponentConfiguration extends AbstractConfiguration {
 			try {
 				parentStream = Stream.get( stream, pvob ).load();
 			} catch( ClearCaseException e ) {
-				throw new ConfigurationException( "Could not get parent stream: " + e.getMessage() );
+				throw new ConfigurationException( "Could not get parent stream", e );
 			}
 		} else {
 			/* No parent */
@@ -83,7 +82,7 @@ public class ClearCaseVobComponentConfiguration extends AbstractConfiguration {
 		try {
 			foundationBaseline = Baseline.get( baseline, pvob ).load();
 		} catch( ClearCaseException e ) {
-			throw new ConfigurationException( "Could not get foundation baseline: " + e.getMessage() );
+			throw new ConfigurationException( "Could not get foundation baseline", e );
 		}
 	}
 

@@ -6,6 +6,7 @@ import net.praqma.util.debug.Logger;
 import net.praqma.ava.model.AbstractVCS;
 import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
 import net.praqma.ava.model.exceptions.ElementException;
+import net.praqma.ava.model.exceptions.ElementException.FailureType;
 import net.praqma.ava.model.exceptions.ElementNotCreatedException;
 import net.praqma.ava.model.git.api.Git;
 import net.praqma.ava.model.git.exceptions.GitException;
@@ -51,7 +52,7 @@ public class GitVCS extends AbstractVCS {
 				Git.initialize( location.getAbsoluteFile() );
 			} catch( GitException e ) {
 				logger.warning( "Could not initialize repository at " + location.getAbsolutePath() );
-				throw new ElementNotCreatedException( "Could not initialize Git repository: " + e.getMessage() );
+				throw new ElementNotCreatedException( "Could not initialize Git repository", FailureType.INITIALIZATON, e );
 			}
 			return true;
 		}

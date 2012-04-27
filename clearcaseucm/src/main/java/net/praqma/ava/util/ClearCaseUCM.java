@@ -22,14 +22,14 @@ public class ClearCaseUCM {
 		try {
 			snapview = SnapshotView.getSnapshotViewFromPath( view );
 		} catch( Exception e ) {
-			throw new ElementDoesNotExistException( e.getMessage() );
+			throw new ElementDoesNotExistException( e );
 		}
 
 		Stream stream;
 		try {
 			stream = snapview.getStream().load();
 		} catch( Exception e ) {
-			throw new ElementException( e.getMessage() );
+			throw new ElementException( e );
 		}
 
 		File parentView = view.getParentFile();

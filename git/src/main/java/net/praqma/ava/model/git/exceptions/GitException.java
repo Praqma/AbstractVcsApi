@@ -1,21 +1,18 @@
 package net.praqma.ava.model.git.exceptions;
 
-import net.praqma.ava.model.exceptions.VCSException;
+import net.praqma.ava.model.exceptions.APIException;
 
-public class GitException extends VCSException {
+public class GitException extends APIException {
 
-	private static final long serialVersionUID = 5511630514361323388L;
-		
-	public GitException() {
-		super();
-	}
-	
 	public GitException(String s) {
 		super(s);
 	}
 	
-	public GitException( String s, FailureType type ) {
-		super( s, type );
+	public GitException( String s, Exception e ) {
+		super( s, e );
 	}
-	
+
+	public GitException( String s, FailureType type, Exception e ) {
+		super( s, type, e );
+	}
 }

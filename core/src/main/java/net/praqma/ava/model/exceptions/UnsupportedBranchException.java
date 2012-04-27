@@ -1,14 +1,12 @@
 package net.praqma.ava.model.exceptions;
 
-public class UnsupportedBranchException extends Exception {
+public class UnsupportedBranchException extends AVAException {
 
-	private static final long serialVersionUID = 55114361323388L;
-	
-	public UnsupportedBranchException() {
-		super();
+	public UnsupportedBranchException( String s ) {
+		super( s );
 	}
 	
-	public UnsupportedBranchException(String s) {
-		super(s);
+	public UnsupportedBranchException( String s, Exception e ) {
+		super( s, e );
 	}
 }

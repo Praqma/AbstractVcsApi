@@ -13,6 +13,7 @@ import net.praqma.ava.model.AbstractCommit;
 import net.praqma.ava.model.Repository;
 import net.praqma.ava.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
+import net.praqma.ava.model.exceptions.ElementException.FailureType;
 import net.praqma.ava.model.exceptions.ElementNotCreatedException;
 
 public class MercurialBranch extends AbstractBranch {
@@ -98,7 +99,7 @@ public class MercurialBranch extends AbstractBranch {
 					Mercurial.createBranch( name, localRepositoryPath );
 				} catch( MercurialException e2 ) {
 					logger.warning( "Could not create branch " + name );
-					throw new ElementNotCreatedException( "Could not create branch " + name + ": " + e2.getMessage() );
+					throw new ElementNotCreatedException( "Could not create branch " + name, FailureType.INITIALIZATON, e );
 				}
 			}
 			
@@ -109,7 +110,7 @@ public class MercurialBranch extends AbstractBranch {
 					Mercurial.pull( parent.getLocation(), parent.getName(), localRepositoryPath );
 				} catch( MercurialException e ) {
 					logger.warning( "Could not initialize Mercurial branch " + name + " from remote " + parent.getName() + ": " + e.getMessage() );
-					throw new ElementNotCreatedException( "Could not initialize Mercurial branch: " + e.getMessage() );
+					throw new ElementNotCreatedException( "Could not initialize Mercurial branch", FailureType.INITIALIZATON, e );
 				}
 				
 			}

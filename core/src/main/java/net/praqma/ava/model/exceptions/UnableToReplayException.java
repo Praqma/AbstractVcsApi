@@ -1,14 +1,8 @@
 package net.praqma.ava.model.exceptions;
 
-public class UnableToReplayException extends Exception {
+public class UnableToReplayException extends AVAException {
 
-	private static final long serialVersionUID = 5511630514361323388L;
-	
-	public UnableToReplayException() {
-		super();
-	}
-	
-	public UnableToReplayException(String s) {
-		super(s);
+	public UnableToReplayException(String s, Exception e ) {
+		super(s, e);
 	}
 }

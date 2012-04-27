@@ -1,14 +1,8 @@
 package net.praqma.ava.model.subversion.exceptions;
 
-import net.praqma.ava.model.exceptions.VCSException;
+import net.praqma.ava.model.exceptions.APIException;
 
-public class SubversionException extends VCSException {
-
-	private static final long serialVersionUID = 5511630514361323388L;
-
-	public SubversionException() {
-		super();
-	}
+public class SubversionException extends APIException {
 
 	public SubversionException( String s ) {
 		super( s );
@@ -18,10 +12,6 @@ public class SubversionException extends VCSException {
 		super( s, e );
 	}
 
-	public SubversionException( String s, FailureType type ) {
-		super( s, type );
-	}
-	
 	public SubversionException( String s, FailureType type, Exception e ) {
 		super( s, type, e );
 	}

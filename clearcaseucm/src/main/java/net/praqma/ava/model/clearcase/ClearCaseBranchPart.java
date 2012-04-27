@@ -102,7 +102,7 @@ public class ClearCaseBranchPart implements Serializable {
 		try {
 			this.component = baseline.getComponent().load();
 		} catch( ClearCaseException e ) {
-			throw new ElementNotCreatedException( "Component could not be loaded", FailureType.DEPENDENCY );
+			throw new ElementNotCreatedException( "Component could not be loaded", FailureType.DEPENDENCY, e );
 		}
 	}
 
@@ -116,13 +116,13 @@ public class ClearCaseBranchPart implements Serializable {
 			this.baseline = parent.getFoundationBaseline().load();
 		} catch( ClearCaseException e ) {
 			logger.error( "Could not create Clearcase branch: " + e.getMessage() );
-			throw new ElementNotCreatedException( "Could not create Clearcase branch: " + e.getMessage(), FailureType.DEPENDENCY );
+			throw new ElementNotCreatedException( "Could not create Clearcase branch: " + e.getMessage(), FailureType.DEPENDENCY, e );
 		}
 
 		try {
 			this.component = baseline.getComponent().load();
 		} catch( ClearCaseException e ) {
-			throw new ElementNotCreatedException( "Component could not be loaded", FailureType.DEPENDENCY );
+			throw new ElementNotCreatedException( "Component could not be loaded", FailureType.DEPENDENCY, e );
 		}
 	}
 
@@ -160,7 +160,7 @@ public class ClearCaseBranchPart implements Serializable {
 						devStream = Stream.create( parent, name + "@" + pvob, false, baseline );
 					} catch( ClearCaseException e1 ) {
 						logger.error( "Error while creating input stream: " + e1.getMessage() );
-						throw new ElementNotCreatedException( "Error while creating development stream: " + e1.getMessage() );
+						throw new ElementNotCreatedException( "Error while creating development stream", FailureType.INITIALIZATON, e1 );
 					}
 				} else {
 					logger.debug( "Unable to create the stream " + name + ". Parent is null" );
@@ -174,7 +174,7 @@ public class ClearCaseBranchPart implements Serializable {
 					devStream = Stream.create( parent, name + "@" + pvob, false, baseline );
 				} catch( ClearCaseException e ) {
 					logger.error( "Error while creating Development input Stream: " + e.getMessage() );
-					throw new ElementNotCreatedException( "Error while creating development stream: " + e.getMessage() );
+					throw new ElementNotCreatedException( "Error while creating development stream", FailureType.INITIALIZATON, e );
 				}
 			} else {
 				logger.debug( "Unable to create the stream " + name + ". Parent is null" );
@@ -223,7 +223,7 @@ public class ClearCaseBranchPart implements Serializable {
 					}
 					snapshot = SnapshotView.create( devStream, viewroot, viewtag );
 				} catch( Exception e ) {
-					throw new ElementAlreadyExistsException( "The input view " + viewtag + " already exists" );
+					throw new ElementAlreadyExistsException( "The input view " + viewtag + " already exists", e );
 				}
 			} else {
 				logger.debug( "Unable to create the view " + viewroot + ". View tag is null" );
@@ -265,7 +265,7 @@ public class ClearCaseBranchPart implements Serializable {
 			snapshot = SnapshotView.getSnapshotViewFromPath( viewroot );
 		} catch( Exception e ) {
 			logger.error( "Could not get view: " + e.getMessage() );
-			throw new ElementDoesNotExistException( "Could not get view" );
+			throw new ElementDoesNotExistException( "Could not get view", e );
 		}
 	}
 
@@ -274,7 +274,7 @@ public class ClearCaseBranchPart implements Serializable {
 			this.devStream = Stream.get( name, pvob ).load();
 		} catch( ClearCaseException e1 ) {
 			logger.error( "Stream does not exist" );
-			throw new ElementDoesNotExistException( "Could not get stream" );
+			throw new ElementDoesNotExistException( "Could not get stream " + name, e1 );
 		}
 	}
 

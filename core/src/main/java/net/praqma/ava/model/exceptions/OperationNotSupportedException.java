@@ -1,14 +1,8 @@
 package net.praqma.ava.model.exceptions;
 
-public class OperationNotSupportedException extends Exception {
+public class OperationNotSupportedException extends AVAException {
 
-	private static final long serialVersionUID = 5511630514361323388L;
-	
-	public OperationNotSupportedException() {
-		super();
-	}
-	
-	public OperationNotSupportedException(String s) {
-		super(s);
+	public OperationNotSupportedException( String s, Exception e ) {
+		super( s, e );
 	}
 }
