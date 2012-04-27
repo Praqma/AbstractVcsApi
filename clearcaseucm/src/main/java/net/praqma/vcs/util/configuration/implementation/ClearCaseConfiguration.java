@@ -3,7 +3,7 @@ package net.praqma.vcs.util.configuration.implementation;
 import java.io.File;
 
 import net.praqma.clearcase.PVob;
-import net.praqma.clearcase.ucm.UCMException;
+import net.praqma.clearcase.exceptions.ClearCaseException;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.entities.UCMEntity;
@@ -112,8 +112,8 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	public void setParentStream( String stream ) throws ConfigurationException {
 		if( stream != null && stream.length() > 0 ) {
 			try {
-				parentStream = UCMEntity.getStream( stream, pvob, false );
-			} catch( UCMException e ) {
+				parentStream = Stream.get( stream, pvob ).load();
+			} catch( ClearCaseException e ) {
 				throw new ConfigurationException( "Could not get parent stream: " + e.getMessage() );
 			}
 		} else {
@@ -128,8 +128,8 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 
 	public void setFoundationBaseline( String baseline ) throws ConfigurationException {
 		try {
-			foundationBaseline = UCMEntity.getBaseline( baseline, pvob, false );
-		} catch( UCMException e ) {
+			foundationBaseline = Baseline.get( baseline, pvob ).load();
+		} catch( ClearCaseException e ) {
 			/* Not that important */
 		}
 	}

@@ -4,7 +4,7 @@ import java.io.File;
 
 import net.praqma.clearcase.PVob;
 import net.praqma.clearcase.Vob;
-import net.praqma.clearcase.ucm.UCMException;
+import net.praqma.clearcase.exceptions.ClearCaseException;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.entities.UCMEntity;
@@ -27,12 +27,12 @@ public class ClearCaseVobComponentConfiguration extends AbstractConfiguration {
 	private String streamName;
 
 	private Baseline foundationBaseline;
-	
+
 	private File inputPath;
 	private File outputPath;
-	
+
 	private File developmentPath;
-	
+
 	public ClearCaseVobComponentConfiguration( File path, String viewtag, String vobname, String pvobname, String foundationBaselineName, String parentStreamName, String streamName ) throws ConfigurationException {
 		super( path );
 
@@ -48,7 +48,7 @@ public class ClearCaseVobComponentConfiguration extends AbstractConfiguration {
 		this.streamName = streamName;
 		setParentStream( parentStreamName );
 	}
-	
+
 	public ClearCaseVobComponentConfiguration( File path, String viewtag, Vob vob, PVob pvob, Baseline baseline, Stream parentStream, Stream stream ) throws ConfigurationException {
 		super( path );
 
@@ -60,17 +60,17 @@ public class ClearCaseVobComponentConfiguration extends AbstractConfiguration {
 		this.foundationBaseline = baseline;
 		this.streamName = stream.getFullyQualifiedName();
 		this.parentStream = parentStream;
-	}	
-	
+	}
+
 	public static void parse() {
-		
+
 	}
 
 	public void setParentStream( String stream ) throws ConfigurationException {
 		if( stream != null && stream.length() > 0 ) {
 			try {
-				parentStream = UCMEntity.getStream( stream, pvob, false );
-			} catch (UCMException e) {
+				parentStream = Stream.get( stream, pvob ).load();
+			} catch( ClearCaseException e ) {
 				throw new ConfigurationException( "Could not get parent stream: " + e.getMessage() );
 			}
 		} else {
@@ -78,11 +78,11 @@ public class ClearCaseVobComponentConfiguration extends AbstractConfiguration {
 			parentStream = null;
 		}
 	}
-	
+
 	public void setFoundationBaseline( String baseline ) throws ConfigurationException {
 		try {
-			foundationBaseline = UCMEntity.getBaseline( baseline, pvob, false );
-		} catch (UCMException e) {
+			foundationBaseline = Baseline.get( baseline, pvob ).load();
+		} catch( ClearCaseException e ) {
 			throw new ConfigurationException( "Could not get foundation baseline: " + e.getMessage() );
 		}
 	}
@@ -114,31 +114,31 @@ public class ClearCaseVobComponentConfiguration extends AbstractConfiguration {
 	public String getViewtag() {
 		return viewtag;
 	}
-	
+
 	public void setInputPath( File path ) {
 		this.inputPath = path;
 	}
-	
+
 	public void setOutputPath( File path ) {
 		this.outputPath = path;
 	}
-	
+
 	public void setDevelopmentPath( File path ) {
 		this.developmentPath = path;
 	}
-	
+
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		
+
 		sb.append( "Parent: " + super.toString() );
-		
+
 		sb.append( "View tag: " + viewtag + "\n" );
 		sb.append( "Vob: " + vob + "\n" );
 		sb.append( "PVob: " + pvob + "\n" );
-		
+
 		sb.append( "Stream name: " + streamName + "\n" );
 		sb.append( "Parent stream: " + parentStream + "\n" );
-		
+
 		return sb.toString();
 	}
 
@@ -151,19 +151,19 @@ public class ClearCaseVobComponentConfiguration extends AbstractConfiguration {
 			if( inputPath != null ) {
 				branch.setInputPath( inputPath );
 			}
-			
+
 			/* Set output path */
 			if( outputPath != null ) {
 				branch.setOutputPath( outputPath );
 			}
-			
+
 			/* Set the development path */
 			if( developmentPath != null ) {
 				/* TODO Fix when branch vob-component is implemented */
 				//branch.setDevelopmentPath( developmentPath );
 			}
-			
-			branch.get(true);
+
+			branch.get( true );
 			this.branch = branch;
 		}
 		return branch;

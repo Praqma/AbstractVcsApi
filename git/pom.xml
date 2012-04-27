@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.praqma</groupId>
-	<artifactId>ava</artifactId>
-	<version>0.1.8-SNAPSHOT</version>
-	<name>AbstractVcsApi</name>
+	<artifactId>ava-git</artifactId>
+	<version>0.2.0-SNAPSHOT</version>
+	<name>git support for AVA</name>
 	<url>http://maven.apache.org</url>
 
 	<parent>
 		<groupId>net.praqma</groupId>
-		<artifactId>git</artifactId>
+		<artifactId>ava</artifactId>
 		<version>0.2.0-SNAPSHOT</version>
 	</parent>
 	
