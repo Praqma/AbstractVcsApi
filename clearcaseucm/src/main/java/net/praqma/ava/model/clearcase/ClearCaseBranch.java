@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.clearcase;
+package net.praqma.ava.model.clearcase;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -16,14 +16,14 @@ import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.clearcase.ucm.view.SnapshotView.Components;
 import net.praqma.clearcase.ucm.view.SnapshotView.LoadRules;
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.VersionControlSystems;
-import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
-import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementException;
-import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
+import net.praqma.ava.VersionControlSystems;
+import net.praqma.ava.model.AbstractBranch;
+import net.praqma.ava.model.AbstractCommit;
+import net.praqma.ava.model.exceptions.ElementAlreadyExistsException;
+import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
+import net.praqma.ava.model.exceptions.ElementException;
+import net.praqma.ava.model.exceptions.ElementNotCreatedException;
+import net.praqma.ava.model.exceptions.UnableToCheckoutCommitException;
 
 /**
  * An implementation of {@link AbstractBranch} for Clearcase, where

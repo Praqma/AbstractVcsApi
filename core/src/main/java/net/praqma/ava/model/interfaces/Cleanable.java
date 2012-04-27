@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.interfaces;
+package net.praqma.ava.model.interfaces;
 
 public interface Cleanable {
 	public boolean cleanup();

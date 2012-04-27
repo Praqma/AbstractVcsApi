@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.git;
+package net.praqma.ava.model.git;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -7,17 +7,17 @@ import java.util.Date;
 import java.util.List;
 
 import net.praqma.util.execute.AbnormalProcessTerminationException;
-import net.praqma.vcs.VersionControlSystems;
-import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.Repository;
-import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
-import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.git.api.Git;
-import net.praqma.vcs.model.git.exceptions.GitException;
-import net.praqma.vcs.model.interfaces.Cleanable;
-import net.praqma.vcs.util.CommandLine;
+import net.praqma.ava.VersionControlSystems;
+import net.praqma.ava.model.AbstractBranch;
+import net.praqma.ava.model.AbstractCommit;
+import net.praqma.ava.model.Repository;
+import net.praqma.ava.model.exceptions.ElementAlreadyExistsException;
+import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
+import net.praqma.ava.model.exceptions.ElementNotCreatedException;
+import net.praqma.ava.model.git.api.Git;
+import net.praqma.ava.model.git.exceptions.GitException;
+import net.praqma.ava.model.interfaces.Cleanable;
+import net.praqma.ava.util.CommandLine;
 
 public class GitBranch extends AbstractBranch{
 	

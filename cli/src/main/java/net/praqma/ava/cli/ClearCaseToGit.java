@@ -1,4 +1,4 @@
-package net.praqma.vcs.cli;
+package net.praqma.ava.cli;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,18 +20,18 @@ import net.praqma.util.debug.Logger.LogLevel;
 import net.praqma.util.debug.appenders.StreamAppender;
 import net.praqma.util.option.Option;
 import net.praqma.util.option.Options;
-import net.praqma.vcs.AVA;
-import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.clearcase.ClearCaseBranch;
-import net.praqma.vcs.model.clearcase.ClearCaseReplay;
-import net.praqma.vcs.model.clearcase.ClearCaseVCS;
-import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
-import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
-import net.praqma.vcs.model.exceptions.UnableToReplayException;
-import net.praqma.vcs.model.git.GitBranch;
-import net.praqma.vcs.model.git.GitReplay;
+import net.praqma.ava.AVA;
+import net.praqma.ava.model.AbstractCommit;
+import net.praqma.ava.model.clearcase.ClearCaseBranch;
+import net.praqma.ava.model.clearcase.ClearCaseReplay;
+import net.praqma.ava.model.clearcase.ClearCaseVCS;
+import net.praqma.ava.model.exceptions.ElementAlreadyExistsException;
+import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
+import net.praqma.ava.model.exceptions.ElementNotCreatedException;
+import net.praqma.ava.model.exceptions.UnableToCheckoutCommitException;
+import net.praqma.ava.model.exceptions.UnableToReplayException;
+import net.praqma.ava.model.git.GitBranch;
+import net.praqma.ava.model.git.GitReplay;
 
 public class ClearCaseToGit {
 	private static Logger logger = Logger.getLogger();

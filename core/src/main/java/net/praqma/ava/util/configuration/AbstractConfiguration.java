@@ -1,16 +1,16 @@
-package net.praqma.vcs.util.configuration;
+package net.praqma.ava.util.configuration;
 
 import java.io.File;
 import java.io.Serializable;
 
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.model.AbstractReplay;
-import net.praqma.vcs.model.Repository;
-import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
-import net.praqma.vcs.util.configuration.exception.ConfigurationException;
+import net.praqma.ava.model.AbstractBranch;
+import net.praqma.ava.model.AbstractReplay;
+import net.praqma.ava.model.Repository;
+import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
+import net.praqma.ava.model.exceptions.ElementNotCreatedException;
+import net.praqma.ava.model.exceptions.UnsupportedBranchException;
+import net.praqma.ava.util.configuration.exception.ConfigurationException;
 
 public abstract class AbstractConfiguration implements Serializable {
 	private static final long serialVersionUID = -812250782421147883L;

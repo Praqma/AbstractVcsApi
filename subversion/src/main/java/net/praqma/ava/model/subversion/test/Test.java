@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.subversion.test;
+package net.praqma.ava.model.subversion.test;
 
 import java.io.File;
 import java.util.List;
@@ -7,11 +7,11 @@ import net.praqma.util.debug.Logger;
 import net.praqma.util.debug.Logger.LogLevel;
 import net.praqma.util.debug.appenders.Appender;
 import net.praqma.util.debug.appenders.ConsoleAppender;
-import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.Repository;
-import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
-import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.subversion.SubversionBranch;
+import net.praqma.ava.model.AbstractCommit;
+import net.praqma.ava.model.Repository;
+import net.praqma.ava.model.exceptions.ElementAlreadyExistsException;
+import net.praqma.ava.model.exceptions.ElementNotCreatedException;
+import net.praqma.ava.model.subversion.SubversionBranch;
 
 public class Test {
 

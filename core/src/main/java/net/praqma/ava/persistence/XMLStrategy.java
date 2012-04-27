@@ -1,4 +1,4 @@
-package net.praqma.vcs.persistence;
+package net.praqma.ava.persistence;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import org.w3c.dom.Element;
 
 import net.praqma.util.debug.Logger;
 import net.praqma.util.xml.XML;
-import net.praqma.vcs.model.AbstractBranch;
+import net.praqma.ava.model.AbstractBranch;
 
 public class XMLStrategy extends XML implements PersistenceStrategy {
 	

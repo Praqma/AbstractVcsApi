@@ -1,4 +1,4 @@
-package net.praqma.vcs.model;
+package net.praqma.ava.model;
 
 public abstract class AbstractConstructSequence {
 

@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.git.api;
+package net.praqma.ava.model.git.api;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -12,10 +12,10 @@ import java.util.regex.Pattern;
 
 import net.praqma.util.debug.Logger;
 import net.praqma.util.execute.AbnormalProcessTerminationException;
-import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
-import net.praqma.vcs.model.exceptions.VCSException.FailureType;
-import net.praqma.vcs.model.git.exceptions.GitException;
-import net.praqma.vcs.util.CommandLine;
+import net.praqma.ava.model.exceptions.ElementAlreadyExistsException;
+import net.praqma.ava.model.exceptions.VCSException.FailureType;
+import net.praqma.ava.model.git.exceptions.GitException;
+import net.praqma.ava.util.CommandLine;
 
 public class Git {
 

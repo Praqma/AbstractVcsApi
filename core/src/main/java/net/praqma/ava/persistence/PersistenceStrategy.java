@@ -1,8 +1,8 @@
-package net.praqma.vcs.persistence;
+package net.praqma.ava.persistence;
 
 import java.util.Date;
 
-import net.praqma.vcs.model.AbstractBranch;
+import net.praqma.ava.model.AbstractBranch;
 
 public interface PersistenceStrategy {
 	public void setLastCommitDate( AbstractBranch branch, Date date );

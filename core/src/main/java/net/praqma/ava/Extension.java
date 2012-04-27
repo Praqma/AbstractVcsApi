@@ -1,4 +1,4 @@
-package net.praqma.vcs;
+package net.praqma.ava;
 
 public interface Extension {
 

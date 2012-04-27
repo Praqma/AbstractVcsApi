@@ -1,11 +1,11 @@
-package net.praqma.vcs;
+package net.praqma.ava;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.persistence.PersistenceStrategy;
+import net.praqma.ava.model.AbstractBranch;
+import net.praqma.ava.persistence.PersistenceStrategy;
 
 public class AVA {
 	

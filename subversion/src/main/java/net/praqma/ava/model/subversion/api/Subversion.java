@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.subversion.api;
+package net.praqma.ava.model.subversion.api;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 
 import net.praqma.util.debug.Logger;
 import net.praqma.util.execute.AbnormalProcessTerminationException;
-import net.praqma.vcs.model.subversion.exceptions.SubversionException;
-import net.praqma.vcs.util.CommandLine;
+import net.praqma.ava.model.subversion.exceptions.SubversionException;
+import net.praqma.ava.util.CommandLine;
 
 public class Subversion {
 	private static Logger logger = Logger.getLogger();

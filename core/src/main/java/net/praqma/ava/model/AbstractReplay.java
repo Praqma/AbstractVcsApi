@@ -1,12 +1,12 @@
-package net.praqma.vcs.model;
+package net.praqma.ava.model;
 
 import java.io.File;
 import java.util.List;
 
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
-import net.praqma.vcs.model.exceptions.UnableToReplayException;
-import net.praqma.vcs.model.extensions.ReplayListener;
+import net.praqma.ava.model.exceptions.OperationNotImplementedException;
+import net.praqma.ava.model.exceptions.UnableToReplayException;
+import net.praqma.ava.model.extensions.ReplayListener;
 
 public abstract class AbstractReplay {
 	

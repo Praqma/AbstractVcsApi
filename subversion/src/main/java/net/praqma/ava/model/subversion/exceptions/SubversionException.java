@@ -1,6 +1,6 @@
-package net.praqma.vcs.model.subversion.exceptions;
+package net.praqma.ava.model.subversion.exceptions;
 
-import net.praqma.vcs.model.exceptions.VCSException;
+import net.praqma.ava.model.exceptions.VCSException;
 
 public class SubversionException extends VCSException {
 

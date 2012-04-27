@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.git;
+package net.praqma.ava.model.git;
 
 import java.io.File;
 import java.util.Date;
@@ -7,11 +7,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.ChangeSetElement;
-import net.praqma.vcs.model.ChangeSetElement.Status;
-import net.praqma.vcs.util.CommandLine;
+import net.praqma.ava.model.AbstractBranch;
+import net.praqma.ava.model.AbstractCommit;
+import net.praqma.ava.model.ChangeSetElement;
+import net.praqma.ava.model.ChangeSetElement.Status;
+import net.praqma.ava.util.CommandLine;
 
 public class GitCommit extends AbstractCommit {
 

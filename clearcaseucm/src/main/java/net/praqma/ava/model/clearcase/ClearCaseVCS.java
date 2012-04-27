@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.clearcase;
+package net.praqma.ava.model.clearcase;
 
 import java.io.File;
 
@@ -13,10 +13,10 @@ import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.clearcase.ucm.view.DynamicView;
 import net.praqma.clearcase.ucm.view.UCMView;
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.AbstractVCS;
-import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementException.FailureType;
-import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
+import net.praqma.ava.model.AbstractVCS;
+import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
+import net.praqma.ava.model.exceptions.ElementException.FailureType;
+import net.praqma.ava.model.exceptions.ElementNotCreatedException;
 
 /**
  * This is a Clearcase implementation of the abstract VCS. Initializing this

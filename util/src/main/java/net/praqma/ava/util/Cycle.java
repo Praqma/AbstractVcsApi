@@ -1,4 +1,4 @@
-package net.praqma.vcs.util;
+package net.praqma.ava.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,12 +7,12 @@ import java.util.Date;
 import java.util.List;
 
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.AVA;
-import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.AbstractReplay;
-import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
-import net.praqma.vcs.model.exceptions.UnableToReplayException;
+import net.praqma.ava.AVA;
+import net.praqma.ava.model.AbstractBranch;
+import net.praqma.ava.model.AbstractCommit;
+import net.praqma.ava.model.AbstractReplay;
+import net.praqma.ava.model.exceptions.UnableToCheckoutCommitException;
+import net.praqma.ava.model.exceptions.UnableToReplayException;
 
 public class Cycle {
 	

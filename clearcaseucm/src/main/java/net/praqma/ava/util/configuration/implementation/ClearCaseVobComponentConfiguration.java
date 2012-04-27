@@ -1,4 +1,4 @@
-package net.praqma.vcs.util.configuration.implementation;
+package net.praqma.ava.util.configuration.implementation;
 
 import java.io.File;
 
@@ -8,15 +8,15 @@ import net.praqma.clearcase.exceptions.ClearCaseException;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.entities.UCMEntity;
-import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.model.AbstractReplay;
-import net.praqma.vcs.model.clearcase.ClearCaseBranch;
-import net.praqma.vcs.model.clearcase.ClearCaseReplay;
-import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
-import net.praqma.vcs.util.configuration.AbstractConfiguration;
-import net.praqma.vcs.util.configuration.exception.ConfigurationException;
+import net.praqma.ava.model.AbstractBranch;
+import net.praqma.ava.model.AbstractReplay;
+import net.praqma.ava.model.clearcase.ClearCaseBranch;
+import net.praqma.ava.model.clearcase.ClearCaseReplay;
+import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
+import net.praqma.ava.model.exceptions.ElementNotCreatedException;
+import net.praqma.ava.model.exceptions.UnsupportedBranchException;
+import net.praqma.ava.util.configuration.AbstractConfiguration;
+import net.praqma.ava.util.configuration.exception.ConfigurationException;
 
 public class ClearCaseVobComponentConfiguration extends AbstractConfiguration {
 	private String viewtag;

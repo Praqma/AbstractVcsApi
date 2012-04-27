@@ -1,7 +1,7 @@
-package net.praqma.vcs.model.extensions;
+package net.praqma.ava.model.extensions;
 
-import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.AbstractReplay;
+import net.praqma.ava.model.AbstractCommit;
+import net.praqma.ava.model.AbstractReplay;
 
 public class CommitCounter extends ReplayListener {
 

@@ -1,4 +1,4 @@
-package net.praqma.vcs.util;
+package net.praqma.ava.util;
 
 public class Utils {
 	public static String getProgress( int total, int i ) {

@@ -1,4 +1,4 @@
-package net.praqma.vcs.util.configuration;
+package net.praqma.ava.util.configuration;
 
 public class Configuration {
 	private AbstractConfiguration sourceConfiguration;

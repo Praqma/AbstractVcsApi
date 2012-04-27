@@ -1,11 +1,11 @@
-package net.praqma.vcs.model.extensions;
+package net.praqma.ava.model.extensions;
 
 import java.util.List;
 
-import net.praqma.vcs.AVA;
-import net.praqma.vcs.Extension;
-import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.AbstractReplay;
+import net.praqma.ava.AVA;
+import net.praqma.ava.Extension;
+import net.praqma.ava.model.AbstractCommit;
+import net.praqma.ava.model.AbstractReplay;
 
 public abstract class ReplayListener implements Extension {
 	

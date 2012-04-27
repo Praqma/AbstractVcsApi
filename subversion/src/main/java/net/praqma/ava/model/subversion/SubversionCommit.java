@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.subversion;
+package net.praqma.ava.model.subversion;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -7,10 +7,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.subversion.api.Subversion;
-import net.praqma.vcs.model.subversion.exceptions.SubversionException;
+import net.praqma.ava.model.AbstractBranch;
+import net.praqma.ava.model.AbstractCommit;
+import net.praqma.ava.model.subversion.api.Subversion;
+import net.praqma.ava.model.subversion.exceptions.SubversionException;
 
 public class SubversionCommit extends AbstractCommit {
 	

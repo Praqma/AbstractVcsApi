@@ -1,12 +1,12 @@
-package net.praqma.vcs.model;
+package net.praqma.ava.model;
 
 import java.io.File;
 
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.exceptions.OperationNotSupportedException;
-import net.praqma.vcs.model.interfaces.Cleanable;
+import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
+import net.praqma.ava.model.exceptions.ElementNotCreatedException;
+import net.praqma.ava.model.exceptions.OperationNotSupportedException;
+import net.praqma.ava.model.interfaces.Cleanable;
 
 public abstract class AbstractVCS implements Cleanable {
 

@@ -4,9 +4,9 @@ import java.io.File;
 
 import org.w3c.dom.Element;
 
-import net.praqma.vcs.util.configuration.AbstractConfiguration;
-import net.praqma.vcs.util.configuration.AbstractConfigurationReader;
-import net.praqma.vcs.util.configuration.exception.ConfigurationException;
+import net.praqma.ava.util.configuration.AbstractConfiguration;
+import net.praqma.ava.util.configuration.AbstractConfigurationReader;
+import net.praqma.ava.util.configuration.exception.ConfigurationException;
 
 public class MercurialConfigurationReader extends AbstractConfigurationReader {
 

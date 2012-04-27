@@ -10,9 +10,9 @@ import java.util.regex.Pattern;
 import net.praqma.ava.model.mercurial.exceptions.MercurialException;
 import net.praqma.util.debug.Logger;
 import net.praqma.util.execute.AbnormalProcessTerminationException;
-import net.praqma.vcs.model.Repository;
-import net.praqma.vcs.model.exceptions.VCSException.FailureType;
-import net.praqma.vcs.util.CommandLine;
+import net.praqma.ava.model.Repository;
+import net.praqma.ava.model.exceptions.VCSException.FailureType;
+import net.praqma.ava.util.CommandLine;
 
 public class Mercurial {
 

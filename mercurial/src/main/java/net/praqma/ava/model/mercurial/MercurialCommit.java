@@ -17,11 +17,11 @@ import java.util.regex.Pattern;
 import net.praqma.ava.model.mercurial.api.Mercurial;
 import net.praqma.ava.model.mercurial.exceptions.MercurialException;
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.ChangeSetElement;
-import net.praqma.vcs.model.ChangeSetElement.Status;
-import net.praqma.vcs.util.CommandLine;
+import net.praqma.ava.model.AbstractBranch;
+import net.praqma.ava.model.AbstractCommit;
+import net.praqma.ava.model.ChangeSetElement;
+import net.praqma.ava.model.ChangeSetElement.Status;
+import net.praqma.ava.util.CommandLine;
 
 public class MercurialCommit extends AbstractCommit {
 

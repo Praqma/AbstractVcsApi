@@ -1,4 +1,4 @@
-package net.praqma.vcs.model;
+package net.praqma.ava.model;
 
 import java.io.File;
 

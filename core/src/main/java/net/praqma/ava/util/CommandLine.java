@@ -1,4 +1,4 @@
-package net.praqma.vcs.util;
+package net.praqma.ava.util;
 
 import java.io.File;
 import java.util.Map;

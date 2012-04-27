@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.exceptions;
+package net.praqma.ava.model.exceptions;
 
 public class UnableToReplayException extends Exception {
 

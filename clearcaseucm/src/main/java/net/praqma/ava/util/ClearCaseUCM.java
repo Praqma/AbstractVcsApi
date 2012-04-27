@@ -1,4 +1,4 @@
-package net.praqma.vcs.util;
+package net.praqma.ava.util;
 
 import java.io.File;
 
@@ -6,11 +6,11 @@ import net.praqma.clearcase.exceptions.ClearCaseException;
 import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementException;
-import net.praqma.vcs.util.configuration.AbstractConfiguration;
-import net.praqma.vcs.util.configuration.exception.ConfigurationException;
-import net.praqma.vcs.util.configuration.implementation.ClearCaseConfiguration;
+import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
+import net.praqma.ava.model.exceptions.ElementException;
+import net.praqma.ava.util.configuration.AbstractConfiguration;
+import net.praqma.ava.util.configuration.exception.ConfigurationException;
+import net.praqma.ava.util.configuration.implementation.ClearCaseConfiguration;
 
 public class ClearCaseUCM {
 

@@ -1,20 +1,20 @@
-package net.praqma.vcs.model.subversion;
+package net.praqma.ava.model.subversion;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import net.praqma.vcs.VersionControlSystems;
-import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.Repository;
-import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
-import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
-import net.praqma.vcs.model.subversion.api.Subversion;
-import net.praqma.vcs.model.subversion.exceptions.SubversionException;
+import net.praqma.ava.VersionControlSystems;
+import net.praqma.ava.model.AbstractBranch;
+import net.praqma.ava.model.AbstractCommit;
+import net.praqma.ava.model.Repository;
+import net.praqma.ava.model.exceptions.ElementAlreadyExistsException;
+import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
+import net.praqma.ava.model.exceptions.ElementNotCreatedException;
+import net.praqma.ava.model.exceptions.UnableToCheckoutCommitException;
+import net.praqma.ava.model.subversion.api.Subversion;
+import net.praqma.ava.model.subversion.exceptions.SubversionException;
 
 public class SubversionBranch extends AbstractBranch {
 

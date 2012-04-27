@@ -1,4 +1,4 @@
-package net.praqma.vcs.model;
+package net.praqma.ava.model;
 
 import java.io.File;
 import java.io.Serializable;
@@ -7,14 +7,14 @@ import java.util.Date;
 import java.util.List;
 
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.VersionControlSystems;
-import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
-import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.exceptions.OperationNotSupportedException;
-import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
-import net.praqma.vcs.model.extensions.PullListener;
-import net.praqma.vcs.model.interfaces.Cleanable;
+import net.praqma.ava.VersionControlSystems;
+import net.praqma.ava.model.exceptions.ElementAlreadyExistsException;
+import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
+import net.praqma.ava.model.exceptions.ElementNotCreatedException;
+import net.praqma.ava.model.exceptions.OperationNotSupportedException;
+import net.praqma.ava.model.exceptions.UnableToCheckoutCommitException;
+import net.praqma.ava.model.extensions.PullListener;
+import net.praqma.ava.model.interfaces.Cleanable;
 
 public abstract class AbstractBranch implements Cleanable, Serializable {
 	

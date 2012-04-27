@@ -1,9 +1,9 @@
-package net.praqma.vcs.model.extensions;
+package net.praqma.ava.model.extensions;
 
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.AbstractReplay;
-import net.praqma.vcs.util.IO;
+import net.praqma.ava.model.AbstractCommit;
+import net.praqma.ava.model.AbstractReplay;
+import net.praqma.ava.util.IO;
 
 public class CleanupEmptyFolders extends ReplayListener {
 

@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.clearcase;
+package net.praqma.ava.model.clearcase;
 
 import java.io.File;
 import java.io.Serializable;
@@ -15,11 +15,11 @@ import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.clearcase.ucm.view.UCMView;
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
-import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementException.FailureType;
-import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
+import net.praqma.ava.model.AbstractBranch;
+import net.praqma.ava.model.exceptions.ElementAlreadyExistsException;
+import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
+import net.praqma.ava.model.exceptions.ElementException.FailureType;
+import net.praqma.ava.model.exceptions.ElementNotCreatedException;
 
 /**
  * An implementation of {@link AbstractBranch} for Clearcase, where

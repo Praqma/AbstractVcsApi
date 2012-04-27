@@ -1,13 +1,13 @@
-package net.praqma.vcs.util.configuration.implementation;
+package net.praqma.ava.util.configuration.implementation;
 
 import java.io.File;
 
 import org.w3c.dom.Element;
 
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.util.configuration.AbstractConfiguration;
-import net.praqma.vcs.util.configuration.AbstractConfigurationReader;
-import net.praqma.vcs.util.configuration.exception.ConfigurationException;
+import net.praqma.ava.util.configuration.AbstractConfiguration;
+import net.praqma.ava.util.configuration.AbstractConfigurationReader;
+import net.praqma.ava.util.configuration.exception.ConfigurationException;
 
 public class ClearCaseConfigurationReader extends AbstractConfigurationReader {
 

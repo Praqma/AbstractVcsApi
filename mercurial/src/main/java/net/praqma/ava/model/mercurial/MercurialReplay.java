@@ -6,15 +6,15 @@ import java.util.List;
 
 import net.praqma.ava.model.mercurial.api.Mercurial;
 import net.praqma.ava.model.mercurial.exceptions.MercurialException;
-import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.AbstractReplay;
-import net.praqma.vcs.model.ChangeSetElement;
-import net.praqma.vcs.model.exceptions.UnableToReplayException;
-import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
-import net.praqma.vcs.model.exceptions.VCSException.FailureType;
-import net.praqma.vcs.model.extensions.ReplayListener;
-import net.praqma.vcs.util.IO;
+import net.praqma.ava.model.AbstractBranch;
+import net.praqma.ava.model.AbstractCommit;
+import net.praqma.ava.model.AbstractReplay;
+import net.praqma.ava.model.ChangeSetElement;
+import net.praqma.ava.model.exceptions.UnableToReplayException;
+import net.praqma.ava.model.exceptions.UnsupportedBranchException;
+import net.praqma.ava.model.exceptions.VCSException.FailureType;
+import net.praqma.ava.model.extensions.ReplayListener;
+import net.praqma.ava.util.IO;
 
 public class MercurialReplay extends AbstractReplay{
 

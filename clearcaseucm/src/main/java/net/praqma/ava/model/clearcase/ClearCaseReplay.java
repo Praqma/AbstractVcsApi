@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.clearcase;
+package net.praqma.ava.model.clearcase;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,14 +20,14 @@ import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.entities.Version;
 import net.praqma.clearcase.ucm.entities.Baseline.LabelBehaviour;
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.AbstractReplay;
-import net.praqma.vcs.model.ChangeSetElement;
-import net.praqma.vcs.model.ChangeSetElement.Status;
-import net.praqma.vcs.model.clearcase.listeners.ClearcaseReplayListener;
-import net.praqma.vcs.model.exceptions.UnableToReplayException;
-import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
+import net.praqma.ava.model.AbstractBranch;
+import net.praqma.ava.model.AbstractCommit;
+import net.praqma.ava.model.AbstractReplay;
+import net.praqma.ava.model.ChangeSetElement;
+import net.praqma.ava.model.ChangeSetElement.Status;
+import net.praqma.ava.model.clearcase.listeners.ClearcaseReplayListener;
+import net.praqma.ava.model.exceptions.UnableToReplayException;
+import net.praqma.ava.model.exceptions.UnsupportedBranchException;
 
 public class ClearCaseReplay extends AbstractReplay {
 

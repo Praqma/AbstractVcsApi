@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.clearcase;
+package net.praqma.ava.model.clearcase;
 
 import java.io.File;
 import java.util.List;
@@ -8,10 +8,10 @@ import net.praqma.clearcase.changeset.ChangeSetElement2;
 import net.praqma.clearcase.exceptions.ClearCaseException;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.ChangeSetElement;
-import net.praqma.vcs.model.ChangeSetElement.Status;
+import net.praqma.ava.model.AbstractBranch;
+import net.praqma.ava.model.AbstractCommit;
+import net.praqma.ava.model.ChangeSetElement;
+import net.praqma.ava.model.ChangeSetElement.Status;
 
 public class ClearCaseCommit extends AbstractCommit {
 

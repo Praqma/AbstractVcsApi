@@ -6,13 +6,13 @@ import net.praqma.ava.model.mercurial.MercurialBranch;
 import net.praqma.ava.model.mercurial.MercurialReplay;
 import net.praqma.ava.model.mercurial.api.Mercurial;
 import net.praqma.ava.model.mercurial.exceptions.MercurialException;
-import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.model.AbstractReplay;
-import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
-import net.praqma.vcs.util.configuration.AbstractConfiguration;
-import net.praqma.vcs.util.configuration.exception.ConfigurationException;
+import net.praqma.ava.model.AbstractBranch;
+import net.praqma.ava.model.AbstractReplay;
+import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
+import net.praqma.ava.model.exceptions.ElementNotCreatedException;
+import net.praqma.ava.model.exceptions.UnsupportedBranchException;
+import net.praqma.ava.util.configuration.AbstractConfiguration;
+import net.praqma.ava.util.configuration.exception.ConfigurationException;
 
 public class MercurialConfiguration extends AbstractConfiguration {
 	

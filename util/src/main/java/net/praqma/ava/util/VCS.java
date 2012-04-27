@@ -1,8 +1,8 @@
-package net.praqma.vcs.util;
+package net.praqma.ava.util;
 
 import java.io.File;
 
-import net.praqma.vcs.VersionControlSystems;
+import net.praqma.ava.VersionControlSystems;
 
 public abstract class VCS {
 	public static VersionControlSystems determineVCS( File path ) {

@@ -1,9 +1,9 @@
-package net.praqma.vcs.model.extensions;
+package net.praqma.ava.model.extensions;
 
 import java.util.List;
 
-import net.praqma.vcs.Extension;
-import net.praqma.vcs.AVA;
+import net.praqma.ava.Extension;
+import net.praqma.ava.AVA;
 
 public abstract class PullListener implements Extension {
 	

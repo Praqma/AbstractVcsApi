@@ -1,14 +1,14 @@
-package net.praqma.vcs.model.git;
+package net.praqma.ava.model.git;
 
 import java.io.File;
 
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.AbstractVCS;
-import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementException;
-import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.git.api.Git;
-import net.praqma.vcs.model.git.exceptions.GitException;
+import net.praqma.ava.model.AbstractVCS;
+import net.praqma.ava.model.exceptions.ElementDoesNotExistException;
+import net.praqma.ava.model.exceptions.ElementException;
+import net.praqma.ava.model.exceptions.ElementNotCreatedException;
+import net.praqma.ava.model.git.api.Git;
+import net.praqma.ava.model.git.exceptions.GitException;
 
 public class GitVCS extends AbstractVCS {
 	

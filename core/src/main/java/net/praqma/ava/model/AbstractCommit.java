@@ -1,10 +1,10 @@
-package net.praqma.vcs.model;
+package net.praqma.ava.model;
 
 import java.util.Date;
 
 import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
-import net.praqma.vcs.model.extensions.CommitLoadListener;
+import net.praqma.ava.model.exceptions.OperationNotImplementedException;
+import net.praqma.ava.model.extensions.CommitLoadListener;
 
 public abstract class AbstractCommit implements Comparable<AbstractCommit> {
 	

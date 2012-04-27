@@ -1,12 +1,12 @@
-package net.praqma.vcs.model.clearcase.listeners;
+package net.praqma.ava.model.clearcase.listeners;
 
 import java.util.List;
 
-import net.praqma.vcs.Extension;
-import net.praqma.vcs.AVA;
-import net.praqma.vcs.model.AbstractCommit;
-import net.praqma.vcs.model.AbstractReplay;
-import net.praqma.vcs.model.clearcase.ClearCaseReplay;
+import net.praqma.ava.Extension;
+import net.praqma.ava.AVA;
+import net.praqma.ava.model.AbstractCommit;
+import net.praqma.ava.model.AbstractReplay;
+import net.praqma.ava.model.clearcase.ClearCaseReplay;
 
 public abstract class ClearcaseReplayListener implements Extension {
 
