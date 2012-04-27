@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.mercurial.exceptions;
+package net.praqma.ava.model.mercurial.exceptions;
 
 import net.praqma.vcs.model.exceptions.VCSException;
 import net.praqma.vcs.model.exceptions.VCSException.FailureType;

@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.mercurial;
+package net.praqma.ava.model.mercurial;
 
 import java.io.File;
 import java.text.ParseException;
@@ -14,13 +14,13 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.praqma.ava.model.mercurial.api.Mercurial;
+import net.praqma.ava.model.mercurial.exceptions.MercurialException;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.ChangeSetElement;
 import net.praqma.vcs.model.ChangeSetElement.Status;
-import net.praqma.vcs.model.mercurial.api.Mercurial;
-import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
 import net.praqma.vcs.util.CommandLine;
 
 public class MercurialCommit extends AbstractCommit {

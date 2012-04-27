@@ -1,9 +1,11 @@
-package net.praqma.vcs.model.mercurial;
+package net.praqma.ava.model.mercurial;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import net.praqma.ava.model.mercurial.api.Mercurial;
+import net.praqma.ava.model.mercurial.exceptions.MercurialException;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
@@ -12,8 +14,6 @@ import net.praqma.vcs.model.exceptions.UnableToReplayException;
 import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
 import net.praqma.vcs.model.exceptions.VCSException.FailureType;
 import net.praqma.vcs.model.extensions.ReplayListener;
-import net.praqma.vcs.model.mercurial.api.Mercurial;
-import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
 import net.praqma.vcs.util.IO;
 
 public class MercurialReplay extends AbstractReplay{

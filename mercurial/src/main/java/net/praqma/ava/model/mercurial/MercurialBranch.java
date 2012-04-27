@@ -1,10 +1,12 @@
-package net.praqma.vcs.model.mercurial;
+package net.praqma.ava.model.mercurial;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import net.praqma.ava.model.mercurial.api.Mercurial;
+import net.praqma.ava.model.mercurial.exceptions.MercurialException;
 import net.praqma.vcs.VersionControlSystems;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
@@ -12,8 +14,6 @@ import net.praqma.vcs.model.Repository;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.mercurial.api.Mercurial;
-import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
 
 public class MercurialBranch extends AbstractBranch {
 	

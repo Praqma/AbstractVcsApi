@@ -1,4 +1,4 @@
-package net.praqma.vcs.model.mercurial.api;
+package net.praqma.ava.model.mercurial.api;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -7,11 +7,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import net.praqma.ava.model.mercurial.exceptions.MercurialException;
 import net.praqma.util.debug.Logger;
 import net.praqma.util.execute.AbnormalProcessTerminationException;
 import net.praqma.vcs.model.Repository;
 import net.praqma.vcs.model.exceptions.VCSException.FailureType;
-import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
 import net.praqma.vcs.util.CommandLine;
 
 public class Mercurial {
