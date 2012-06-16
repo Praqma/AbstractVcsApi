@@ -131,13 +131,13 @@
         <dependency>
             <groupId>net.praqma</groupId>
             <artifactId>praqmajutils</artifactId>
-            <version>0.1.17</version>
+            <version>0.1.20</version>
         </dependency>
         
         <dependency>
             <groupId>net.praqma</groupId>
             <artifactId>COOL</artifactId>
-            <version>0.3.39-SNAPSHOT</version>
+            <version>0.3.40</version>
         </dependency>
         
 	</dependencies>
