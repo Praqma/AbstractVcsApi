@@ -3,16 +3,12 @@ package net.praqma.vcs.cli;
 import java.io.IOException;
 
 import net.praqma.clearcase.PVob;
-import net.praqma.clearcase.ucm.UCMException;
-import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Project;
-import net.praqma.clearcase.ucm.entities.UCM;
 import net.praqma.util.debug.Logger;
 import net.praqma.util.debug.Logger.LogLevel;
 import net.praqma.util.debug.appenders.StreamAppender;
 import net.praqma.util.option.Option;
 import net.praqma.util.option.Options;
-import net.praqma.vcs.AVA;
 import net.praqma.vcs.model.clearcase.ClearCaseVCS;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
@@ -30,7 +26,7 @@ public class CreateClearCaseRepository {
         }
     }
 	
-	public static void main(String[] args) throws IOException, UCMException, ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException, UnableToCheckoutCommitException, UnableToReplayException {
+	public static void main(String[] args) throws IOException, ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException, UnableToCheckoutCommitException, UnableToReplayException {
 		
         Options o = new Options( "1.0.0" );
 
@@ -65,9 +61,9 @@ public class CreateClearCaseRepository {
         }
         
 		/* Do the ClearCase thing... */
-		UCM.setContext( UCM.ContextType.CLEARTOOL );
+		//UCM.setContext( UCM.ContextType.CLEARTOOL );
 		
-		new AVA( null );
+		//new AVA( null );
 		
 		/* Setup ClearCase */
 		PVob pvob = ClearCaseVCS.bootstrap();

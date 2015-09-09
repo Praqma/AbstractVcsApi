@@ -5,7 +5,6 @@ import java.io.File;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractVCS;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.git.api.Git;
 import net.praqma.vcs.model.git.exceptions.GitException;
@@ -24,6 +23,7 @@ public class GitVCS extends AbstractVCS {
 		return git;
 	}
 	
+    @Override
 	public boolean exists() {
 		return Git.repositoryExists( location );
 	}
@@ -34,6 +34,7 @@ public class GitVCS extends AbstractVCS {
 		initialize(false);
 	}
 	
+    @Override
 	public void initialize( boolean get ) throws ElementNotCreatedException, ElementDoesNotExistException {
 		logger.info( "Initializing git repository " + location );
 		InitializeImpl init = new InitializeImpl(get);
@@ -57,6 +58,7 @@ public class GitVCS extends AbstractVCS {
 		}
 	}
 	
+    @Override
 	public void get() throws ElementDoesNotExistException {
 		try {
 			get(false);

@@ -11,7 +11,6 @@ import net.praqma.vcs.model.ChangeSetElement;
 import net.praqma.vcs.model.exceptions.UnableToReplayException;
 import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
 import net.praqma.vcs.model.exceptions.VCSException.FailureType;
-import net.praqma.vcs.model.extensions.ReplayListener;
 import net.praqma.vcs.model.mercurial.api.Mercurial;
 import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
 import net.praqma.vcs.util.IO;
@@ -41,11 +40,13 @@ public class MercurialReplay extends AbstractReplay{
 			super( commit );
 		}
 		
+        @Override
 		public boolean setup() {
 			branch.update();
 			return true;
 		}
-		
+        
+		@Override
 		public boolean replay() {
 			List<ChangeSetElement> cs = commit.getChangeSet().asList();
 			
@@ -110,9 +111,6 @@ public class MercurialReplay extends AbstractReplay{
 						logger.warning( e.getMessage() );
 						success = false;
 					}
-					
-					//cleanRename( oldfile );
-					
 					break;
 				}
 				
@@ -126,9 +124,8 @@ public class MercurialReplay extends AbstractReplay{
 			
 			return success;
 		}
-		
-
-		
+        
+		@Override
 		public boolean commit() {
 			try {
 				Mercurial.createCommit( commit.getTitle(), commit.getAuthor(), commit.getAuthorDate(), branch.getPath() );

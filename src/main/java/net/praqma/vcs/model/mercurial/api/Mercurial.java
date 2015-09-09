@@ -11,7 +11,6 @@ import net.praqma.util.debug.Logger;
 import net.praqma.util.execute.AbnormalProcessTerminationException;
 import net.praqma.vcs.model.Repository;
 import net.praqma.vcs.model.exceptions.VCSException.FailureType;
-import net.praqma.vcs.model.git.exceptions.GitException;
 import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
 import net.praqma.vcs.util.CommandLine;
 

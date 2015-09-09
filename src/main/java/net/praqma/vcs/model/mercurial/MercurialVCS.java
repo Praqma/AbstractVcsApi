@@ -5,7 +5,6 @@ import java.io.File;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractVCS;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.mercurial.api.Mercurial;
 import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
@@ -24,6 +23,7 @@ public class MercurialVCS extends AbstractVCS {
 		return hg;
 	}
 	
+    @Override
 	public boolean exists() {
 		return Mercurial.repositoryExists( location );
 	}
@@ -34,6 +34,7 @@ public class MercurialVCS extends AbstractVCS {
 		initialize(false);
 	}
 	
+    @Override
 	public void initialize( boolean get ) throws ElementNotCreatedException, ElementDoesNotExistException {
 		logger.info( "Initializing Mercurial repository " + location );
 		InitializeImpl init = new InitializeImpl(get);
@@ -45,6 +46,7 @@ public class MercurialVCS extends AbstractVCS {
 			super( get );
 		}
 
+        @Override
 		public boolean initialize() throws ElementNotCreatedException {
 			location.mkdirs();
 			try {

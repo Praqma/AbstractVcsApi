@@ -9,13 +9,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import net.praqma.clearcase.ucm.UCMException;
-import net.praqma.clearcase.ucm.UCMException.UCMType;
 import net.praqma.clearcase.ucm.entities.Activity;
 import net.praqma.clearcase.ucm.entities.Baseline;
-import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.entities.Version;
-import net.praqma.clearcase.ucm.utils.BaselineList;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
@@ -63,6 +59,7 @@ public class ClearCaseReplay extends AbstractReplay {
 			super( commit );
 		}
 
+        @Override
 		public boolean setup() {
 			/* Update? Yes, but we must rebase first! NO! */
 			/*

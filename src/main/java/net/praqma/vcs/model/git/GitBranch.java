@@ -1,12 +1,10 @@
 package net.praqma.vcs.model.git;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import net.praqma.util.execute.AbnormalProcessTerminationException;
 import net.praqma.vcs.VersionControlSystems;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
@@ -16,12 +14,6 @@ import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.git.api.Git;
 import net.praqma.vcs.model.git.exceptions.GitException;
-import net.praqma.vcs.model.interfaces.Cleanable;
-import net.praqma.vcs.model.mercurial.MercurialBranch;
-import net.praqma.vcs.model.mercurial.api.Mercurial;
-import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
-import net.praqma.vcs.util.CommandLine;
-import net.praqma.vcs.util.Utils;
 
 public class GitBranch extends AbstractBranch{
 	
@@ -41,6 +33,7 @@ public class GitBranch extends AbstractBranch{
 		return gb;
 	}
 	
+    @Override
 	public void initialize() throws ElementNotCreatedException, ElementAlreadyExistsException {
 		try {
 			initialize(false);
@@ -50,11 +43,13 @@ public class GitBranch extends AbstractBranch{
 		}
 	}
 	
+    @Override
 	public void initialize( boolean get ) throws ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException {
 		InitializeImpl init = new InitializeImpl( get );
 		doInitialize( init );
 	}
 	
+    @Override
 	public void get() throws ElementDoesNotExistException {
 		try {
 			get(false);
@@ -79,6 +74,7 @@ public class GitBranch extends AbstractBranch{
 		}
 	}
 	
+    @Override
 	public boolean exists() {
 		try {
 			return Git.branchExists( this.name, localRepositoryPath );
@@ -93,6 +89,7 @@ public class GitBranch extends AbstractBranch{
 			super( get );
 		}
 
+        @Override
 		public boolean initialize() throws ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException {
 
 			/* Try to switch branch */
@@ -149,6 +146,7 @@ public class GitBranch extends AbstractBranch{
 		
 	}
 
+    @Override
 	public void update() {
 		doUpdate( new UpdateImpl() );
 	}
@@ -176,7 +174,8 @@ public class GitBranch extends AbstractBranch{
 			return true;
 		}
 	}
-	
+    
+	@Override
 	public void checkoutCommit( AbstractCommit commit ) {
 		this.currentCommit = commit;
 		try {

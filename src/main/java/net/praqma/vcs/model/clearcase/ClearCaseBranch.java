@@ -6,19 +6,20 @@ import java.util.Date;
 import java.util.List;
 
 import net.praqma.clearcase.PVob;
-import net.praqma.clearcase.ucm.UCMException;
+import net.praqma.clearcase.Rebase;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Component;
 import net.praqma.clearcase.ucm.entities.Stream;
+import net.praqma.clearcase.ucm.utils.BaselineList;
+import net.praqma.clearcase.ucm.utils.filters.AfterDate;
 import net.praqma.clearcase.ucm.view.SnapshotView;
-import net.praqma.clearcase.ucm.view.SnapshotView.Components;
+import net.praqma.clearcase.ucm.view.UpdateView;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.VersionControlSystems;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
-import net.praqma.vcs.model.exceptions.ElementException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
 
@@ -195,26 +196,17 @@ public class ClearCaseBranch extends AbstractBranch{
 					logger.debug( "Initializing output" );
 					output.initialize( get );
 				}
-			} catch( ElementDoesNotExistException e ) {
+			} catch( ElementDoesNotExistException | ElementNotCreatedException | ElementAlreadyExistsException e ) {
 				if( !dontCare ) {
 					throw e;
 				}
-			} catch( ElementNotCreatedException e ) {
-				if( !dontCare ) {
-					throw e;
-				}
-			} catch( ElementAlreadyExistsException e ) {
-				if( !dontCare ) {
-					throw e;
-				}
-			}
+			} 
 			
 			return true;
 		}
 	}
 	
-	
-	
+    @Override
 	public boolean exists() {
 		boolean result = true;
 		
@@ -270,7 +262,7 @@ public class ClearCaseBranch extends AbstractBranch{
 		}
 	}
 	
-	
+    @Override
 	public void update() {
 		doUpdate( new UpdateImpl() );
 	}
@@ -283,8 +275,8 @@ public class ClearCaseBranch extends AbstractBranch{
 	 */
 	public class UpdateImpl extends Update {
 
+        @Override
 		public boolean setup() {
-			//if( snapshot_in == null || devStream_in == null ) {
 			if( input.getSnapshotView() == null || input.getStream() == null ) {
 				try {
 					get();
@@ -297,10 +289,12 @@ public class ClearCaseBranch extends AbstractBranch{
 			return true;
 		}
 		
+        @Override
 		public boolean update() {
 			try {
-				input.getSnapshotView().Update( true, true, true, false, Components.ALL, null );
-			} catch (UCMException e) {
+                UpdateView uview = new UpdateView(input.getSnapshotView()).swipe().overwrite().generate();
+                uview.update();
+			} catch (Exception e) {
 	        	logger.error("Error while updating view: " + e.getMessage());
 	        	return false;
 			}
@@ -315,17 +309,10 @@ public class ClearCaseBranch extends AbstractBranch{
 		
 		if( commit instanceof ClearCaseCommit ) {
 			ClearCaseCommit cccommit = (ClearCaseCommit)commit;
-			//this.devStream_out.rebase( this.snapshot_out, cccommit.getBaseline(), true );
 			try {
-				this.output.getStream().rebase( this.output.getSnapshotView(), cccommit.getBaseline(), true );
-			} catch( UCMException e1 ) {
+                new Rebase(this.output.getStream()).setViewTag(this.output.getSnapshotView().getViewtag()).dropFromStream();				
+			} catch( Exception e1 ) {
 				throw new UnableToCheckoutCommitException( "Could not rebase " + cccommit.getBaseline() + ": " + e1.getMessage() );
-			}
-			try {
-				//this.snapshot_out.Update(true, true, true, false, COMP.ALL, null);
-				this.output.getSnapshotView().Update(true, true, true, false, Components.ALL, null);
-			} catch (UCMException e) {
-				throw new UnableToCheckoutCommitException( "Could not checkout " + cccommit.getBaseline() );
 			}
 		} else {
 			logger.warning( "I don't know how to do this!!!" );
@@ -346,26 +333,33 @@ public class ClearCaseBranch extends AbstractBranch{
 	@Override
 	public List<AbstractCommit> getCommits( boolean load, Date offset ) {
 		
-		List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
+		List<AbstractCommit> getCommits = new ArrayList<>();
 		
 		logger.debug( "Getting CC commits after " + null );
 				
 		try {
-			//List<Baseline> baselines = this.devStream_in.getBaselines( getComponent(), null, offset );
 			List<Baseline> baselines = null;
+            Stream selectedStream;
 			if( output.getParent() != null ) {
 				logger.debug( "Getting baselines from parent" );
-				baselines = this.output.getParent().getBaselines( getComponent(), null, offset );
+                selectedStream = this.output.getParent();
 			} else if( input.getStream() != null ) {
 				logger.debug( "Getting baselines from input" );
-				baselines = this.input.getStream().getBaselines( getComponent(), null, offset );
+                selectedStream = this.input.getStream();
 			} else if( output.getStream() != null ) {
 				logger.debug( "Getting baselines from output" );
-				baselines = this.output.getStream().getBaselines( getComponent(), null, offset );
+                selectedStream = this.output.getStream();
 			} else {
 				logger.debug( "Couldn't get any baselines" );
 				return commits;
 			}
+            
+            if(load) {
+                baselines = new BaselineList(selectedStream, component, null).addFilter(new AfterDate(offset)).load().apply();
+            } else {
+                baselines = new BaselineList(selectedStream, component, null).addFilter(new AfterDate(offset)).apply();
+            }
+            
 			
 			logger.debug( "I got " + baselines.size() + " baselines" );
 			for( int i = 0 ; i < baselines.size() ; i++ ) {				
@@ -374,15 +368,15 @@ public class ClearCaseBranch extends AbstractBranch{
 				if( load ) {
 					commit.load();
 				}
-				commits.add( commit );
+				getCommits.add( commit );
 			}
-		} catch (UCMException e) {
+		} catch (Exception e) {
 			logger.error( "Could not list baselines: " + e.getMessage() );
 		}
 		
 		logger.debug( "Done" );
 		
-		return commits;
+		return getCommits;
 	}
 	
 	/**
@@ -409,22 +403,18 @@ public class ClearCaseBranch extends AbstractBranch{
 	}
 	
 	public void setInputPath( File path ) {
-		//this.viewroot_in = path;
 		this.input.setPath( path );
 	}
 	
 	public File getInputPath() {
-		//return this.viewroot_in;
 		return this.input.getPath();
 	}
 	
-	public void setOutputPath( File path ) {
-		//this.viewroot_out = path;
+	public void setOutputPath( File path ) {		
 		this.output.setPath( path );
 	}
 	
 	public File getOutputPath() {
-		//return this.viewroot_out;
 		return this.output.getPath();
 	}
 	
@@ -438,19 +428,7 @@ public class ClearCaseBranch extends AbstractBranch{
 	
 	@Override
 	public File getPath() {
-		//return this.developmentPath_out;
-		//return this.viewroot_out;
 		return this.output.getPath();
-	}
-	
-	/**
-	 * @deprecated
-	 * @return
-	 */
-	public File getPathIn() {
-		//return this.developmentPath_out;
-		//return this.viewroot_in;
-		return this.input.getPath();
 	}
 		
 	public Component getComponent() {
@@ -458,12 +436,10 @@ public class ClearCaseBranch extends AbstractBranch{
 	}
 	
 	public Stream getInputStream() {
-		//return devStream_in;
 		return this.input.getStream();
 	}
 	
 	public Stream getOutputStream() {
-		//return devStream_out;
 		return this.input.getStream();
 	}
 	
@@ -484,8 +460,9 @@ public class ClearCaseBranch extends AbstractBranch{
 		return true;
 	}
 	
+    @Override
 	public String toString() { 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		
 		sb.append( "ClearCase UCM branch\n" );
 		

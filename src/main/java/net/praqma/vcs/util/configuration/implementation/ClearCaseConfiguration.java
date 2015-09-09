@@ -3,10 +3,9 @@ package net.praqma.vcs.util.configuration.implementation;
 import java.io.File;
 
 import net.praqma.clearcase.PVob;
-import net.praqma.clearcase.ucm.UCMException;
+import net.praqma.clearcase.exceptions.UnableToInitializeEntityException;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Stream;
-import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractReplay;
@@ -23,8 +22,6 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 
 	private static final long serialVersionUID = -7104484491917047522L;
 	private static Logger logger = Logger.getLogger();
-
-	/**/
 
 	private String viewtagIn;
 	private String viewtagOut;
@@ -112,8 +109,8 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	public void setParentStream( String stream ) throws ConfigurationException {
 		if( stream != null && stream.length() > 0 ) {
 			try {
-				parentStream = UCMEntity.getStream( stream, pvob, false );
-			} catch( UCMException e ) {
+				parentStream = Stream.get( stream, pvob );
+			} catch( UnableToInitializeEntityException e ) {
 				throw new ConfigurationException( "Could not get parent stream: " + e.getMessage() );
 			}
 		} else {
@@ -128,8 +125,8 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 
 	public void setFoundationBaseline( String baseline ) throws ConfigurationException {
 		try {
-			foundationBaseline = UCMEntity.getBaseline( baseline, pvob, false );
-		} catch( UCMException e ) {
+			foundationBaseline = Baseline.get( baseline, pvob );
+		} catch( UnableToInitializeEntityException e ) {
 			/* Not that important */
 		}
 	}

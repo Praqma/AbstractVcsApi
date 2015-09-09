@@ -49,6 +49,7 @@ public class ClearCaseCommit extends AbstractCommit {
 			logger.debug( "PATH: " + ccbranch.getPath().toString() );
 		}
 
+        @Override
 		public boolean perform() {
 			logger.debug( "CC: perform load" );
 
@@ -61,7 +62,7 @@ public class ClearCaseCommit extends AbstractCommit {
 	
 				ClearCaseCommit.this.title = ( baseline.getComment() != null ? baseline.getComment() : baseline.getFullyQualifiedName() );
 				ChangeSet2 changeset = ChangeSet2.getChangeSet( baseline, null, ccbranch.getOuputSnapshotView().getViewRoot() );
-				
+
 				logger.debug( "Changeset for " + ClearCaseCommit.this.baseline.getShortname() );
 				
 				List<ChangeSetElement2> elements = changeset.getElementsAsList();
@@ -109,10 +110,7 @@ public class ClearCaseCommit extends AbstractCommit {
 						ChangeSetElement cse = new ChangeSetElement( new File( element.getFile().getAbsoluteFile().toString().substring( length ) ), Status.DELETED );
 						logger.debug(element.getFile() + " " + cse.getStatus() );
 						ClearCaseCommit.this.changeSet.put( element.getFile().toString(), cse );
-						continue;
-					}
-					
-					
+					}				
 				}
 					
 			} catch( UCMException e ) {

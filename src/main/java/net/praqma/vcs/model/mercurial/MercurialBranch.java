@@ -42,6 +42,7 @@ public class MercurialBranch extends AbstractBranch {
 		}
 	}
 	
+    @Override
 	public void initialize( boolean get ) throws ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException {
 		InitializeImpl init = new InitializeImpl( get );
 		doInitialize( init );
@@ -56,6 +57,7 @@ public class MercurialBranch extends AbstractBranch {
 		}
 	}
 	
+    @Override
 	public void get( boolean initialize ) throws ElementNotCreatedException, ElementDoesNotExistException {
 		if( initialize ) {
 			try{
@@ -70,7 +72,8 @@ public class MercurialBranch extends AbstractBranch {
 			}
 		}
 	}
-	
+    
+	@Override
 	public boolean exists() {
 		try {
 			return Mercurial.branchExists( this.name, localRepositoryPath );
@@ -85,6 +88,7 @@ public class MercurialBranch extends AbstractBranch {
 			super( get );
 		}
 
+        @Override
 		public boolean initialize() throws ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException {
 
 			/* Try to switch branch */
@@ -119,13 +123,13 @@ public class MercurialBranch extends AbstractBranch {
 		
 	}
 
+    @Override
 	public void update() {
 		doUpdate( new UpdateImpl() );
 	}
 	
 	public class UpdateImpl extends Update {
-
-
+        @Override
 		public boolean update() {
 			logger.debug( "Mercurial: perform checkout" );
 			
@@ -146,7 +150,8 @@ public class MercurialBranch extends AbstractBranch {
 			}
 		}
 	}
-	
+    
+	@Override
 	public void checkoutCommit( AbstractCommit commit ) {
 		this.currentCommit = commit;
 		try {

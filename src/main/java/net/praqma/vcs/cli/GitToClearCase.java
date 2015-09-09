@@ -9,12 +9,9 @@ import java.util.List;
 
 import net.praqma.clearcase.PVob;
 import net.praqma.clearcase.Vob;
-import net.praqma.clearcase.ucm.UCMException;
+import net.praqma.clearcase.exceptions.UnableToInitializeEntityException;
 import net.praqma.clearcase.ucm.entities.Baseline;
-import net.praqma.clearcase.ucm.entities.Project;
 import net.praqma.clearcase.ucm.entities.Stream;
-import net.praqma.clearcase.ucm.entities.UCM;
-import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.util.debug.Logger;
 import net.praqma.util.debug.Logger.LogLevel;
 import net.praqma.util.debug.appenders.StreamAppender;
@@ -31,7 +28,6 @@ import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
 import net.praqma.vcs.model.exceptions.UnableToReplayException;
 import net.praqma.vcs.model.git.GitBranch;
-import net.praqma.vcs.model.git.GitReplay;
 import net.praqma.vcs.persistence.XMLStrategy;
 
 public class GitToClearCase {
@@ -44,7 +40,7 @@ public class GitToClearCase {
         }
     }
 	
-	public static void main(String[] args) throws IOException, UCMException, ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException, UnableToCheckoutCommitException, UnableToReplayException {
+	public static void main(String[] args) throws IOException, ElementNotCreatedException, UnableToInitializeEntityException, ElementAlreadyExistsException, ElementDoesNotExistException, UnableToCheckoutCommitException, UnableToReplayException, UnableToInitializeEntityException {
 		
         Options o = new Options( "1.0.0" );
 
@@ -88,14 +84,14 @@ public class GitToClearCase {
         }
         
 		/* Do the ClearCase thing... */
-		UCM.setContext( UCM.ContextType.CLEARTOOL );
+		//UCM.setContext( UCM.ContextType.CLEARTOOL );
 		
 		new AVA( new XMLStrategy( new File( "ava.xml" ) ) );
 		
 		/* Setup ClearCase */
 		PVob pvob = ClearCaseVCS.bootstrap();
 		
-		Baseline baseline = UCMEntity.getBaseline( obaselinename.getString(), pvob, false );
+		Baseline baseline = Baseline.get( obaselinename.getString(), pvob );
 		
 		if( !ochildstreamname.isUsed() ) {
 			logger.error( "The child stream must be given" );
@@ -103,7 +99,7 @@ public class GitToClearCase {
 		}
 		
 		Vob vob = new Vob( "\\" + ovobname.getString() );
-		Stream stream = UCMEntity.getStream( ostreamname.getString(), pvob, false );
+		Stream stream = Stream.get( ostreamname.getString(), pvob );
 		
 		ClearCaseBranch ccbranch = new ClearCaseBranch( pvob, stream, baseline, new File( oview.getString() ), oviewtag.getString(), ochildstreamname.getString() );
 		ccbranch.initialize(true);

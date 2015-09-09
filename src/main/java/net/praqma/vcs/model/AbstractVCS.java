@@ -27,10 +27,8 @@ public abstract class AbstractVCS implements Cleanable {
 	
 	/**
 	 * Initialize the given branch
-	 * @param branch
 	 * @throws ElementNotCreatedException 
-	 * @throws ElementDoesNotExistException 
-	 * @throws OperationNotSupportedException
+	 * @throws ElementDoesNotExistException
 	 */
 	public abstract void initialize() throws ElementNotCreatedException, ElementDoesNotExistException;
 	

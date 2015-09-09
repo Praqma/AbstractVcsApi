@@ -41,7 +41,7 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 				<configuration>
-					<source>1.6</source>
+					<source>1.7</source>
 					<target>1.6</target>
 				</configuration>
 			</plugin>
@@ -144,8 +144,8 @@
         
         <dependency>
             <groupId>net.praqma</groupId>
-            <artifactId>COOL</artifactId>
-            <version>0.3.40</version>
+            <artifactId>cool</artifactId>
+            <version>0.6.43</version>
         </dependency>
         
 	</dependencies>

@@ -9,21 +9,17 @@ import java.util.List;
 
 import net.praqma.clearcase.PVob;
 import net.praqma.clearcase.Vob;
-import net.praqma.clearcase.ucm.UCMException;
+import net.praqma.clearcase.exceptions.UnableToInitializeEntityException;
+
 import net.praqma.clearcase.ucm.entities.Baseline;
-import net.praqma.clearcase.ucm.entities.Project;
 import net.praqma.clearcase.ucm.entities.Stream;
-import net.praqma.clearcase.ucm.entities.UCM;
-import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.util.debug.Logger;
 import net.praqma.util.debug.Logger.LogLevel;
 import net.praqma.util.debug.appenders.StreamAppender;
 import net.praqma.util.option.Option;
 import net.praqma.util.option.Options;
-import net.praqma.vcs.AVA;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.clearcase.ClearCaseBranch;
-import net.praqma.vcs.model.clearcase.ClearCaseReplay;
 import net.praqma.vcs.model.clearcase.ClearCaseVCS;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
@@ -38,12 +34,13 @@ public class ClearCaseToGit {
 	private static StreamAppender app = new StreamAppender( System.out );
 	
     static class MyShutdown extends Thread {
+        @Override
         public void run() {
             System.out.println( "Terminating AVA process" );
         }
     }
 	
-	public static void main(String[] args) throws IOException, UCMException, ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException, UnableToCheckoutCommitException, UnableToReplayException {
+	public static void main(String[] args) throws IOException, ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException, UnableToCheckoutCommitException, UnableToReplayException, UnableToInitializeEntityException {
 		
         Options o = new Options( "1.0.0" );
 
@@ -89,14 +86,14 @@ public class ClearCaseToGit {
         }
         
 		/* Do the ClearCase thing... */
-		UCM.setContext( UCM.ContextType.CLEARTOOL );
+		//UCM.setContext( UCM.ContextType.CLEARTOOL );
 		
-		new AVA( null );
+		//new AVA( null );
 		
 		/* Setup ClearCase */
 		PVob pvob = ClearCaseVCS.bootstrap();
 		
-		Baseline baseline = UCMEntity.getBaseline( obaselinename.getString(), pvob, false );
+		Baseline baseline = Baseline.get( obaselinename.getString(), pvob);
 		
 		if( !ochildstreamname.isUsed() ) {
 			logger.error( "The child stream must be given" );
@@ -104,7 +101,7 @@ public class ClearCaseToGit {
 		}
 		
 		Vob vob = new Vob( "\\" + ovobname.getString() );
-		Stream stream = UCMEntity.getStream( ostreamname.getString(), pvob, false );
+		Stream stream = Stream.get( ostreamname.getString(), pvob);
 		
 		ClearCaseBranch ccbranch = new ClearCaseBranch( pvob, stream, baseline, new File( oview.getString() ), oviewtag.getString(), ochildstreamname.getString() );
 		ccbranch.initialize(true);

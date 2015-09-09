@@ -1,8 +1,9 @@
 package net.praqma.vcs.util;
 
 import java.io.File;
+import java.io.IOException;
+import net.praqma.clearcase.exceptions.ClearCaseException;
 
-import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.util.debug.Logger;
@@ -17,18 +18,18 @@ public class ClearCaseUCM {
 	private static final String fdel = System.getProperty( "file.separator" );
 	private static Logger logger = Logger.getLogger();
 	
-	public static AbstractConfiguration getConfigurationFromView( File view, boolean input ) throws ElementException, ConfigurationException, UCMException {
+	public static AbstractConfiguration getConfigurationFromView( File view, boolean input ) throws ElementException, ConfigurationException {
 		SnapshotView snapview = null;
 		try {
 			snapview = SnapshotView.getSnapshotViewFromPath( view );
-		} catch( UCMException e ) {
+		} catch( ClearCaseException | IOException e ) {
 			throw new ElementDoesNotExistException( e.getMessage() );
 		}
 		
 		Stream stream;
 		try {
 			stream = snapview.getStream();
-		} catch( UCMException e ) {
+		} catch( ClearCaseException | IOException e ) {
 			throw new ElementException( e.getMessage() );
 		}
 		

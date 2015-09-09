@@ -1,9 +1,17 @@
 package net.praqma.vcs.model.clearcase;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.logging.Level;
 
 import net.praqma.clearcase.PVob;
+import net.praqma.clearcase.exceptions.CleartoolException;
+import net.praqma.clearcase.exceptions.UCMEntityNotFoundException;
+import net.praqma.clearcase.exceptions.UnableToCreateEntityException;
+import net.praqma.clearcase.exceptions.UnableToInitializeEntityException;
+import net.praqma.clearcase.exceptions.UnableToLoadEntityException;
+import net.praqma.clearcase.exceptions.ViewException;
 import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Component;
@@ -147,14 +155,14 @@ public class ClearCaseBranchPart implements Serializable {
 		/* Create or get input stream */
 		if( useIfExists ) {
 			try {
-				devStream = UCMEntity.getStream( name, pvob, false );
-			} catch ( UCMException e ) {
+				devStream = Stream.get(name, pvob);
+			} catch ( UnableToInitializeEntityException e ) {
 				logger.debug( name + " was not found."  );
 				if( parent != null ) {
 					logger.debug( "Trying to create the stream " + name );
 					try {
 						devStream = Stream.create( parent, name + "@" + pvob, false, baseline );
-					} catch (UCMException e1) {
+					} catch (UnableToInitializeEntityException | UnableToCreateEntityException e1) {
 						logger.error( "Error while creating input stream: " + e1.getMessage() );
 						throw new ElementNotCreatedException( "Error while creating development stream: " + e1.getMessage() );
 					}
@@ -168,7 +176,7 @@ public class ClearCaseBranchPart implements Serializable {
 				try {
 					logger.info( "Creating development stream"  );
 					devStream = Stream.create( parent, name + "@" + pvob, false, baseline );
-				} catch (UCMException e) {
+				} catch (UnableToInitializeEntityException | UnableToCreateEntityException e) {
 					logger.error( "Error while creating Development input Stream: " + e.getMessage() );
 					throw new ElementNotCreatedException( "Error while creating development stream: " + e.getMessage() );
 				}
@@ -182,9 +190,7 @@ public class ClearCaseBranchPart implements Serializable {
 		if( baseline == null ) {
 			try {
 				baseline = devStream.getFoundationBaseline();
-			} catch( UCMException e ) {
-				logger.warning( "Unable to get foundation baseline. I wonder why?! " + e.getMessage() );
-			} catch( NullPointerException e ) {
+			}  catch( NullPointerException e ) {
 				logger.debug( "Could not get foundation baseline, because input stream was null" );
 			}
 		}
@@ -192,25 +198,30 @@ public class ClearCaseBranchPart implements Serializable {
 		
 		/* Creating input view */
 		if( useIfExists ) {
-			try {
-				snapshot = UCMView.getSnapshotView( viewroot );
-				logger.info( "Using existing view" );
-			} catch (Exception e1) {
-				if( viewtag != null ) {
-					try {
-						logger.info( "Creating development view, " + viewtag );
-						if( !viewroot.exists() ) {
-							viewroot.mkdirs();
-						}
-						snapshot = SnapshotView.create( devStream, viewroot, viewtag );
-					} catch (UCMException e) {
-						logger.error( "Error while initializing input view: " + e.getMessage() );
-					}
-				} else {
-					logger.debug( "Unable to create the view " + viewroot + ". View tag is null" );
-					throw new ElementNotCreatedException( "Error while creating view, view tag is null" );
-				}
-			}
+            try {
+                snapshot = new SnapshotView(viewroot);
+                if(!snapshot.exists()) {
+                    if( viewtag != null ) {
+                        try {
+                            logger.info( "Creating development view, " + viewtag );
+                            if( !viewroot.exists() ) {
+                                viewroot.mkdirs();
+                            }
+                            snapshot = SnapshotView.create( devStream, viewroot, viewtag );
+                        } catch (UCMException e) {
+                            logger.error( "Error while initializing input view: " + e.getMessage() );
+                        }
+                    } else {
+                        logger.debug( "Unable to create the view " + viewroot + ". View tag is null" );
+                        throw new ElementNotCreatedException( "Error while creating view, view tag is null" );
+                    }
+                } else {
+                    logger.info( "Using existing view" );
+                }
+            } catch (UnableToInitializeEntityException | CleartoolException | ViewException | IOException ex) {
+                logger.debug("Unable to create/use existing view: "+ex.getMessage());
+            }
+
 		} else {
 			if( viewtag != null ) {
 				try {
@@ -219,16 +230,14 @@ public class ClearCaseBranchPart implements Serializable {
 						viewroot.mkdirs();
 					}
 					snapshot = SnapshotView.create( devStream, viewroot, viewtag );
-				} catch (UCMException e) {
-					throw new ElementAlreadyExistsException( "The input view " + viewtag + " already exists" );
+				} catch (ViewException | UnableToInitializeEntityException | CleartoolException | IOException e) {
+					throw new ElementAlreadyExistsException( "The input view " + viewtag + " already exists: Error: "+e.getMessage() );
 				}
 			} else {
 				logger.debug( "Unable to create the view " + viewroot + ". View tag is null" );
 				throw new ElementNotCreatedException( "Error while creating view, view tag is null" );
 			}
 		}
-		
-		
 		return true;
 	}
 	
@@ -236,8 +245,8 @@ public class ClearCaseBranchPart implements Serializable {
 		boolean result = true;
 		
 		try {
-			UCMEntity.getStream( name, pvob, false );
-		} catch (UCMException e1) {
+			Stream.get(name, pvob).load();
+		} catch (UnableToInitializeEntityException | UCMEntityNotFoundException | UnableToLoadEntityException e1) {
 			logger.error( "Stream does not exist" );
 			result = false;
 		}
@@ -247,12 +256,13 @@ public class ClearCaseBranchPart implements Serializable {
 			logger.debug( "Input view tag, " + viewtag + ", does not exist" );
 			result = false;
 		} else {
-			try {
-				UCMView.getSnapshotView( viewroot );
-			} catch (Exception e1) {
-				logger.debug( "View does not exist" );
-				result = false;
-			}
+            try {
+				SnapshotView view = new SnapshotView( viewroot );                
+                result = view.exists();
+            } catch (UnableToInitializeEntityException | CleartoolException | ViewException | IOException  e1) {
+                logger.debug("Snapshot view check failed in exists for ClearCaseBranchPart: "+ e1.getMessage());
+                result = false;
+            } 
 		}
 		
 		return result;
@@ -260,6 +270,7 @@ public class ClearCaseBranchPart implements Serializable {
 	
 	public void initializeView() throws ElementDoesNotExistException {
 		try {
+            SnapshotView ss;
 			snapshot = UCMView.getSnapshotView( viewroot );
 		} catch (UCMException e) {
 			logger.error( "Could not get view: " + e.getMessage() );
@@ -269,14 +280,13 @@ public class ClearCaseBranchPart implements Serializable {
 	
 	public void initializeStream() throws ElementDoesNotExistException {
 		try {
-			this.devStream = UCMEntity.getStream( name, pvob, false );
-		} catch (UCMException e1) {
+			this.devStream = Stream.get( name, pvob).load();
+		} catch (UnableToInitializeEntityException | UnableToLoadEntityException | UCMEntityNotFoundException  e1) {
 			logger.error( "Stream does not exist" );
-			throw new ElementDoesNotExistException( "Could not get stream" );
-		}
+			throw new ElementDoesNotExistException( "Could not get stream: "+name );
+		} 
 	}
-	
-	
+
 	
 	public SnapshotView getSnapshotView() {
 		return snapshot;

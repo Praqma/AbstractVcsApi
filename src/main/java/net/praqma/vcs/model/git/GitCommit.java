@@ -29,6 +29,7 @@ public class GitCommit extends AbstractCommit {
 		return null;
 	}
 	
+    @Override
 	public void load() {
 		LoadImpl load = new LoadImpl();
 		doLoad( load );
@@ -46,6 +47,7 @@ public class GitCommit extends AbstractCommit {
 			super();
 		}
 
+        @Override
 		public boolean perform() {
 			logger.debug( "GIT: perform load" );
 			
@@ -106,8 +108,6 @@ public class GitCommit extends AbstractCommit {
 							cse.setRenameFromFile( new File( oldFilename ) );
 							GitCommit.this.changeSet.put( m3.group(1), cse );
 						}
-						//GitCommit.this.changeSet.put( m3.group(1), new ChangeSetElement( new File( m3.group(1) ), Status.DELETED ) );
-						continue;
 					}
 				}
 				

@@ -4,15 +4,10 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
@@ -42,6 +37,7 @@ public class MercurialCommit extends AbstractCommit {
 		return null;
 	}
 	
+    @Override
 	public void load() {
 		LoadImpl load = new LoadImpl();
 		doLoad( load );
@@ -98,9 +94,9 @@ public class MercurialCommit extends AbstractCommit {
 			
 			logger.debug( "CS: " + files1 );
 			
-			List<String[]> filesmap = new ArrayList<String[]>();
-			Set<String> removes = new HashSet<String>();
-			Set<String> origins = new HashSet<String>();
+			List<String[]> filesmap = new ArrayList<>();
+			Set<String> removes = new HashSet<>();
+			Set<String> origins = new HashSet<>();
 			
 			for( String f : files1 ) {
 				String[] s = new String[]{ f.substring( 0, 1 ), f.substring( 2 ).trim() };

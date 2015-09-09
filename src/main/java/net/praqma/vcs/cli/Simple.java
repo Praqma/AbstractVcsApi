@@ -1,41 +1,21 @@
 package net.praqma.vcs.cli;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Date;
-import java.util.List;
-
-import net.praqma.clearcase.PVob;
-import net.praqma.clearcase.Vob;
-import net.praqma.clearcase.ucm.UCMException;
-import net.praqma.clearcase.ucm.entities.Baseline;
-import net.praqma.clearcase.ucm.entities.Project;
-import net.praqma.clearcase.ucm.entities.Stream;
-import net.praqma.clearcase.ucm.entities.UCM;
-import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.util.debug.Logger;
 import net.praqma.util.debug.Logger.LogLevel;
-import net.praqma.util.debug.appenders.FileAppender;
 import net.praqma.util.debug.appenders.StreamAppender;
 import net.praqma.util.option.Option;
 import net.praqma.util.option.Options;
 import net.praqma.vcs.AVA;
 import net.praqma.vcs.model.AbstractBranch;
-import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
-import net.praqma.vcs.model.clearcase.ClearCaseBranch;
-import net.praqma.vcs.model.clearcase.ClearCaseReplay;
-import net.praqma.vcs.model.clearcase.ClearCaseVCS;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
 import net.praqma.vcs.model.exceptions.UnableToReplayException;
 import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
-import net.praqma.vcs.model.git.GitBranch;
-import net.praqma.vcs.model.git.GitReplay;
 import net.praqma.vcs.persistence.XMLStrategy;
 import net.praqma.vcs.util.Cycle;
 import net.praqma.vcs.util.configuration.AbstractConfigurationReader;
@@ -53,7 +33,7 @@ public class Simple {
         }
     }
 	
-	public static void main(String[] args) throws IOException, UCMException, ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException, UnableToCheckoutCommitException, UnableToReplayException, ConfigurationDoesNotExistException, ConfigurationException, UnsupportedBranchException, InterruptedException {
+	public static void main(String[] args) throws IOException, ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException, UnableToCheckoutCommitException, UnableToReplayException, ConfigurationDoesNotExistException, ConfigurationException, UnsupportedBranchException, InterruptedException {
 		
         Options o = new Options( "1.0.0" );
 
@@ -91,7 +71,7 @@ public class Simple {
         }
 
 		/* Do the ClearCase thing... */
-		UCM.setContext( UCM.ContextType.CLEARTOOL );
+		//UCM.setContext( UCM.ContextType.CLEARTOOL );
 		
 		File p = new File( "ava.xml" );
 		p.createNewFile();

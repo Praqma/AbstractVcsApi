@@ -1,9 +1,15 @@
 package net.praqma.vcs.model.clearcase;
 
 import java.io.File;
+import java.util.logging.Level;
 
 import net.praqma.clearcase.PVob;
 import net.praqma.clearcase.Vob;
+import net.praqma.clearcase.exceptions.CleartoolException;
+import net.praqma.clearcase.exceptions.EntityAlreadyExistsException;
+import net.praqma.clearcase.exceptions.NotMountedException;
+import net.praqma.clearcase.exceptions.UnableToCreateEntityException;
+import net.praqma.clearcase.exceptions.UnableToInitializeEntityException;
 import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Component;
@@ -250,8 +256,8 @@ public class ClearCaseVCS extends AbstractVCS {
 			return vob;
 		}
 
+        @Override
 		public boolean initialize() throws ElementNotCreatedException, ElementDoesNotExistException {
-
 			/* Create Vob */
 			/* Test existence before creation */
 			vob = Vob.get( ClearCaseVCS.this.vobName );
@@ -259,7 +265,7 @@ public class ClearCaseVCS extends AbstractVCS {
 				try {
 					logger.info( "Creating Vob " + ClearCaseVCS.this.vobName );
 					vob = Vob.create( ClearCaseVCS.this.vobName, null, ClearCaseVCS.this.vobName + " Vob" );
-				} catch (UCMException e) {
+				} catch (CleartoolException | EntityAlreadyExistsException e) {
 					logger.error( "Error while creating Vob: " + e.getMessage() );
 					throw new ElementNotCreatedException( "Error while creating vob: " + e.getMessage() );
 				}
@@ -270,14 +276,14 @@ public class ClearCaseVCS extends AbstractVCS {
 			logger.info( "Loading Vob " + vob );
 			try {
 				vob.load();
-			} catch (UCMException e) {
+			} catch (CleartoolException e) {
 				logger.error( "Error while loading vob: " + e.getMessage() );
 				throw new ElementNotCreatedException( "Error while loading vob: " + e.getMessage() );
-			}
+			} 
 			
 			try {
 				vob.mount();
-			} catch (UCMException e) {
+			} catch (NotMountedException e) {
 				logger.error( "Error while mounting Vob: " + e.getMessage() );
 				throw new ElementNotCreatedException( "Error while mounting vob: " + e.getMessage() );
 			}
@@ -291,12 +297,12 @@ public class ClearCaseVCS extends AbstractVCS {
 				File basepath = new File( ClearCaseVCS.viewPath, ClearCaseVCS.dynView + "/" + vob.getName() );
 				logger.debug( "Baseview path: " + basepath.getAbsolutePath() );
 				c = Component.create( ClearCaseVCS.this.baseName, pvob, ClearCaseVCS.this.baseName, "Main component", basepath );
-			} catch (UCMException e) {
+			} catch (UnableToCreateEntityException | UnableToInitializeEntityException e) {
 				if( get ) {
 					try {
-						c = UCMEntity.getComponent( ClearCaseVCS.this.baseName, pvob, false );
+						c = Component.get(ClearCaseVCS.this.baseName, pvob);
 						logger.info( "Using existing component" );
-					} catch (UCMException e1) {
+					} catch (UnableToInitializeEntityException e1) {
 						logger.error( "Component does not exist and could not be created: " + e1.getMessage() );
 						throw new ElementDoesNotExistException( "Component does not exist and could not be created: " + e1.getMessage() );
 					}
@@ -307,13 +313,11 @@ public class ClearCaseVCS extends AbstractVCS {
 			}
 			logger.debug( "Component=" + c );
 
-			// logger.info("Creating " + ClearcaseVCS.this.baseName +
-			// " Structure_1_0");
 			logger.debug( "Getting " + ClearCaseVCS.this.baseName + "_INITIAL" );
 			Baseline initial;
 			try {
-				initial = UCMEntity.getBaseline( ClearCaseVCS.this.baseName + "_INITIAL", pvob, true );
-			} catch (UCMException e) {
+				initial = Baseline.get(ClearCaseVCS.this.baseName + "_INITIAL", pvob);
+			} catch (UnableToInitializeEntityException e) {
 				logger.error( "Error while loading INITIAL Baseline: " + e.getMessage() );
 				throw new ElementDoesNotExistException( "Error while loading baseline INITIAL: " + e.getMessage() );
 			}
