@@ -2,11 +2,20 @@ package net.praqma.vcs.model.clearcase;
 
 import java.io.File;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import net.praqma.clearcase.api.DiffBl;
 
 import net.praqma.clearcase.changeset.ChangeSet2;
 import net.praqma.clearcase.changeset.ChangeSetElement2;
-import net.praqma.clearcase.ucm.UCMException;
+import net.praqma.clearcase.exceptions.CleartoolException;
+import net.praqma.clearcase.exceptions.UCMEntityNotFoundException;
+import net.praqma.clearcase.exceptions.UnableToInitializeEntityException;
+import net.praqma.clearcase.exceptions.UnableToLoadEntityException;
+import net.praqma.clearcase.exceptions.UnknownEntityException;
 import net.praqma.clearcase.ucm.entities.Baseline;
+import net.praqma.clearcase.ucm.entities.UCMEntity;
+import net.praqma.clearcase.ucm.entities.Version;
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
@@ -18,6 +27,7 @@ public class ClearCaseCommit extends AbstractCommit {
 	private Logger logger = Logger.getLogger();
 	protected Baseline baseline;
 	protected ClearCaseBranch ccbranch;
+    private static final Pattern rx_versionName = Pattern.compile( "^(\\S+)\\s+([\\S\\s.^@]+@@.*)$" );
 
 	public ClearCaseCommit( Baseline baseline, ClearCaseBranch branch, int number ) {
 		super( baseline.getFullyQualifiedName(), branch, number );
@@ -30,6 +40,7 @@ public class ClearCaseCommit extends AbstractCommit {
 		
 	}
 
+    @Override
 	public void load() {
 		LoadImpl load = new LoadImpl();
 		doLoad( load );
@@ -61,7 +72,25 @@ public class ClearCaseCommit extends AbstractCommit {
 				ClearCaseCommit.this.committerDate = baseline.getDate();
 	
 				ClearCaseCommit.this.title = ( baseline.getComment() != null ? baseline.getComment() : baseline.getFullyQualifiedName() );
-				ChangeSet2 changeset = ChangeSet2.getChangeSet( baseline, null, ccbranch.getOuputSnapshotView().getViewRoot() );
+                
+                //This one has been replaced with diffbl
+				//ChangeSet2 changeset = ChangeSet2.getChangeSet( baseline, null, ccbranch.getOuputSnapshotView().getViewRoot() );
+                
+                DiffBl diffBl = new DiffBl(baseline, null).setViewRoot(ccbranch.getOuputSnapshotView().getViewRoot()).setVersions(true).setNmerge(true);                
+                List<String> s = diffBl.execute();
+                
+                ChangeSet2 changeset = new ChangeSet2( ccbranch.getOuputSnapshotView().getViewRoot());
+            
+                for(String line : s) {
+                    Matcher m = rx_versionName.matcher(line);
+                    if(m.find()) {
+                        String f = m.group( 2 ).trim();
+                        Version version = (Version) UCMEntity.getEntity( m.group( 2 ).trim()).load();
+                        changeset.addVersion(version);
+                    }
+                }
+                
+                
 
 				logger.debug( "Changeset for " + ClearCaseCommit.this.baseline.getShortname() );
 				
@@ -113,7 +142,7 @@ public class ClearCaseCommit extends AbstractCommit {
 					}				
 				}
 					
-			} catch( UCMException e ) {
+			} catch( CleartoolException | UnableToInitializeEntityException | UnknownEntityException | UnableToLoadEntityException | UCMEntityNotFoundException e ) {
 				logger.warning( "Could not get differences: " + e.getMessage() );
 			}
 			

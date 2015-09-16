@@ -3,8 +3,6 @@ package net.praqma.vcs.model.clearcase;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.logging.Level;
-
 import net.praqma.clearcase.PVob;
 import net.praqma.clearcase.exceptions.CleartoolException;
 import net.praqma.clearcase.exceptions.UCMEntityNotFoundException;
@@ -12,11 +10,9 @@ import net.praqma.clearcase.exceptions.UnableToCreateEntityException;
 import net.praqma.clearcase.exceptions.UnableToInitializeEntityException;
 import net.praqma.clearcase.exceptions.UnableToLoadEntityException;
 import net.praqma.clearcase.exceptions.ViewException;
-import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Component;
 import net.praqma.clearcase.ucm.entities.Stream;
-import net.praqma.clearcase.ucm.entities.UCMEntity;
 import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.clearcase.ucm.view.UCMView;
 import net.praqma.util.debug.Logger;
@@ -101,33 +97,16 @@ public class ClearCaseBranchPart implements Serializable {
 		
 		this.pvob = pvob;
 		
-		try {
-			this.component = baseline.getComponent();
-		} catch (UCMException e) {
-			logger.error( "Could not create Clearcase branch: " + e.getMessage() );
-			throw new ElementNotCreatedException( "Could not create Clearcase branch: " + e.getMessage(), FailureType.DEPENDENCY );
-		}
+        this.component = baseline.getComponent();
 	}
 	
 	public ClearCaseBranchPart( PVob pvob, Stream parent, File viewroot, String name ) throws ElementNotCreatedException {
 		this.name = name;
 		this.viewroot = viewroot;		
 		this.parent = parent;		
-		this.pvob = pvob;
-		
-		try {
-			this.baseline = parent.getFoundationBaseline();
-		} catch (UCMException e) {
-			logger.error( "Could not create Clearcase branch: " + e.getMessage() );
-			throw new ElementNotCreatedException( "Could not create Clearcase branch: " + e.getMessage(), FailureType.DEPENDENCY );
-		}	
-		
-		try {
-			this.component = baseline.getComponent();
-		} catch (UCMException e) {
-			logger.error( "Could not create Clearcase branch: " + e.getMessage() );
-			throw new ElementNotCreatedException( "Could not create Clearcase branch: " + e.getMessage(), FailureType.DEPENDENCY );
-		}
+		this.pvob = pvob;				
+        this.baseline = parent.getFoundationBaseline();
+        this.component = baseline.getComponent();
 	}
 	
 	/**
@@ -202,15 +181,11 @@ public class ClearCaseBranchPart implements Serializable {
                 snapshot = new SnapshotView(viewroot);
                 if(!snapshot.exists()) {
                     if( viewtag != null ) {
-                        try {
-                            logger.info( "Creating development view, " + viewtag );
-                            if( !viewroot.exists() ) {
-                                viewroot.mkdirs();
-                            }
-                            snapshot = SnapshotView.create( devStream, viewroot, viewtag );
-                        } catch (UCMException e) {
-                            logger.error( "Error while initializing input view: " + e.getMessage() );
+                        logger.info( "Creating development view, " + viewtag );
+                        if( !viewroot.exists() ) {
+                            viewroot.mkdirs();
                         }
+                        snapshot = SnapshotView.create( devStream, viewroot, viewtag );
                     } else {
                         logger.debug( "Unable to create the view " + viewroot + ". View tag is null" );
                         throw new ElementNotCreatedException( "Error while creating view, view tag is null" );
@@ -270,9 +245,8 @@ public class ClearCaseBranchPart implements Serializable {
 	
 	public void initializeView() throws ElementDoesNotExistException {
 		try {
-            SnapshotView ss;
-			snapshot = UCMView.getSnapshotView( viewroot );
-		} catch (UCMException e) {
+			snapshot = new SnapshotView(viewroot);
+		} catch (UnableToInitializeEntityException | CleartoolException | ViewException | IOException e) {
 			logger.error( "Could not get view: " + e.getMessage() );
 			throw new ElementDoesNotExistException( "Could not get view" );
 		}

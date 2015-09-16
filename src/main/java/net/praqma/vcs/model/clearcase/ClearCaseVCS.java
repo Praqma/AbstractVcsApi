@@ -1,16 +1,19 @@
 package net.praqma.vcs.model.clearcase;
 
 import java.io.File;
-import java.util.logging.Level;
 
 import net.praqma.clearcase.PVob;
 import net.praqma.clearcase.Vob;
 import net.praqma.clearcase.exceptions.CleartoolException;
 import net.praqma.clearcase.exceptions.EntityAlreadyExistsException;
 import net.praqma.clearcase.exceptions.NotMountedException;
+import net.praqma.clearcase.exceptions.NothingNewException;
+import net.praqma.clearcase.exceptions.UCMEntityNotFoundException;
 import net.praqma.clearcase.exceptions.UnableToCreateEntityException;
+import net.praqma.clearcase.exceptions.UnableToGetEntityException;
 import net.praqma.clearcase.exceptions.UnableToInitializeEntityException;
-import net.praqma.clearcase.ucm.UCMException;
+import net.praqma.clearcase.exceptions.ViewException;
+
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Component;
 import net.praqma.clearcase.ucm.entities.Project;
@@ -142,34 +145,35 @@ public class ClearCaseVCS extends AbstractVCS {
 		return cc;
 	}
 	
+    @Override
 	public boolean exists() {
 
 		boolean result = true;
 		
 		try {
-			UCMEntity.getComponent( ClearCaseVCS.this.baseName, pvob, false );
-		} catch (UCMException e1) {
+			Component.get(ClearCaseVCS.this.baseName, pvob);
+		} catch (UnableToInitializeEntityException e1) {
 			logger.debug( "Component does not exist" );
 			result = false;
 		}
 		
 		try {
-			UCMEntity.getProject( ClearCaseVCS.this.projectName, pvob, false );
-		} catch (UCMException e1) {
+			Project.get(ClearCaseVCS.this.projectName, pvob);
+		} catch (UnableToInitializeEntityException e1) {
 			logger.debug( "Project does not exist" );
 			result = false;
 		}
 		
 		try {
-			UCMEntity.getStream( ClearCaseVCS.this.streamName, pvob, false );
-		} catch (UCMException e1) {
+			Stream.get(ClearCaseVCS.this.streamName, pvob);
+		} catch (UnableToInitializeEntityException e1) {
 			logger.debug( "Stream does not exist" );
 			result = false;
 		}
 		
 		try {
-			UCMEntity.getBaseline( ClearCaseVCS.this.baselineName, pvob, false );
-		} catch (UCMException e1) {
+			Baseline.get(ClearCaseVCS.this.baselineName, pvob);
+		} catch (UnableToInitializeEntityException e1) {
 			logger.debug( "Baseline does not exist" );
 			result = false;
 		}
@@ -177,6 +181,7 @@ public class ClearCaseVCS extends AbstractVCS {
 		return result;
 	}
 
+    @Override
 	public void get() throws ElementDoesNotExistException {
 		try {
 			get( false );
@@ -192,24 +197,12 @@ public class ClearCaseVCS extends AbstractVCS {
 			initialize( true );
 		} else {			
 			try {
-				this.project = UCMEntity.getProject( ClearCaseVCS.this.projectName, pvob, false );
-			} catch (UCMException e1) {
+				this.project = Project.get( ClearCaseVCS.this.projectName, pvob);
+				this.integrationStream = Stream.get( ClearCaseVCS.this.streamName, pvob);
+				this.initialBaseline = Baseline.get( ClearCaseVCS.this.baselineName, pvob);
+			} catch (UnableToInitializeEntityException e1) {
 				logger.error( "Project does not exist" );
-				throw new ElementDoesNotExistException( "Project does not exist" );
-			}
-			
-			try {
-				this.integrationStream = UCMEntity.getStream( ClearCaseVCS.this.streamName, pvob, false );
-			} catch (UCMException e1) {
-				logger.error( "Stream does not exist" );
-				throw new ElementDoesNotExistException( "Stream does not exist" );
-			}
-			
-			try {
-				this.initialBaseline = UCMEntity.getBaseline( ClearCaseVCS.this.baselineName, pvob, false );
-			} catch (UCMException e1) {
-				logger.error( "Baseline does not exist" );
-				throw new ElementDoesNotExistException( "Baseline does not exist" );
+				throw new ElementDoesNotExistException( e1.getMessage());
 			}
 		}
 	}
@@ -244,6 +237,7 @@ public class ClearCaseVCS extends AbstractVCS {
 			super(get);
 		}
 
+        @Override
 		public boolean setup() {
 			return true;
 		}
@@ -324,13 +318,14 @@ public class ClearCaseVCS extends AbstractVCS {
 
 			logger.info( "Creating Mainline project" );
 			try {
-				project = Project.create( ClearCaseVCS.this.projectName, null, pvob, policies, "Mainline project", c );
-			} catch (UCMException e) {
+                //TODO: vob root and normal, what should they be?
+                project = Project.create(ClearCaseVCS.this.projectName, null, pvob, policies, vobName, true, c);				
+			} catch ( UnableToCreateEntityException | UnableToInitializeEntityException e) {
 				if( get ) {
 					try {
-						project = UCMEntity.getProject( ClearCaseVCS.this.projectName, pvob, false );
+						project = Project.get( ClearCaseVCS.this.projectName, pvob );
 						logger.info( "Using existing project" );
-					} catch (UCMException e1) {
+					} catch (UnableToInitializeEntityException e1) {
 						logger.error( "Project does not exist and could not be created: " + e1.getMessage() );
 						throw new ElementDoesNotExistException( "Project does not exist and could not be created: " + e1.getMessage() );
 					}
@@ -343,12 +338,12 @@ public class ClearCaseVCS extends AbstractVCS {
 			logger.info( "Creating Mainline integration stream" );
 			try {
 				integrationStream = Stream.createIntegration( ClearCaseVCS.this.streamName, project, initial );
-			} catch (UCMException e) {
+			} catch (UnableToCreateEntityException | UnableToGetEntityException | UCMEntityNotFoundException | UnableToInitializeEntityException e) {
 				if( get ) {
 					try {
-						integrationStream = UCMEntity.getStream( ClearCaseVCS.this.streamName, pvob, false );
+						integrationStream = Stream.get( ClearCaseVCS.this.streamName, pvob );
 						logger.info( "Using existing stream" );
-					} catch (UCMException e1) {
+					} catch (UnableToInitializeEntityException e1) {
 						logger.error( "Stream does not exist and could not be created: " + e1.getMessage() );
 						throw new ElementDoesNotExistException( "Stream does not exist and could not be created: " + e1.getMessage() );
 					}
@@ -363,7 +358,7 @@ public class ClearCaseVCS extends AbstractVCS {
 			if( !UCMView.viewExists( ClearCaseVCS.this.baseName + "_" + bootView )) {
 				try {
 					bview = DynamicView.create( null, ClearCaseVCS.this.baseName + "_" + bootView, integrationStream );
-				} catch (UCMException e) {
+				} catch (ViewException e) {
 					logger.error( "Error while creating base view: " + e.getMessage() );
 					throw new ElementNotCreatedException( "Error while creating base view " + ClearCaseVCS.this.baseName + "_" + bootView + ": " + e.getMessage() );
 				}
@@ -372,7 +367,7 @@ public class ClearCaseVCS extends AbstractVCS {
 					new DynamicView( null, ClearCaseVCS.this.baseName + "_" + bootView ).startView();
 					bview = new DynamicView( null, ClearCaseVCS.this.baseName + "_" + bootView );
 					logger.info( "Using existing view" );
-				} catch (UCMException e) {
+				} catch (ViewException e) {
 					logger.error( "Error while starting baseview: " + e.getMessage() );
 					throw new ElementNotCreatedException( "Error while creating view " + ClearCaseVCS.this.baseName + ": " + e.getMessage() );
 				}
@@ -381,13 +376,13 @@ public class ClearCaseVCS extends AbstractVCS {
 			logger.info( "Creating Structure_1_0" );
 			try {
 				//baseline = Baseline.create( ClearcaseVCS.this.baseName + "_Structure_1_0", c, new File( viewPath, ClearcaseVCS.this.baseName + "_" + bootView + "/" + ClearcaseVCS.this.baseName ), false, true );
-				baseline = Baseline.create( ClearCaseVCS.this.baselineName, c, new File( viewPath, bview.getViewtag() + "/" + vob.getName() ), false, true );
-			} catch (UCMException e) {
+				baseline = Baseline.create( ClearCaseVCS.this.baselineName, c, new File( viewPath, bview.getViewtag() + "/" + vob.getName() ), Baseline.LabelBehaviour.FULL, true );
+			} catch (UnableToInitializeEntityException | UnableToCreateEntityException | NothingNewException e) {
 				if( get ) {
 					try {
-						baseline = UCMEntity.getBaseline( ClearCaseVCS.this.baselineName, pvob, false );
+						baseline = Baseline.get( ClearCaseVCS.this.baselineName, pvob );
 						logger.info( "Using existing baseline" );
-					} catch (UCMException e1) {
+					} catch (Exception e1) {
 						logger.error( "Baseline does not exist and could not be created: " + e1.getMessage() );
 						throw new ElementDoesNotExistException( "Baseline does not exist and could not be created: " + e1.getMessage() );
 					}
@@ -471,7 +466,7 @@ public class ClearCaseVCS extends AbstractVCS {
 			logger.info( "Creating PVOB" );
 			try {
 				pvob = PVob.create( pvobName, null, "PVOB" );
-			} catch (UCMException e) {
+			} catch (CleartoolException | EntityAlreadyExistsException e) {
 				logger.error( "Error while creating PVOB: " + e.getMessage() );
 				throw new ElementNotCreatedException( "Could not create PVob: " + e.getMessage(), FailureType.INITIALIZATON );
 			}
@@ -488,7 +483,7 @@ public class ClearCaseVCS extends AbstractVCS {
 		} else {
 			try {
 				new DynamicView( null, dynView).startView();
-			} catch (UCMException e) {
+			} catch (ViewException e) {
 				logger.error( "Error while starting baseview: " + e.getMessage() );
 				throw new ElementNotCreatedException( "Could not starting base view: " + e.getMessage(), FailureType.INITIALIZATON );
 			}

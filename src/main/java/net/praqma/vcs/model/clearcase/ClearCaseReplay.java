@@ -8,6 +8,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.logging.Level;
+import net.praqma.clearcase.exceptions.CleartoolException;
+import net.praqma.clearcase.exceptions.NothingNewException;
+import net.praqma.clearcase.exceptions.UCMEntityNotFoundException;
+import net.praqma.clearcase.exceptions.UnableToCreateEntityException;
+import net.praqma.clearcase.exceptions.UnableToGetEntityException;
+import net.praqma.clearcase.exceptions.UnableToInitializeEntityException;
+import net.praqma.clearcase.exceptions.UnableToLoadEntityException;
 
 import net.praqma.clearcase.ucm.entities.Activity;
 import net.praqma.clearcase.ucm.entities.Baseline;
@@ -25,8 +33,6 @@ import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
 public class ClearCaseReplay extends AbstractReplay {
 	
 	protected ClearCaseBranch ccBranch;
-	
-	private Logger logger = Logger.getLogger();
 
 	public ClearCaseReplay( ClearCaseBranch branch ) {
 		super( branch );
@@ -83,8 +89,10 @@ public class ClearCaseReplay extends AbstractReplay {
 			ccBranch.update();
 			
 			try {
-				Activity.create( null, ccBranch.getPVob(), true, "CCReplay: " + commit.getKey(), ccBranch.getInputSnapshotView().getViewRoot() );
-			} catch (UCMException e1) {
+				//Activity.create( null, ccBranch.getPVob(), true, "CCReplay: " + commit.getKey(), ccBranch.getInputSnapshotView().getViewRoot() );
+                //TODO: 2.0 What is the 'in' stream value here?
+                Activity.create(null, null, ccBranch.getPVob(), true, "CCReplay: " + commit.getKey(), null, ccBranch.getInputSnapshotView().getViewRoot());
+			} catch (UnableToCreateEntityException | UCMEntityNotFoundException | UnableToGetEntityException | UnableToInitializeEntityException e1) {
 				logger.error( "ClearCase Activity could not be created: " + e1.getMessage() );
 				return false;
 			}
@@ -108,6 +116,7 @@ public class ClearCaseReplay extends AbstractReplay {
 			return new File( ccBranch.getInputPath(), cse.getFile().toString() );
 		}
 		
+        @Override
 		public boolean replay() {
 			List<ChangeSetElement> cs = commit.getChangeSet().asList();
 			
@@ -120,83 +129,83 @@ public class ClearCaseReplay extends AbstractReplay {
 				Version version = null;
 				
 				switch( cse.getStatus() ) {
-				case DELETED:
-					try {
-						version = getFile( file, file.isDirectory() );
-						version.removeName();
-						//version.removeVersion();
-						removeEmptyDirectories( file.getParentFile() );
-					} catch (UCMException e1) {
-						logger.error( "ClearCase could not remove name: " + e1.getMessage() );
-						success = false;
-						continue;
-					}
-					break;
-					
-				case CREATED:
-					try {
-						version = getFile( file, file.isDirectory() );
-						version.getFile().createNewFile();
-					} catch (IOException e1) {
-						logger.warning( "Could not create file: " + e1.getMessage() );
-						/* Continue anyway */
-					}
-				case CHANGED:
-					if( cse.getStatus().equals( Status.CHANGED ) ) {
-						version = getFile( file, file.isDirectory() );
-					}
-					InputStream in = null;
-					OutputStream out = null;
-					try {
-						in = new FileInputStream( new File( commit.getBranch().getPath(), cse.getFile().toString() ));
-						out = new FileOutputStream(version.getFile());
-						
-					    byte[] buf = new byte[1024];
-					    int len;
-					    while ((len = in.read(buf)) > 0) {
-					        out.write(buf, 0, len);
-					    }
-						
-					} catch (FileNotFoundException e) {
-						success = false;
-						logger.error( "Could not write to file(" + version.getFile().getAbsolutePath() + "): " + e );
-					} catch (IOException e) {
-						success = false;
-						logger.error( "Could not write to file(" + version.getFile().getAbsolutePath() + "): " + e );
-					} finally {
-						try {
-							in.close();
-							out.close();
-						} catch (Exception e) {
-							logger.warning( "Could not close files: " + e.getMessage() );
-						}
-						
-					}
+                    
+                    case DELETED:
+                        try {
+                            version = getFile( file, file.isDirectory() );
+                            version.removeName();
+                            //version.removeVersion();
+                            removeEmptyDirectories( file.getParentFile() );
+                        } catch (Exception e1) {
+                            logger.error( "ClearCase could not remove name: " + e1.getMessage() );
+                            success = false;
+                        }
+                        break;
 
-					break;
-					
-				case RENAMED:
-					File oldfile = new File( ccBranch.getInputPath(), cse.getRenameFromFile().toString() );
-					version = getFile( oldfile, false );
-					
-					/* Write before rename? */
-					write( new File( commit.getBranch().getPath(), cse.getFile().toString() ), oldfile );
-					
-					/* Add to source control */
-					getFile( file.getParentFile(), true );
-					
-					try {
-						logger.debug( "MOVING: " + version.getVersion() );
-						version.moveFile( file );
-					} catch( UCMException e ) {
-						logger.warning( "Could not rename file" );
-					}
-					
-					/* Clear out empty directories */
-					removeEmptyDirectories( oldfile.getParentFile() );
-					
-					break;
-				}
+                    case CREATED:
+                        try {
+                            version = getFile( file, file.isDirectory() );
+                            version.getFile().createNewFile();
+                        } catch (IOException e1) {
+                            logger.warning( "Could not create file: " + e1.getMessage() );
+                            /* Continue anyway */
+                        }
+                    case CHANGED:
+                        if( cse.getStatus().equals( Status.CHANGED ) ) {
+                            version = getFile( file, file.isDirectory() );
+                        }
+                        InputStream in = null;
+                        OutputStream out = null;
+                        try {
+                            in = new FileInputStream( new File( commit.getBranch().getPath(), cse.getFile().toString() ));
+                            out = new FileOutputStream(version.getFile());
+
+                            byte[] buf = new byte[1024];
+                            int len;
+                            while ((len = in.read(buf)) > 0) {
+                                out.write(buf, 0, len);
+                            }
+
+                        } catch (FileNotFoundException e) {
+                            success = false;
+                            logger.error( "Could not write to file(" + version.getFile().getAbsolutePath() + "): " + e );
+                        } catch (IOException e) {
+                            success = false;
+                            logger.error( "Could not write to file(" + version.getFile().getAbsolutePath() + "): " + e );
+                        } finally {
+                            try {
+                                in.close();
+                                out.close();
+                            } catch (Exception e) {
+                                logger.warning( "Could not close files: " + e.getMessage() );
+                            }
+
+                        }
+
+                        break;
+
+                    case RENAMED:
+                        File oldfile = new File( ccBranch.getInputPath(), cse.getRenameFromFile().toString() );
+                        version = getFile( oldfile, false );
+
+                        /* Write before rename? */
+                        write( new File( commit.getBranch().getPath(), cse.getFile().toString() ), oldfile );
+
+                        /* Add to source control */
+                        getFile( file.getParentFile(), true );
+
+                        try {
+                            logger.debug( "MOVING: " + version.getVersion() );
+                            version.moveFile( file );
+                        } catch( UnableToLoadEntityException | CleartoolException e ) {
+                            logger.warning( "Could not rename file" );
+                        }
+
+                        /* Clear out empty directories */
+                        removeEmptyDirectories( oldfile.getParentFile() );
+
+                        break;
+                }
 				
 			}
 			
@@ -209,7 +218,7 @@ public class ClearCaseReplay extends AbstractReplay {
 				try {
 					Version.removeName( d, ccBranch.getInputSnapshotView().getViewRoot() );
 					//Version.removeVersion( d, ccBranch.getSnapshotView().GetViewRoot() );
-				} catch (UCMException e) {
+				} catch (Exception e) {
 					logger.warning( "Could not remove version " + d );
 				}
 				
@@ -250,15 +259,22 @@ public class ClearCaseReplay extends AbstractReplay {
 			}
 		}
 		
-		protected Version getFile( File file, boolean mkdir ) {
+		protected Version getFile( File file, boolean mkdir )  {
 			logger.debug( "GETFILE: " + file );
 			Version version = null;
 			/* TODO Determine whether the file exists or not */
+            boolean underSourceControl = false;
+            
+            try {
+                underSourceControl = Version.isUnderSourceControl( file, ccBranch.getInputSnapshotView().getViewRoot() );
+            } catch (CleartoolException ex) {
+                logger.error( String.format( "Unable to determine if file %s is under source control", file.getAbsolutePath() ) );
+            }
 			
-			if( !file.exists() || !Version.isUnderSourceControl( file, ccBranch.getInputSnapshotView().getViewRoot() ) ) {
+			if( !file.exists() || !underSourceControl ) {
 				try {
 					version = Version.create( file, mkdir, ccBranch.getInputSnapshotView() );
-				} catch (UCMException e1) {
+				} catch (CleartoolException | IOException | UnableToCreateEntityException | UCMEntityNotFoundException | UnableToGetEntityException | UnableToLoadEntityException | UnableToInitializeEntityException e1) {
 					logger.error( "ClearCase could not create version: " + e1.getMessage() );
 				}
 			} else {
@@ -266,7 +282,7 @@ public class ClearCaseReplay extends AbstractReplay {
 					version = Version.getUnextendedVersion( file, ccBranch.getInputPath() );
 					version.setView( ccBranch.getInputSnapshotView() );
 					version.checkOut();
-				} catch (UCMException e1) {
+				} catch (IOException | CleartoolException | UnableToLoadEntityException | UCMEntityNotFoundException | UnableToInitializeEntityException e1) {
 					logger.error( "ClearCase could not get version: " + e1.getMessage() );
 				}
 			}
@@ -274,6 +290,7 @@ public class ClearCaseReplay extends AbstractReplay {
 			return version;
 		}
 		
+        @Override
 		public boolean commit() {
 			logger.debug( "Committing ClearCase baseline" );
 
@@ -283,12 +300,12 @@ public class ClearCaseReplay extends AbstractReplay {
 					logger.debug( "Checking in " + f );
 					try {
 						Version.checkIn( f, false, ccBranch.getInputPath() );
-					} catch( UCMException e ) {
+					} catch( Exception e ) {
 						logger.debug( "Unable to checkin " + f );
 						/* No op */
 					}
 				}
-			} catch( UCMException e ) {
+			} catch( Exception e ) {
 				logger.error( e.getMessage() );
 				
 			}
@@ -296,19 +313,17 @@ public class ClearCaseReplay extends AbstractReplay {
 			String baselineName = ClearcaseReplayListener.runSelectBaselineName( commit );
 
 			try {
-				Baseline.create( baselineName, ccBranch.getComponent(), ccBranch.getInputPath(), true, false );
+				Baseline.create( baselineName, ccBranch.getComponent(), ccBranch.getInputPath(), Baseline.LabelBehaviour.INCREMENTAL, false );
 				logger.info( "New baseline created" );
 				return true;
-			} catch( UCMException e1 ) {
-				if( e1.type.equals( UCMType.NOTHING_CHANGED ) ) {
-					logger.info( "No new baseline created, nothing changed" );
-					return false;
-				} else {
-					logger.error( "ClearCase could not create baseline: " + e1.getMessage() );
-					return false;
-				}
+            } catch (NothingNewException nnew) {
+                logger.info( "No new baseline created, nothing changed" );
+                return false;                
+			} catch( UnableToInitializeEntityException | UnableToCreateEntityException e1 ) {
+                logger.error( "ClearCase could not create baseline: " + e1.getMessage() );
+                return false;
+				
 			}
 		}
-	}
-	
+	}	
 }
