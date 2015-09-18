@@ -47,7 +47,7 @@ public abstract class ClearcaseReplayListener implements Extension {
 	}
 	
 	public static List<ClearcaseReplayListener> all() {
-		return AVA.getInstance().getExtensions(ClearcaseReplayListener.class);
+		return AVA.getInstance(null).getExtensions(ClearcaseReplayListener.class);
 	}
 	
 }

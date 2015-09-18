@@ -86,7 +86,7 @@ public class GitToClearCase {
 		/* Do the ClearCase thing... */
 		//UCM.setContext( UCM.ContextType.CLEARTOOL );
 		
-		new AVA( new XMLStrategy( new File( "ava.xml" ) ) );
+		AVA.getInstance(new XMLStrategy( new File( "ava.xml" ) ) );
 		
 		/* Setup ClearCase */
 		PVob pvob = ClearCaseVCS.bootstrap();

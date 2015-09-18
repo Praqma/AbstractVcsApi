@@ -11,23 +11,22 @@ public class AVA {
 	
 	private static AVA instance;
 	
-	private List<Extension> extensionsList = new ArrayList<Extension>();
+	private List<Extension> extensionsList = new ArrayList<>();
 	
 	private PersistenceStrategy persistence;
 	
-	public AVA( PersistenceStrategy persistence ) {
-		if( instance != null ) {
-			throw new IllegalStateException( "Instance already defined" );
-		}
-		
+	private AVA( PersistenceStrategy persistence ) {
 		this.persistence = persistence;
-		
-		instance = this;
 	}
 	
-	public static AVA getInstance() {
-		return instance;
-	}
+    public static AVA getInstance(PersistenceStrategy persistenceStrategy) {
+        if(instance == null) {
+            instance = new AVA(persistenceStrategy);
+        } else if(persistenceStrategy != null) {
+            instance.persistence = persistenceStrategy;
+        }
+        return instance;
+    }
 	
 	public PersistenceStrategy getPersistenceStrategy() {
 		return persistence;

@@ -24,7 +24,7 @@ public class Cycle {
 	
 	public static void cycle( AbstractBranch branch, AbstractReplay replay, Integer interval, boolean checkoutCommit ) throws UnableToCheckoutCommitException, UnableToReplayException, IOException, InterruptedException {
 		BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
-		Date now = AVA.getInstance().getLastCommitDate( branch );
+		Date now = AVA.getInstance(null).getLastCommitDate( branch );
 		logger.debug( "LAST IS " + now );
 		Date before = null;
 		
@@ -51,7 +51,7 @@ public class Cycle {
 			/* Make now before */
 			now = before;
 			
-			AVA.getInstance().setLastCommitDate( branch, now );
+			AVA.getInstance(null).setLastCommitDate( branch, now );
 			
 			if( interval != null ) {
 				/* Interactive mode */

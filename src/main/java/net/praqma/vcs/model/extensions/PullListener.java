@@ -24,6 +24,6 @@ public abstract class PullListener implements Extension {
 	}
 	
 	public static List<PullListener> all() {
-		return AVA.getInstance().getExtensions(PullListener.class);
+		return AVA.getInstance(null).getExtensions(PullListener.class);
 	}
 }

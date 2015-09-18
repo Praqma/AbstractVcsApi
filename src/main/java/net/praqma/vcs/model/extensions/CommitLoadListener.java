@@ -25,6 +25,6 @@ public abstract class CommitLoadListener implements Extension {
 	}
 	
 	public static List<CommitLoadListener> all() {
-		return AVA.getInstance().getExtensions(CommitLoadListener.class);
+		return AVA.getInstance(null).getExtensions(CommitLoadListener.class);
 	}
 }

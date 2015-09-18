@@ -28,6 +28,7 @@ public class Simple {
 	private static StreamAppender app = new StreamAppender( System.out );
 	
     static class MyShutdown extends Thread {
+        @Override
         public void run() {
             System.out.println( "Terminating AVA process" );
         }
@@ -75,8 +76,9 @@ public class Simple {
 		
 		File p = new File( "ava.xml" );
 		p.createNewFile();
-		new AVA( new XMLStrategy( p ) );
-		
+        
+        AVA.getInstance(new XMLStrategy(p));
+
 		Integer interval = null;
 		if( ointeractive.isUsed() && ointerval.isUsed() ) {
 			System.err.println( "Interactive and interval cannot be used at the same time" );

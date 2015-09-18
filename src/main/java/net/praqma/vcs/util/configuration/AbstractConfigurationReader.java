@@ -20,7 +20,7 @@ import net.praqma.vcs.util.configuration.implementation.MercurialConfigurationRe
 
 public abstract class AbstractConfigurationReader extends XML {
 	
-	private static Logger logger = Logger.getLogger();
+	private static final Logger logger = Logger.getLogger();
 	
 	protected AbstractConfigurationReader() {
 		
@@ -30,7 +30,7 @@ public abstract class AbstractConfigurationReader extends XML {
 		super( conf );
 	}
 	
-	private static Map<String, Class<? extends AbstractConfigurationReader>> readers = new HashMap<String, Class<? extends AbstractConfigurationReader>>();
+	private static final Map<String, Class<? extends AbstractConfigurationReader>> readers = new HashMap<>();
 	
 	/* Default readers */
 	static {
@@ -60,7 +60,7 @@ public abstract class AbstractConfigurationReader extends XML {
 		AbstractConfigurationReader r = null;
 		try {
 			r = readers.get( sourceType ).newInstance();
-		} catch (Exception e) {
+		} catch (InstantiationException | IllegalAccessException e) {
 			throw new ConfigurationException( "Could not instantiate a " + sourceType + " reader" );
 		}
 		
@@ -78,7 +78,7 @@ public abstract class AbstractConfigurationReader extends XML {
 			for( Element e : exts ) {
 				String ext = e.getTextContent();
 				try {
-					AVA.getInstance().registerExtension( "", (Extension) Class.forName( ext ).newInstance() );
+					AVA.getInstance(null).registerExtension( "", (Extension) Class.forName( ext ).newInstance() );
 					logger.info( "Adding " + ext + " as an extension" );
 				} catch ( Exception e1 ) {
 					logger.warning( ext + " could not be added as an extension: " + e1.getMessage() );

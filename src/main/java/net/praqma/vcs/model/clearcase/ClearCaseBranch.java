@@ -359,8 +359,7 @@ public class ClearCaseBranch extends AbstractBranch{
             } else {
                 baselines = new BaselineList(selectedStream, component, null).addFilter(new AfterDate(offset)).apply();
             }
-            
-			
+            			
 			logger.debug( "I got " + baselines.size() + " baselines" );
 			for( int i = 0 ; i < baselines.size() ; i++ ) {				
 				ClearCaseCommit commit = new ClearCaseCommit( baselines.get( i ), ClearCaseBranch.this, i );

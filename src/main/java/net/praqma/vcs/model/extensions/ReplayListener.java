@@ -26,6 +26,6 @@ public abstract class ReplayListener implements Extension {
 	}
 	
 	public static List<ReplayListener> all() {
-		return AVA.getInstance().getExtensions(ReplayListener.class);
+		return AVA.getInstance(null).getExtensions(ReplayListener.class);
 	}
 }
