@@ -162,8 +162,8 @@ public class ClearCaseBranch extends AbstractBranch{
 			logger.debug( "InitializeIMPL" );
 		}
 
+        @Override
 		public boolean initialize() throws ElementDoesNotExistException, ElementNotCreatedException, ElementAlreadyExistsException {
-
 			/* TODO Make exception handling less verbose! If possible */
 			logger.debug( "Trying to initialize input" );
 			try {
@@ -283,8 +283,9 @@ public class ClearCaseBranch extends AbstractBranch{
 	 */
 	public class UpdateImpl extends Update {
 
+        @Override
 		public boolean setup() {
-			//if( snapshot_in == null || devStream_in == null ) {
+			
 			if( input.getSnapshotView() == null || input.getStream() == null ) {
 				try {
 					get();

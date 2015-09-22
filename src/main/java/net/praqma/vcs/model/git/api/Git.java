@@ -54,7 +54,16 @@ public class Git {
 			throw new GitException( "Could not change to branch " + branchName + ": " + e.getMessage() );
 		}	
 	}
-	
+
+    public static void changeBranchAndCreate( String branchName, File viewContext ) throws GitException {
+		try {
+			CommandLine.run( "git checkout -b " + branchName, viewContext );
+		} catch( AbnormalProcessTerminationException e ) {
+			throw new GitException( "Could not change to branch " + branchName + ": " + e.getMessage() );
+		}	
+	}
+    
+    
 	private static final Pattern rx_branchExists = Pattern.compile( "^.*?branch \\w+ already exists.*?$" );
 	
 	public static void checkoutRemoteBranch( String branchName, String remoteBranchName, File viewContext ) throws GitException, ElementAlreadyExistsException {

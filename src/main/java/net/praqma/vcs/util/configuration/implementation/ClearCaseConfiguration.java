@@ -110,7 +110,7 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	}
 
 	public void setParentStream( String stream ) throws ConfigurationException {
-		if( stream != null && stream.length() > 0 ) {
+		if(stream != null && stream.length() > 0 ) {
 			try {
 				parentStream = UCMEntity.getStream( stream, pvob, false );
 			} catch( UCMException e ) {
@@ -174,6 +174,7 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 		this.dontCare = true;
 	}
 
+    @Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 

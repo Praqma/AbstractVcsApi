@@ -1,12 +1,10 @@
 package net.praqma.vcs.model.git;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import net.praqma.util.execute.AbnormalProcessTerminationException;
 import net.praqma.vcs.VersionControlSystems;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
@@ -16,12 +14,6 @@ import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.git.api.Git;
 import net.praqma.vcs.model.git.exceptions.GitException;
-import net.praqma.vcs.model.interfaces.Cleanable;
-import net.praqma.vcs.model.mercurial.MercurialBranch;
-import net.praqma.vcs.model.mercurial.api.Mercurial;
-import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
-import net.praqma.vcs.util.CommandLine;
-import net.praqma.vcs.util.Utils;
 
 public class GitBranch extends AbstractBranch{
 	
@@ -98,10 +90,17 @@ public class GitBranch extends AbstractBranch{
 			/* Try to switch branch */
 			try {
 				logger.debug( "Switching to branch " + GitBranch.this.name );
-				Git.changeBranch( GitBranch.this.name, localRepositoryPath );
+                
+                if(!Git.branchExists(name, localRepositoryPath)) {
+                    Git.changeBranchAndCreate(name, localRepositoryPath);
+                } else {
+                    Git.changeBranch( GitBranch.this.name, localRepositoryPath );
+                }				
 			} catch( GitException e ) {
 				/* TODO Should we just fall back to the default branch? */
+                logger.warning(e.getMessage());
 				logger.warning( "The branch " + GitBranch.this.name + " does not seem to exist" );
+                GitBranch.create(localRepositoryPath, name, parent);                
 				throw new ElementDoesNotExistException( "The branch " + GitBranch.this.name + " does not seem to exist" );
 			}
 			
