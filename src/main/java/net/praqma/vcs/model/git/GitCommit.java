@@ -29,6 +29,7 @@ public class GitCommit extends AbstractCommit {
 		return null;
 	}
 	
+    @Override
 	public void load() {
 		LoadImpl load = new LoadImpl();
 		doLoad( load );
@@ -39,20 +40,21 @@ public class GitCommit extends AbstractCommit {
 	private static final Pattern rx_getCreateFile = Pattern.compile( "^\\s*create\\s*mode\\s*\\d+\\s*(.*)$" );
 	private static final Pattern rx_getDeleteFile = Pattern.compile( "^\\s*delete\\s*mode\\s*\\d+\\s*(.*)$" );
 	private static final Pattern rx_getRenameFile = Pattern.compile( "^\\s*rename\\s*mode\\s*\\d+\\s*(.*)$" );
-	
+    
 	public class LoadImpl extends Load {
 		
 		public LoadImpl() {
 			super();
 		}
 
+        @Override
 		public boolean perform() {
 			logger.debug( "GIT: perform load" );
-			
-			
-			String cmd = "git show -M90% --numstat --summary --pretty=format:\"%H%n%P%n%aN <%ae>%n%cN <%ce>%n%at%n%ct%n%s%nLISTINGCHANGES\" " + GitCommit.this.key;
+						
+			String cmd = "git show -M90% --numstat --summary --pretty=format:\"%H%n%P%n%aN <%ae>%n%cN <%ce>%n%at%n%ci%n%s%nLISTINGCHANGES\" " + GitCommit.this.key;
 			List<String> result = CommandLine.run( cmd, branch.getPath() ).stdoutList;
-			
+ 
+            
 			if( result.size() < 8 ) {
 				
 			} else {
@@ -60,7 +62,12 @@ public class GitCommit extends AbstractCommit {
 				GitCommit.this.author = result.get( 2 );
 				GitCommit.this.committer = result.get( 3 );
 				GitCommit.this.authorDate = new Date( (long)Integer.parseInt( result.get( 4 ) ) * 1000 );
-				GitCommit.this.committerDate = new Date( (long)Integer.parseInt( result.get( 5 ) ) * 1000 );
+                try {
+                    GitCommit.this.setCommitterDate(new Date( (long)Integer.parseInt( result.get( 5 ) ) * 1000 ));
+                } catch (NumberFormatException nex) {
+                    logger.debug("No commit date found...use authorDate");
+                    GitCommit.this.setCommitterDate(authorDate);
+                }
 
 				GitCommit.this.title = result.get( 6 );
 				
@@ -107,13 +114,12 @@ public class GitCommit extends AbstractCommit {
 							GitCommit.this.changeSet.put( m3.group(1), cse );
 						}
 						//GitCommit.this.changeSet.put( m3.group(1), new ChangeSetElement( new File( m3.group(1) ), Status.DELETED ) );
-						continue;
 					}
 				}
 				
 				result.clear();
 			}
-			
+        
 			return true;
 		}
 	}
@@ -133,6 +139,6 @@ public class GitCommit extends AbstractCommit {
 		}
 
 		return null;
-	}
+	}    
 
 }

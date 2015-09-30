@@ -21,11 +21,35 @@ public class Cycle {
 	public static void cycle( AbstractBranch branch, AbstractReplay replay, Integer interval ) throws UnableToCheckoutCommitException, UnableToReplayException, IOException, InterruptedException {
 		cycle( branch, replay, interval, true );
 	}
+    
+    /**
+     * Used in plugin
+     * @param branch
+     * @param commits
+     * @param replay 
+     * @throws net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException 
+     * @throws java.lang.InterruptedException 
+     */
+    public static void rotate(AbstractBranch branch, List<? extends AbstractCommit> commits, AbstractReplay replay) throws UnableToCheckoutCommitException, UnableToReplayException, IOException, InterruptedException {
+        int amount = commits.size();
+        int cnt = 0;
+        
+        for(AbstractCommit acm : commits) {
+            logger.info( "Commit "  + (++cnt) + "/" + amount + ": " + acm.getKey() );
+            acm.load();
+            branch.checkoutCommit(acm);
+            replay.replay(acm);            
+        }        
+    }
 	
 	public static void cycle( AbstractBranch branch, AbstractReplay replay, Integer interval, boolean checkoutCommit ) throws UnableToCheckoutCommitException, UnableToReplayException, IOException, InterruptedException {
 		BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
+        
+        /**
+         * By default the strategy is an XML strategy where we update the date of the latest commit. 
+         */
 		Date now = AVA.getInstance().getLastCommitDate( branch );
-		logger.debug( "LAST IS " + now );
+		logger.debug( "Replay commits after the date specified: " + now );
 		Date before = null;
 		
 		while( true ) {
@@ -37,13 +61,12 @@ public class Cycle {
 			before = new Date();
 			/* Retrieve all the latest changes for the source branch */
 			branch.update();
-			List<AbstractCommit> commits = branch.getCommits(false, now);
+			List<? extends AbstractCommit> commits = branch.getCommits(false, now);
 			for( int i = 0 ; i < commits.size() ; ++i ) {
 				logger.info( "Commit " + ( i + 1 ) + "/" + commits.size() + ": " + commits.get( i ).getKey() );
 
 				/* Load the commit */
 				commits.get( i ).load();
-				
 				branch.checkoutCommit( commits.get( i ) );
 				replay.replay( commits.get( i ) );
 			}
@@ -70,7 +93,7 @@ public class Cycle {
 	
 	public static class Update implements Runnable {
 
-		private List<AbstractCommit> commits;
+		private List<? extends AbstractCommit> commits;
 		private AbstractBranch branch;
 		private Date now;
 		
@@ -79,6 +102,7 @@ public class Cycle {
 			this.now = now;
 		}
 		
+        @Override
 		public void run() {
 			commits = branch.getCommits( false, now );
 			/* Update 'em */
@@ -87,7 +111,7 @@ public class Cycle {
 			}
 		}
 		
-		public List<AbstractCommit> getCommits() {
+		public List<? extends AbstractCommit> getCommits() {
 			return commits;
 		}
 		

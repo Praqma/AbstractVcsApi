@@ -1,27 +1,22 @@
 package net.praqma.vcs.model.git;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
 
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
 import net.praqma.vcs.model.ChangeSetElement;
-import net.praqma.vcs.model.clearcase.ClearCaseBranch;
 import net.praqma.vcs.model.exceptions.UnableToReplayException;
 import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
 import net.praqma.vcs.model.git.api.Git;
 import net.praqma.vcs.model.git.exceptions.GitException;
 import net.praqma.vcs.util.IO;
 
-public class GitReplay extends AbstractReplay{
+public class GitReplay extends AbstractReplay {
 
+    
 	public GitReplay( GitBranch branch ) {
 		super( branch );
 	}
@@ -45,6 +40,7 @@ public class GitReplay extends AbstractReplay{
 			super( commit );
 		}
 		
+        @Override
 		public boolean replay() {
 			List<ChangeSetElement> cs = commit.getChangeSet().asList();
 			
@@ -78,7 +74,19 @@ public class GitReplay extends AbstractReplay{
 					
 				case CHANGED:
 					logger.debug( "Change element" );
-					IO.write( sourcefile, targetfile );
+                    if(!targetfile.exists()) {
+                        logger.warning("Changed file...the file is not there??");
+                        try {
+                            targetfile.getParentFile().mkdirs();
+                            targetfile.createNewFile();                            
+                            IO.write( sourcefile, targetfile );
+                            Git.add( targetfile, branch.getPath() );
+                        } catch (Exception e) {
+                           logger.fatal("The file "+ targetfile + "is not present, even though it has changes. And it cannot be creted");
+                        }
+                    } else {
+                        IO.write( sourcefile, targetfile );
+                    }
 					
 					break;
 					
@@ -120,9 +128,11 @@ public class GitReplay extends AbstractReplay{
 			
 			return success;
 		}
-				
+
+        @Override
 		public boolean commit() {
 			try {
+                logger.debug("Creating commit: "+commit.getTitle());
 				Git.createCommit( commit.getTitle(), commit.getAuthor(), commit.getAuthorDate(), branch.getPath() );
 				return true;
 			} catch (GitException e) {

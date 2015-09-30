@@ -17,8 +17,7 @@ public class GitConfiguration extends AbstractConfiguration {
 	private String branchName;
 	
 	public GitConfiguration( File path, String branchName ) {
-		super( path );
-		
+		super( path );        
 		this.branchName = branchName;
 	}
 	
@@ -49,5 +48,16 @@ public class GitConfiguration extends AbstractConfiguration {
 	public AbstractReplay getReplay() throws UnsupportedBranchException, ElementNotCreatedException, ElementDoesNotExistException {
 		return new GitReplay( getBranch() );
 	}
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();		
+		sb.append( "Git configuration: ").append("\n-------------------\n" );
+		sb.append( "Path       : ").append(path).append("\n" );
+		sb.append( "Branch name: ").append(branchName).append("\n" );
+		return sb.toString();
+    }
+    
+    
 
 }

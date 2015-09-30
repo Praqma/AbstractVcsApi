@@ -57,7 +57,7 @@ public class ClearCaseCommit extends AbstractCommit {
 				ClearCaseCommit.this.author = baseline.getUser();
 				ClearCaseCommit.this.committer = baseline.getUser();
 				ClearCaseCommit.this.authorDate = baseline.getDate();
-				ClearCaseCommit.this.committerDate = baseline.getDate();
+				ClearCaseCommit.this.setCommitterDate(baseline.getDate());
 	
 				ClearCaseCommit.this.title = ( baseline.getComment() != null ? baseline.getComment() : baseline.getFullyQualifiedName() );
 				ChangeSet2 changeset = ChangeSet2.getChangeSet( baseline, null, ccbranch.getOuputSnapshotView().getViewRoot() );

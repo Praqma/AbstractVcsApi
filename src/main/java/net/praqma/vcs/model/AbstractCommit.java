@@ -2,8 +2,6 @@ package net.praqma.vcs.model;
 
 import java.util.Date;
 
-import net.praqma.util.debug.Logger;
-import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
 import net.praqma.vcs.model.extensions.CommitLoadListener;
 
 public abstract class AbstractCommit implements Comparable<AbstractCommit> {
@@ -16,13 +14,9 @@ public abstract class AbstractCommit implements Comparable<AbstractCommit> {
 	protected Date authorDate;
 	
 	protected String committer;
-	protected Date committerDate;
+	private Date committerDate;
 	
 	protected int number = -1;
-	
-	private Logger logger = Logger.getLogger();
-	
-	//protected List<ChangeSetElement> changeSet = new ArrayList<ChangeSetElement>();
 	protected ChangeSet changeSet = new ChangeSet();
 	
 	protected AbstractBranch branch;
@@ -54,6 +48,20 @@ public abstract class AbstractCommit implements Comparable<AbstractCommit> {
 		
 		load.postLoad( status );
 	}
+
+    /**
+     * @return the committerDate
+     */
+    public Date getCommitterDate() {
+        return committerDate;
+    }
+
+    /**
+     * @param committerDate the committerDate to set
+     */
+    public void setCommitterDate(Date committerDate) {
+        this.committerDate = committerDate;
+    }
 	
 	public abstract class Load {
 		public boolean preLoad() {
@@ -97,6 +105,7 @@ public abstract class AbstractCommit implements Comparable<AbstractCommit> {
 		return this.number;
 	}
 	
+    @Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 
@@ -117,8 +126,9 @@ public abstract class AbstractCommit implements Comparable<AbstractCommit> {
 		return sb.toString();
 	}
 	
+    @Override
 	public int compareTo( AbstractCommit other ) {
-		return this.committerDate.compareTo( other.getAuthorDate() ); 
+		return this.committerDate.compareTo( other.getCommitterDate()); 
 	}
 	
 	public String getAuthor() {

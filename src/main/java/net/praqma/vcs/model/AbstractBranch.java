@@ -128,9 +128,9 @@ public abstract class AbstractBranch implements Cleanable, Serializable {
 	
 	public abstract void checkoutCommit( AbstractCommit commit ) throws UnableToCheckoutCommitException;
 	
-	public abstract List<AbstractCommit> getCommits();
-	public abstract List<AbstractCommit> getCommits( boolean load );
-	public abstract List<AbstractCommit> getCommits( boolean load, Date offset );
+	public abstract List<? extends AbstractCommit> getCommits();
+	public abstract List<? extends AbstractCommit> getCommits( boolean load );
+	public abstract List<? extends AbstractCommit> getCommits( boolean load, Date offset );
 	
 	public AbstractCommit getLastCommit() {
 		return lastCommit;

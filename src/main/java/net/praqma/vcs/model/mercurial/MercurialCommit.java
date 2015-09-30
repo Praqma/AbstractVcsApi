@@ -4,15 +4,10 @@ import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
@@ -42,6 +37,7 @@ public class MercurialCommit extends AbstractCommit {
 		return null;
 	}
 	
+    @Override
 	public void load() {
 		LoadImpl load = new LoadImpl();
 		doLoad( load );
@@ -75,7 +71,7 @@ public class MercurialCommit extends AbstractCommit {
 				date = new Date();
 			}
 			MercurialCommit.this.authorDate = date;
-			MercurialCommit.this.committerDate = date;
+			MercurialCommit.this.setCommitterDate(date);
 
 			MercurialCommit.this.title = result.get( 4 );
 			

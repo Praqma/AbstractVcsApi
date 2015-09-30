@@ -13,6 +13,11 @@ public class Repository implements Serializable {
 	 */
 	private String name = "";
 	
+    /**
+     * example: origin https://some.repo.git
+     * @param location
+     * @param name 
+     */
 	public Repository( String location, String name ) {
 		this.name = name;
 		this.location = location;
@@ -25,7 +30,8 @@ public class Repository implements Serializable {
 	public String getName() {
 		return name;
 	}
-	
+    
+	@Override
 	public String toString() {
 		return "(" + name + ")" + location;
 	}

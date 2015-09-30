@@ -13,10 +13,7 @@ import net.praqma.clearcase.ucm.UCMException;
 import net.praqma.clearcase.ucm.UCMException.UCMType;
 import net.praqma.clearcase.ucm.entities.Activity;
 import net.praqma.clearcase.ucm.entities.Baseline;
-import net.praqma.clearcase.ucm.entities.Stream;
 import net.praqma.clearcase.ucm.entities.Version;
-import net.praqma.clearcase.ucm.utils.BaselineList;
-import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
@@ -29,9 +26,6 @@ import net.praqma.vcs.model.exceptions.UnsupportedBranchException;
 public class ClearCaseReplay extends AbstractReplay {
 	
 	protected ClearCaseBranch ccBranch;
-	
-	private Logger logger = Logger.getLogger();
-
 	public ClearCaseReplay( ClearCaseBranch branch ) {
 		super( branch );
 		
@@ -58,11 +52,12 @@ public class ClearCaseReplay extends AbstractReplay {
 		doReplay( new ClearCaseReplayImpl( commit ) );
 	}
 	
-	public class ClearCaseReplayImpl extends Replay{
+	public class ClearCaseReplayImpl extends Replay {
 		public ClearCaseReplayImpl( AbstractCommit commit ) {
 			super( commit );
 		}
 
+        @Override
 		public boolean setup() {
 			/* Update? Yes, but we must rebase first! NO! */
 			/*
@@ -82,11 +77,13 @@ public class ClearCaseReplay extends AbstractReplay {
 			} catch( Exception e ) {
 				logger.warning( "I tried to rebase, but got the error: " + e.getMessage() );
 			}
-			*/
+			*/            
 			ccBranch.update();
 			
-			try {
-				Activity.create( null, ccBranch.getPVob(), true, "CCReplay: " + commit.getKey(), ccBranch.getInputSnapshotView().getViewRoot() );
+			try {                
+                String activityName = "CCReplay: " + commit.getKey();
+                logger.debug("Creating activity: "+activityName);
+				Activity.create( "id_"+commit.getKey(), ccBranch.getPVob(), true, activityName, ccBranch.getInputSnapshotView().getViewRoot() );
 			} catch (UCMException e1) {
 				logger.error( "ClearCase Activity could not be created: " + e1.getMessage() );
 				return false;
@@ -111,6 +108,7 @@ public class ClearCaseReplay extends AbstractReplay {
 			return new File( ccBranch.getInputPath(), cse.getFile().toString() );
 		}
 		
+        @Override
 		public boolean replay() {
 			List<ChangeSetElement> cs = commit.getChangeSet().asList();
 			
@@ -132,7 +130,6 @@ public class ClearCaseReplay extends AbstractReplay {
 					} catch (UCMException e1) {
 						logger.error( "ClearCase could not remove name: " + e1.getMessage() );
 						success = false;
-						continue;
 					}
 					break;
 					

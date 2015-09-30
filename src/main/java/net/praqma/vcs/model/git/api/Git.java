@@ -199,6 +199,21 @@ public class Git {
 			throw new GitException( "Could not pull " + branch + " from " + location + " : " + e.getMessage() );
 		}
 	}
+    
+    /**
+     * Example would be `git push origin master`. Context is from where we run the command
+     * @param remote
+     * @param branch
+     * @param context 
+     * @throws net.praqma.vcs.model.git.exceptions.GitException 
+     */
+    public static void push( String remote, String branch, File context ) throws GitException {
+		try {
+			CommandLine.run( "git push " + remote + " " + branch, context );
+		} catch( AbnormalProcessTerminationException e ) {
+			throw new GitException( "Could not pull " + branch + " from " + remote + " : " + e.getMessage() );
+		}        
+    }
 	
 	public static void remove( File file, File viewContext ) throws GitException {
 		try {

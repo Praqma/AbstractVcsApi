@@ -71,6 +71,7 @@ public class GitBranch extends AbstractBranch{
 		}
 	}
 	
+    @Override
 	public boolean exists() {
 		try {
 			return Git.branchExists( this.name, localRepositoryPath );
@@ -85,6 +86,7 @@ public class GitBranch extends AbstractBranch{
 			super( get );
 		}
 
+        @Override
 		public boolean initialize() throws ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException {
 
 			/* Try to switch branch */
@@ -164,8 +166,7 @@ public class GitBranch extends AbstractBranch{
 			}
 			
 			try {
-				Git.pull( parent.getLocation(), name, localRepositoryPath );
-				//Git.checkoutRemoteBranch( name, parent.getName() + "/" + name, localRepositoryPath );
+				Git.pull( parent.getLocation(), name, localRepositoryPath );				
 			} catch (GitException e) {
 				System.err.println( "Could not pull git branch" );
 				logger.warning( "Could not pull git branch" );

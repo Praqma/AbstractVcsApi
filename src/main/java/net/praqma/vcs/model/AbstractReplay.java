@@ -44,6 +44,7 @@ public abstract class AbstractReplay {
 		
 		if( status ) {
 			if( replay.commit() ) {
+                logger.debug("Replay: Trigger commit created listener");
 				ReplayListener.runCommitCreatedListener( this, replay.getCommit() );
 			}
 		}
@@ -53,7 +54,7 @@ public abstract class AbstractReplay {
 		ReplayListener.runPostReplayListener( this, replay.getCommit(), status );
 	}
 	
-	protected abstract class Replay{
+	protected abstract class Replay {
 		protected AbstractCommit commit;
 		
 		public Replay( AbstractCommit commit ) {
