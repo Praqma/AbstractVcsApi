@@ -18,7 +18,7 @@ public abstract class AbstractCommit implements Comparable<AbstractCommit>, Seri
 	private Date committerDate;
 	
 	protected int number = -1;
-	protected ChangeSet changeSet = new ChangeSet();
+	protected transient ChangeSet changeSet = new ChangeSet();
 	
 	protected AbstractBranch branch;
 	
