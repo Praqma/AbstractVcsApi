@@ -1,17 +1,17 @@
 package net.praqma.vcs.util.configuration.implementation;
 
 import java.io.File;
+import java.util.logging.Logger;
 
 import org.w3c.dom.Element;
 
-import net.praqma.util.debug.Logger;
 import net.praqma.vcs.util.configuration.AbstractConfiguration;
 import net.praqma.vcs.util.configuration.AbstractConfigurationReader;
 import net.praqma.vcs.util.configuration.exception.ConfigurationException;
 
 public class ClearCaseVobComponentConfigurationReader extends AbstractConfigurationReader {
 
-	private static Logger logger = Logger.getLogger();
+	private static final Logger logger = Logger.getLogger(ClearCaseVobComponentConfigurationReader.class.getName());
 	
 	public ClearCaseVobComponentConfigurationReader() {
 		super();
@@ -42,7 +42,7 @@ public class ClearCaseVobComponentConfigurationReader extends AbstractConfigurat
 			pstream = getFirstElement( element, "parentStream" ).getTextContent();
 		} catch( Exception e ) {
 			/* no parent given */
-			logger.debug( "No parent given" );
+			logger.fine( "No parent given" );
 		}
 		
 		//ClearCaseConfiguration config = new ClearCaseConfiguration( new File( path ), viewtag, vob, pvob, fbaseline, pstream, streamName );

@@ -6,7 +6,8 @@
 package net.praqma.vcs.model.extensions;
 
 import java.io.File;
-import net.praqma.util.debug.Logger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
 import net.praqma.vcs.model.git.api.Git;
@@ -18,7 +19,7 @@ import net.praqma.vcs.model.git.exceptions.GitException;
  */
 public class GitPublisherListener extends ReplayListener {
     
-    private static final Logger log = Logger.getLogger();
+    private static final Logger log = Logger.getLogger(GitPublisherListener.class.getName());
     
     public final String location,branch;
     public final File context;
@@ -37,12 +38,12 @@ public class GitPublisherListener extends ReplayListener {
     @Override
     public void onCommitCreated(AbstractReplay replay, AbstractCommit commit) {
         try {
-            log.debug( String.format( "Push commit:%n%s", commit) );
+            log.fine( String.format( "Push commit:%n%s", commit) );
             Git.push(location, branch, context);
         } catch (GitException ex) {
-            log.fatal("Failed to push commits to repo: "+ex.getMessage());
+            log.log(Level.SEVERE, "Failed to push commits to repo", ex);
         }
- 
-    }
-  
+
+    }  
 }
+

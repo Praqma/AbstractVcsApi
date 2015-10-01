@@ -7,10 +7,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import net.praqma.util.debug.Logger;
 import net.praqma.util.execute.AbnormalProcessTerminationException;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.VCSException.FailureType;
@@ -19,7 +18,7 @@ import net.praqma.vcs.util.CommandLine;
 
 public class Git {
 
-	private static Logger logger = Logger.getLogger();
+	private static final Logger logger = Logger.getLogger(Git.class.getName());
 	private static final Pattern rx_remoteExists = Pattern.compile( "^.*?remote \\w+ already exists.*?$" );
 	private static final SimpleDateFormat datetimeformat  = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
 	
@@ -89,11 +88,11 @@ public class Git {
 		try {
 			Map<String, String> vars = new HashMap<String, String>();
 			if( date != null ) {
-				logger.debug( "Date is not null: " + date );
+				logger.fine( "Date is not null: " + date );
 				vars.put( "GIT_AUTHOR_DATE", datetimeformat.format( date ) );
 				vars.put( "GIT_COMMITTER_DATE", datetimeformat.format( date ) );
 			} else {
-				logger.debug( "Date is null" );
+				logger.fine( "Date is null" );
 			}
 			/* Check author format */
 			if( author != null ) {

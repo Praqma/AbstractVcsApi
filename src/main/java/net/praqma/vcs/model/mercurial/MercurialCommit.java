@@ -8,8 +8,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.ChangeSetElement;
@@ -20,7 +21,7 @@ import net.praqma.vcs.util.CommandLine;
 
 public class MercurialCommit extends AbstractCommit {
 
-	private Logger logger = Logger.getLogger();
+	private static final Logger logger = Logger.getLogger(MercurialCommit.class.getName());
 	
 	/* NOTE THAT THE HG MANUAL SAYS IT HAS SECONDS, BUT THE OUTPUT HASN'T */
 	private static final SimpleDateFormat isodate  = new SimpleDateFormat( "yyyy-MM-dd HH:mm Z" );
@@ -49,8 +50,9 @@ public class MercurialCommit extends AbstractCommit {
 			super();
 		}
 
+        @Override
 		public boolean perform() {
-			logger.debug( "Mercurial: perform load" );
+			logger.fine( "Mercurial: perform load" );
 			
 			
 			String cmd = "hg log --rev " + MercurialCommit.this.key +  " --template=\"{parents}\\n{author}\\n{date|isodate}\\n{rev}\\n{desc}\"";
@@ -61,13 +63,11 @@ public class MercurialCommit extends AbstractCommit {
 			MercurialCommit.this.committer = result.get( 1 );
 			Date date = null;
 			try {
-				logger.debug( "Trying to parse " + result.get( 2 ) );
-				//date = DateFormat.getInstance().parse( result.get( 2 ) );
+				logger.fine( "Trying to parse " + result.get( 2 ) );
 				date = isodate.parse( result.get( 2 ) );
-				logger.debug( "Success" );
+				logger.fine( "Success" );
 			} catch (ParseException e1) {
-				logger.debug( "Failure" );
-				logger.warning( "Could not parse date. Defaulting to now: " + e1.getMessage() );
+                logger.log(Level.WARNING, "Unable to parse date", e1);
 				date = new Date();
 			}
 			MercurialCommit.this.authorDate = date;
@@ -92,7 +92,7 @@ public class MercurialCommit extends AbstractCommit {
 				return false;
 			}
 			
-			logger.debug( "CS: " + files1 );
+			logger.fine( "CS: " + files1 );
 			
 			List<String[]> filesmap = new ArrayList<>();
 			Set<String> removes = new HashSet<>();
@@ -121,7 +121,7 @@ public class MercurialCommit extends AbstractCommit {
 				String file = filesmap.get( i )[1];
 				String mode = filesmap.get( i )[0];
 				
-				logger.debug( "FILE: " + file + "[" + mode + "]" );
+				logger.fine( "FILE: " + file + "[" + mode + "]" );
 				
 				/* Added */
 				if( mode.equals( "A" ) ) {
@@ -129,7 +129,7 @@ public class MercurialCommit extends AbstractCommit {
 					if( i + 1 < filesmap.size() && filesmap.get( i + 1 )[0].equals( " " ) ) {
 						String src = filesmap.get( i + 1 )[1];
 						
-						logger.debug( "Moving " + src + " to " + file );
+						logger.fine( "Moving " + src + " to " + file );
 						
 						ChangeSetElement cse = new ChangeSetElement( new File( file ), Status.RENAMED );
 						cse.setRenameFromFile( new File( src ) );
@@ -139,7 +139,7 @@ public class MercurialCommit extends AbstractCommit {
 						
 					/* Just a plain add */
 					} else {
-						logger.debug( "Adding " + file );
+						logger.fine( "Adding " + file );
 						MercurialCommit.this.changeSet.put( file, new ChangeSetElement( new File( file ), Status.CREATED ) );
 					}
 					
