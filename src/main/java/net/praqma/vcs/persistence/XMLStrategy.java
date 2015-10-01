@@ -5,16 +5,15 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.w3c.dom.Element;
-
-import net.praqma.util.debug.Logger;
 import net.praqma.util.xml.XML;
 import net.praqma.vcs.model.AbstractBranch;
 
 public class XMLStrategy extends XML implements PersistenceStrategy {
 	
-	private static Logger logger = Logger.getLogger();
+	private static final Logger logger = Logger.getLogger(XMLStrategy.class.getName());
 	
 	private SimpleDateFormat format  = new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
 	private File file;
@@ -25,7 +24,7 @@ public class XMLStrategy extends XML implements PersistenceStrategy {
 	}
 	
 	public Element getBranch( AbstractBranch branch ) {
-		Element b = null;
+		Element b;
 		List<Element> branches = this.getElementsWithAttribute( getRoot(), "branch", "path", branch.getPath().toString() );
 		if( branches.size() < 1 ) {
 			b = addElement( "branch" );
@@ -41,7 +40,7 @@ public class XMLStrategy extends XML implements PersistenceStrategy {
 	@Override
 	public void setLastCommitDate( AbstractBranch branch, Date date ) {
 		Element b = getBranch( branch );
-		Element last = null;
+		Element last;
 		try {
 			last = getFirstElement( b, "last" );
 		} catch( Exception e ) {

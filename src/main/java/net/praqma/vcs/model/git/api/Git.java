@@ -54,7 +54,16 @@ public class Git {
 			throw new GitException( "Could not change to branch " + branchName + ": " + e.getMessage() );
 		}	
 	}
-	
+
+    public static void changeBranchAndCreate( String branchName, File viewContext ) throws GitException {
+		try {
+			CommandLine.run( "git checkout -b " + branchName, viewContext );
+		} catch( AbnormalProcessTerminationException e ) {
+			throw new GitException( "Could not change to branch " + branchName + ": " + e.getMessage() );
+		}	
+	}
+    
+    
 	private static final Pattern rx_branchExists = Pattern.compile( "^.*?branch \\w+ already exists.*?$" );
 	
 	public static void checkoutRemoteBranch( String branchName, String remoteBranchName, File viewContext ) throws GitException, ElementAlreadyExistsException {
@@ -134,8 +143,6 @@ public class Git {
 		}
 	}
 	
-	//private static final Pattern rx_repoExists = Pattern.compile( "^.*?remote \\w+ already exists.*?$" );
-	
 	public static void initialize( File viewContext ) throws GitException {
 		try {
 			CommandLine.run( "git init", viewContext );
@@ -147,7 +154,7 @@ public class Git {
 	private static final Pattern rx_findBranches = Pattern.compile( "^.*?(\\s+)\\s*$" );
 	
 	public static List<String> listBranches( File viewContext ) throws GitException {
-		List<String> branches = new ArrayList<String>();
+		List<String> branches = new ArrayList<>();
 		try {
 			List<String> list = CommandLine.run( "git branch", viewContext ).stdoutList;
 			
@@ -190,6 +197,21 @@ public class Git {
 			throw new GitException( "Could not pull " + branch + " from " + location + " : " + e.getMessage() );
 		}
 	}
+    
+    /**
+     * Example would be `git push origin master`. Context is from where we run the command
+     * @param remote
+     * @param branch
+     * @param context 
+     * @throws net.praqma.vcs.model.git.exceptions.GitException 
+     */
+    public static void push( String remote, String branch, File context ) throws GitException {
+		try {
+			CommandLine.run( "git push " + remote + " " + branch, context );
+		} catch( AbnormalProcessTerminationException e ) {
+			throw new GitException( "Could not pull " + branch + " from " + remote + " : " + e.getMessage() );
+		}        
+    }
 	
 	public static void remove( File file, File viewContext ) throws GitException {
 		try {

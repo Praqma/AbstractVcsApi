@@ -72,6 +72,7 @@ public class MercurialConfiguration extends AbstractConfiguration {
 		return new MercurialReplay( getBranch() );
 	}
 	
+    @Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		

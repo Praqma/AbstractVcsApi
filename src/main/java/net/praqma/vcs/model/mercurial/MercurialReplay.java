@@ -3,6 +3,7 @@ package net.praqma.vcs.model.mercurial;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
@@ -15,7 +16,7 @@ import net.praqma.vcs.model.mercurial.api.Mercurial;
 import net.praqma.vcs.model.mercurial.exceptions.MercurialException;
 import net.praqma.vcs.util.IO;
 
-public class MercurialReplay extends AbstractReplay{
+public class MercurialReplay extends AbstractReplay {
 
 	public MercurialReplay( MercurialBranch branch ) {
 		super( branch );
@@ -64,7 +65,7 @@ public class MercurialReplay extends AbstractReplay{
 				
 				switch( cse.getStatus() ) {
 				case CREATED:
-					logger.debug( "Create element" );
+					logger.fine( "Create element" );
 					try {
 						targetfile.getParentFile().mkdirs();
 						targetfile.createNewFile();
@@ -73,18 +74,18 @@ public class MercurialReplay extends AbstractReplay{
 						logger.warning( "Could not create file: " + e.getMessage() );
 						/* Continue anyway? */
 					} catch (MercurialException e) {
-						logger.error( "Could not add " + targetfile + " to Mercurial: " + e.getMessage() );
+						logger.log(Level.WARNING, "Could not add " + targetfile + " to Mercurial", e);
 						success = false;
 						continue;
 					}
 					
 				case CHANGED:
-					logger.debug( "Change element" );
+					logger.fine( "Change element" );
 					IO.write( sourcefile, targetfile );
 					break;
 					
 				case DELETED:
-					logger.debug( "Delete element" );
+					logger.fine( "Delete element" );
 					try {
 						Mercurial.remove( targetfile, branch.getPath() );
 					} catch (MercurialException e) {
@@ -94,14 +95,14 @@ public class MercurialReplay extends AbstractReplay{
 					break;
 					
 				case RENAMED:
-					logger.debug( "Rename element : " + cse );
+					logger.fine( "Rename element : " + cse );
 					File oldfile = new File( branch.getPath(), cse.getRenameFromFile().toString() );
 					/* Write before rename */
 					IO.write( sourcefile, oldfile );
 					
 					/* Make sure the target directory exists */
 					if( !targetfile.getParentFile().exists() ) {
-						logger.debug( "The directory " + targetfile.getParentFile() + " does not exist. Creating it." );
+						logger.fine( "The directory " + targetfile.getParentFile() + " does not exist. Creating it." );
 						targetfile.getParentFile().mkdirs();
 					}
 					
@@ -115,10 +116,9 @@ public class MercurialReplay extends AbstractReplay{
 				}
 				
 				try {
-					logger.debug( "STATUS: " + Mercurial.status( branch.getPath() ) );
+					logger.fine( "STATUS: " + Mercurial.status( branch.getPath() ) );
 				} catch (MercurialException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					logger.log(Level.SEVERE, "Unable to run hg -status", e);
 				}
 			}
 			
@@ -135,7 +135,7 @@ public class MercurialReplay extends AbstractReplay{
 				if( e.getType().equals( FailureType.NOTHING_CHANGED ) ) {
 					logger.info( "No Mercurial commit created, nothing changed" );
 				} else {
-					logger.error( "No Mercurial commit created, " + e.getMessage() );
+					logger.log(Level.SEVERE,  "No Mercurial commit created", e.getMessage());
 				}
 				return false;
 			}

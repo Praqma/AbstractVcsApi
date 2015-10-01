@@ -33,9 +33,7 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	private String parentStreamName;
 
 	private boolean dontCare = false;
-
-	/* Generated */
-
+    
 	transient private PVob pvob;
 	transient private Stream parentStream;
 	transient private Baseline foundationBaseline;
@@ -44,7 +42,6 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 
 	public ClearCaseConfiguration( String pathName, String viewtag, String pvobName, String foundationBaselineName, String parentStreamName, String streamName ) throws ConfigurationException {
 		super( pathName );
-
 		this.pvobName = pvobName;
 		this.viewtagIn = viewtag;
 		this.foundationBaselineName = foundationBaselineName;
@@ -54,25 +51,19 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 
 	public ClearCaseConfiguration( String pathNameIn, String viewtagIn, String streamNameIn, String pathNameOut, String viewtagOut, String streamNameOut, String pvobName, String foundationBaselineName, String parentStreamName ) throws ConfigurationException {
 		super( pathNameIn );
-
 		this.pathNameOut = pathNameOut;
 		this.viewtagIn = viewtagIn;
 		this.viewtagOut = viewtagOut;
 		this.streamNameOut = streamNameOut;
 		this.streamNameIn = streamNameIn;
-
 		this.pvobName = pvobName;
-
 		this.foundationBaselineName = foundationBaselineName;
-
 		this.parentStreamName = parentStreamName;
 	}
 
 	public ClearCaseConfiguration( File path, String viewtag, PVob pvob, Baseline baseline, Stream parentStream, Stream stream ) throws ConfigurationException {
 		super( path );
-
 		this.pvob = pvob;
-
 		this.viewtagIn = viewtag;
 		this.foundationBaseline = baseline;
 		this.streamNameIn = stream.getShortname();
@@ -107,7 +98,7 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 	}
 
 	public void setParentStream( String stream ) throws ConfigurationException {
-		if( stream != null && stream.length() > 0 ) {
+		if(stream != null && stream.length() > 0 ) {
 			try {
 				parentStream = Stream.get( stream, pvob );
 			} catch( UnableToInitializeEntityException e ) {
@@ -171,6 +162,7 @@ public class ClearCaseConfiguration extends AbstractConfiguration {
 		this.dontCare = true;
 	}
 
+    @Override
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 

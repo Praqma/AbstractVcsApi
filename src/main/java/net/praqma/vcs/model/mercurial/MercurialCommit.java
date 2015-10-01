@@ -71,7 +71,7 @@ public class MercurialCommit extends AbstractCommit {
 				date = new Date();
 			}
 			MercurialCommit.this.authorDate = date;
-			MercurialCommit.this.committerDate = date;
+			MercurialCommit.this.setCommitterDate(date);
 
 			MercurialCommit.this.title = result.get( 4 );
 			

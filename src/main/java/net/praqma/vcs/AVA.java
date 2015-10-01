@@ -18,6 +18,13 @@ public class AVA {
 	private AVA( PersistenceStrategy persistence ) {
 		this.persistence = persistence;
 	}
+    
+    public static AVA getInstance() {
+        if (instance != null && instance.persistence != null) {
+            return instance;
+        }
+        return null;
+    }
 	
     public static AVA getInstance(PersistenceStrategy persistenceStrategy) {
         if(instance == null) {

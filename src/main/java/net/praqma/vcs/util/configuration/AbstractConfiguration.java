@@ -2,8 +2,8 @@ package net.praqma.vcs.util.configuration;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.logging.Logger;
 
-import net.praqma.util.debug.Logger;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractReplay;
 import net.praqma.vcs.model.Repository;
@@ -14,7 +14,7 @@ import net.praqma.vcs.util.configuration.exception.ConfigurationException;
 
 public abstract class AbstractConfiguration implements Serializable {
 	private static final long serialVersionUID = -812250782421147883L;
-	private static Logger logger = Logger.getLogger();
+	private static final Logger logger = Logger.getLogger(AbstractConfiguration.class.getName());
 
 	transient protected File path;
 	protected String pathName;
@@ -41,8 +41,8 @@ public abstract class AbstractConfiguration implements Serializable {
 		this.parent = new Repository( parentLocation, parentName );
 	}
 	
-	public void generate() throws ConfigurationException {
-		logger.debug( "Creating path " + pathName );
+	public void generate() throws ConfigurationException {        
+		logger.fine( String.format( "Creating path %s", pathName) );
 		this.path = new File( pathName );
 	}
 	
@@ -73,6 +73,7 @@ public abstract class AbstractConfiguration implements Serializable {
 	public abstract AbstractBranch getBranch() throws ElementNotCreatedException, ElementDoesNotExistException;
 	public abstract AbstractReplay getReplay() throws UnsupportedBranchException, ElementNotCreatedException, ElementDoesNotExistException;
 	
+    @Override
 	public String toString() {
 		return "Path: " + getPathName() + "\n";
 	}

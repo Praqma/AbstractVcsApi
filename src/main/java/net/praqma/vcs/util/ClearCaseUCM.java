@@ -36,17 +36,37 @@ public class ClearCaseUCM {
 		File parentView = view.getParentFile();
 		
 		ClearCaseConfiguration config = null;
+        
+        String foundationBaselineShort = stream.getFoundationBaseline().getShortname();
+        String pvob = stream.getPVob().toString();
+        String snapViewTag = snapview.getViewtag();
+        String streamShort = stream.getShortname();
 		
-		if( input ) {
-			logger.debug( "This is an input" );
-			config = new ClearCaseConfiguration( view.toString(), snapview.getViewtag(), stream.getShortname(), 
-					                             new File( parentView, view.getName() + "_out" ).toString(), snapview.getViewtag() + "_out", stream.getShortname() + "_out", 
-					                             stream.getPVob().toString(), stream.getFoundationBaseline().getShortname(), null );
+		if( input ) {            
+			config = new ClearCaseConfiguration( 
+                    new File( parentView, view.getName() + "_in" ).toString(),
+                    snapViewTag + "_in", 
+                    streamShort + "_in",
+                    view.toString(),
+                    snapViewTag,
+                    streamShort,                    
+                    pvob,
+                    foundationBaselineShort,
+                    null 
+            );
+            
 		} else {
-			logger.debug( "This is an output" );
-			config = new ClearCaseConfiguration( new File( parentView, view.getName() + "_in" ).toString(), snapview.getViewtag() + "_in", stream.getShortname() + "_in",
-					                             view.toString(), snapview.getViewtag(), stream.getShortname(),                    
-                                                 stream.getPVob().toString(), stream.getFoundationBaseline().getShortname(), null );
+			config = new ClearCaseConfiguration( 
+                    view.toString(), 
+                    snapViewTag,
+                    streamShort, 
+                    new File( parentView, view.getName()).toString(),
+                    snapViewTag,
+                    streamShort,
+                    pvob,
+                    foundationBaselineShort,
+                    null 
+            );
 		}
 		
 		return config;

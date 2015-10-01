@@ -3,6 +3,7 @@ package net.praqma.vcs.model.git;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
 
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
@@ -14,8 +15,9 @@ import net.praqma.vcs.model.git.api.Git;
 import net.praqma.vcs.model.git.exceptions.GitException;
 import net.praqma.vcs.util.IO;
 
-public class GitReplay extends AbstractReplay{
+public class GitReplay extends AbstractReplay {
 
+    
 	public GitReplay( GitBranch branch ) {
 		super( branch );
 	}
@@ -57,7 +59,7 @@ public class GitReplay extends AbstractReplay{
 				
 				switch( cse.getStatus() ) {
 				case CREATED:
-					logger.debug( "Create element" );
+					logger.fine( "Create element" );
 					try {
 						targetfile.getParentFile().mkdirs();
 						targetfile.createNewFile();
@@ -66,19 +68,31 @@ public class GitReplay extends AbstractReplay{
 						logger.warning( "Could not create file: " + e.getMessage() );
 						/* Continue anyway */
 					} catch (GitException e) {
-						logger.error( "Could not add " + targetfile + " to git" );
+						logger.log(Level.SEVERE, "Could not add " + targetfile + " to git", e);
 						success = false;
 						continue;
 					}
 					
 				case CHANGED:
-					logger.debug( "Change element" );
-					IO.write( sourcefile, targetfile );
+					logger.fine( "Change element" );
+                    if(!targetfile.exists()) {
+                        logger.warning("Changed file...the file is not there??");
+                        try {
+                            targetfile.getParentFile().mkdirs();
+                            targetfile.createNewFile();                            
+                            IO.write( sourcefile, targetfile );
+                            Git.add( targetfile, branch.getPath() );
+                        } catch (IOException | GitException e) {
+                           logger.log(Level.SEVERE, "The file "+ targetfile + "is not present, even though it has changes. And it cannot be creted", e);
+                        }
+                    } else {
+                        IO.write( sourcefile, targetfile );
+                    }
 					
 					break;
 					
 				case DELETED:
-					logger.debug( "Delete element" );
+					logger.fine( "Delete element" );
 					try {
 						Git.remove( targetfile, branch.getPath() );
 					} catch (GitException e) {
@@ -88,7 +102,7 @@ public class GitReplay extends AbstractReplay{
 					break;
 					
 				case RENAMED:
-					logger.debug( "Rename element" );
+					logger.fine( "Rename element" );
 					File oldfile = new File( branch.getPath(), cse.getRenameFromFile().toString() );
 					
 					/* Write before rename */
@@ -96,7 +110,7 @@ public class GitReplay extends AbstractReplay{
 					
 					/* Make sure the target directory exists */
 					if( !targetfile.getParentFile().exists() ) {
-						logger.debug( "The directory " + targetfile.getParentFile() + " does not exist. Creating it." );
+						logger.fine( "The directory " + targetfile.getParentFile() + " does not exist. Creating it." );
 						targetfile.getParentFile().mkdirs();
 					}
 					
@@ -115,10 +129,11 @@ public class GitReplay extends AbstractReplay{
 			
 			return success;
 		}
-				
+
         @Override
 		public boolean commit() {
 			try {
+                logger.fine("Creating commit: "+commit.getTitle());
 				Git.createCommit( commit.getTitle(), commit.getAuthor(), commit.getAuthorDate(), branch.getPath() );
 				return true;
 			} catch (GitException e) {

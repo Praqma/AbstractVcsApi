@@ -5,13 +5,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.praqma.util.debug.Logger;
 import net.praqma.vcs.VersionControlSystems;
 import net.praqma.vcs.model.exceptions.ElementAlreadyExistsException;
 import net.praqma.vcs.model.exceptions.ElementDoesNotExistException;
 import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
-import net.praqma.vcs.model.exceptions.OperationNotSupportedException;
 import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
 import net.praqma.vcs.model.extensions.PullListener;
 import net.praqma.vcs.model.interfaces.Cleanable;
@@ -30,9 +30,9 @@ public abstract class AbstractBranch implements Cleanable, Serializable {
 	 */
 	protected String defaultBranch;
 	
-	transient protected List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
+	transient protected List<AbstractCommit> commits = new ArrayList<>();
 	
-	transient protected Logger logger = Logger.getLogger();
+	protected static final Logger logger = Logger.getLogger(AbstractBranch.class.getName());
 	
 	public AbstractBranch() throws ElementNotCreatedException {}
 	
@@ -56,10 +56,8 @@ public abstract class AbstractBranch implements Cleanable, Serializable {
 	
 	/**
 	 * Initialize the given branch
-	 * @param branch
 	 * @throws ElementAlreadyExistsException 
-	 * @throws ElementNotCreatedException 
-	 * @throws OperationNotSupportedException
+	 * @throws ElementNotCreatedException
 	 */
 	public abstract void initialize() throws ElementNotCreatedException, ElementAlreadyExistsException;
 	public abstract void initialize( boolean get ) throws ElementNotCreatedException, ElementAlreadyExistsException, ElementDoesNotExistException;
@@ -82,7 +80,7 @@ public abstract class AbstractBranch implements Cleanable, Serializable {
 			
 			if( defaultBranch != null && ( AbstractBranch.this.name == null || AbstractBranch.this.name.length() == 0 ) ) {
 				AbstractBranch.this.name = defaultBranch;
-				logger.debug( "Defaulting to " + defaultBranch );
+				logger.log(Level.FINE , String.format("Defaulting to %s", defaultBranch)) ;
 			}			
 		}
 		
@@ -128,9 +126,9 @@ public abstract class AbstractBranch implements Cleanable, Serializable {
 	
 	public abstract void checkoutCommit( AbstractCommit commit ) throws UnableToCheckoutCommitException;
 	
-	public abstract List<AbstractCommit> getCommits();
-	public abstract List<AbstractCommit> getCommits( boolean load );
-	public abstract List<AbstractCommit> getCommits( boolean load, Date offset );
+	public abstract List<? extends AbstractCommit> getCommits();
+	public abstract List<? extends AbstractCommit> getCommits( boolean load );
+	public abstract List<? extends AbstractCommit> getCommits( boolean load, Date offset );
 	
 	public AbstractCommit getLastCommit() {
 		return lastCommit;

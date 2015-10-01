@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.praqma.clearcase.PVob;
 import net.praqma.clearcase.Rebase;
@@ -14,7 +16,6 @@ import net.praqma.clearcase.ucm.utils.BaselineList;
 import net.praqma.clearcase.ucm.utils.filters.AfterDate;
 import net.praqma.clearcase.ucm.view.SnapshotView;
 import net.praqma.clearcase.ucm.view.UpdateView;
-import net.praqma.util.debug.Logger;
 import net.praqma.vcs.VersionControlSystems;
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
@@ -28,7 +29,7 @@ import net.praqma.vcs.model.exceptions.UnableToCheckoutCommitException;
  * @author wolfgang
  *
  */
-public class ClearCaseBranch extends AbstractBranch{
+public class ClearCaseBranch extends AbstractBranch {
 	
 	/**
 	 * The input part of the ClearCase branch
@@ -60,7 +61,7 @@ public class ClearCaseBranch extends AbstractBranch{
 	 */
 	protected boolean dontCare = false;
 	
-	transient protected static Logger logger = Logger.getLogger();
+	protected static final Logger logger = Logger.getLogger(ClearCaseBranch.class.getName());
 	
 	/**
 	 * If the Stream does not exist, it will be created as a child of the Stream parent.
@@ -145,8 +146,7 @@ public class ClearCaseBranch extends AbstractBranch{
 		try {
 			initialize( false );
 		} catch( ElementDoesNotExistException e ) {
-			/* This shouldn't be possible */
-			logger.fatal( "FAIL!! Shouldn't throw exist exceptions!!!" );
+			logger.severe("Fail: At this point this should not be possible" );
 		}
 	}
 	
@@ -160,40 +160,32 @@ public class ClearCaseBranch extends AbstractBranch{
 	protected class InitializeImpl extends Initialize {
 		public InitializeImpl( boolean get ) {
 			super( get );
-			logger.debug( "InitializeIMPL" );
+			logger.fine( "InitializeIMPL" );
 		}
 
+        @Override
 		public boolean initialize() throws ElementDoesNotExistException, ElementNotCreatedException, ElementAlreadyExistsException {
-
 			/* TODO Make exception handling less verbose! If possible */
-			logger.debug( "Trying to initialize input" );
+			logger.fine( "Trying to initialize input" );
 			try {
 				if( input != null ) {
-					logger.debug( "Initializing input" );
+					logger.fine( "Initializing input" );
 					input.initialize( get );
 				}
-			} catch( ElementDoesNotExistException e ) {
+			} catch( ElementDoesNotExistException | ElementNotCreatedException | ElementAlreadyExistsException e ) {
 				if( !dontCare ) {
 					throw e;
 				}
-			} catch( ElementNotCreatedException e ) {
-				if( !dontCare ) {
-					throw e;
-				}
-			} catch( ElementAlreadyExistsException e ) {
-				if( !dontCare ) {
-					throw e;
-				}
-			}
+			} 
 			
-			logger.debug( "Trying to initialize output" );
+			logger.fine( "Trying to initialize output" );
 			try {
 				if( output != null ) {
 					if( output.getParent() == null && output.getParent() == null && input.getStream() != null ) {
-						logger.debug( "The ouput parent was null, setting it to input stream" );
+						logger.fine( "The ouput parent was null, setting it to input stream" );
 						output.setParentStream( input.getStream() );
 					}
-					logger.debug( "Initializing output" );
+					logger.fine( "Initializing output" );
 					output.initialize( get );
 				}
 			} catch( ElementDoesNotExistException | ElementNotCreatedException | ElementAlreadyExistsException e ) {
@@ -225,31 +217,29 @@ public class ClearCaseBranch extends AbstractBranch{
 		return result;
 	}
 	
+    @Override
 	public void get() throws ElementDoesNotExistException {
 		try {
 			get( false );
 		} catch( ElementNotCreatedException e ) {
-			/* This should not happen */
-			/* TODO Should we throw DoesNotExist? */
-			logger.fatal( "This shouldn't be possible..." );
+			logger.fine( "This shouldn't be possible..." );
 		}
 	}
 	
+    @Override
 	public void get( boolean initialize ) throws ElementDoesNotExistException, ElementNotCreatedException {
 		
 		boolean exists = exists();
 		
 		if( !exists && initialize ) {
-			logger.debug( "Must initialize" );
+			logger.fine( "Must initialize" );
 			try {
 				initialize( true );
 			} catch (ElementAlreadyExistsException e) {
-				/* This should not happen */
-				/* TODO Should we throw ElementAlreadyExistsException? */
-				logger.fatal( "This shouldn't be possible..." );
+				logger.fine( "This shouldn't be possible..." );
 			}
 		} else {
-			logger.debug( "DONT initialize" );
+			logger.fine( "Do not initialize" );
 			if( input != null ) {
 				input.initializeView();
 				input.initializeStream();
@@ -281,7 +271,7 @@ public class ClearCaseBranch extends AbstractBranch{
 				try {
 					get();
 				} catch (ElementDoesNotExistException e) {
-		        	logger.error("Error while getting stream: " + e.getMessage());
+		        	logger.warning("Error while getting stream: " + e.getMessage());
 		        	return false;
 				}
 			}
@@ -295,10 +285,9 @@ public class ClearCaseBranch extends AbstractBranch{
                 UpdateView uview = new UpdateView(input.getSnapshotView()).swipe().overwrite().generate();
                 uview.update();
 			} catch (Exception e) {
-	        	logger.error("Error while updating view: " + e.getMessage());
+	        	logger.log(Level.SEVERE, "Error while updating view", e);
 	        	return false;
-			}
-			
+			}			
 			return true;
 		}
 	}
@@ -335,22 +324,22 @@ public class ClearCaseBranch extends AbstractBranch{
 		
 		List<AbstractCommit> getCommits = new ArrayList<>();
 		
-		logger.debug( "Getting CC commits after " + null );
+		logger.fine( String.format("Getting CC commits after: %s", offset));
 				
 		try {
 			List<Baseline> baselines = null;
             Stream selectedStream;
 			if( output.getParent() != null ) {
-				logger.debug( "Getting baselines from parent" );
+				logger.fine( "[AVA] Getting baselines from parent" );
                 selectedStream = this.output.getParent();
 			} else if( input.getStream() != null ) {
-				logger.debug( "Getting baselines from input" );
+				logger.fine( "[AVA] Getting baselines from input" );
                 selectedStream = this.input.getStream();
 			} else if( output.getStream() != null ) {
-				logger.debug( "Getting baselines from output" );
+				logger.fine( "[AVA] Getting baselines from output" );
                 selectedStream = this.output.getStream();
 			} else {
-				logger.debug( "Couldn't get any baselines" );
+				logger.fine( "[AVA] Couldn't get any baselines" );
 				return commits;
 			}
             
@@ -360,7 +349,7 @@ public class ClearCaseBranch extends AbstractBranch{
                 baselines = new BaselineList(selectedStream, component, null).addFilter(new AfterDate(offset)).apply();
             }
             			
-			logger.debug( "I got " + baselines.size() + " baselines" );
+			logger.fine(String.format("[AVA] I got %s baselines", baselines.size()));
 			for( int i = 0 ; i < baselines.size() ; i++ ) {				
 				ClearCaseCommit commit = new ClearCaseCommit( baselines.get( i ), ClearCaseBranch.this, i );
 				
@@ -370,10 +359,10 @@ public class ClearCaseBranch extends AbstractBranch{
 				getCommits.add( commit );
 			}
 		} catch (Exception e) {
-			logger.error( "Could not list baselines: " + e.getMessage() );
+			logger.log(Level.SEVERE, "[AVA] Could not list baselines", e);
 		}
 		
-		logger.debug( "Done" );
+		logger.fine( "[AVA] Done" );
 		
 		return getCommits;
 	}

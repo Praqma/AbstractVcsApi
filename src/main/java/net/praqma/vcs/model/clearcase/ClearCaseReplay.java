@@ -20,7 +20,7 @@ import net.praqma.clearcase.exceptions.UnableToLoadEntityException;
 import net.praqma.clearcase.ucm.entities.Activity;
 import net.praqma.clearcase.ucm.entities.Baseline;
 import net.praqma.clearcase.ucm.entities.Version;
-import net.praqma.util.debug.Logger;
+
 import net.praqma.vcs.model.AbstractBranch;
 import net.praqma.vcs.model.AbstractCommit;
 import net.praqma.vcs.model.AbstractReplay;
@@ -60,54 +60,30 @@ public class ClearCaseReplay extends AbstractReplay {
 		doReplay( new ClearCaseReplayImpl( commit ) );
 	}
 	
-	public class ClearCaseReplayImpl extends Replay{
+	public class ClearCaseReplayImpl extends Replay {
 		public ClearCaseReplayImpl( AbstractCommit commit ) {
 			super( commit );
 		}
 
         @Override
 		public boolean setup() {
-			/* Update? Yes, but we must rebase first! NO! */
-			/*
-			try {
-				Stream parent = ccBranch.getInputStream().getDefaultTarget();
-				if( parent != null ) {
-					logger.debug( "Trying to rebase against " + parent );
-					List<Baseline> baselines = parent.getLatestBaselines();
-					if( baselines != null && baselines.size() > 0 ) {
-						ccBranch.getInputStream().rebase( ccBranch.getInputSnapshotView(), baselines.get( 0 ), true );
-					} else {
-						logger.warning( "Unable to rebase to latest baseline!!!" );
-					}
-				} else {
-					logger.debug( "Could not rebase stream, no parent stream given" );
-				}
-			} catch( Exception e ) {
-				logger.warning( "I tried to rebase, but got the error: " + e.getMessage() );
-			}
-			*/
-			ccBranch.update();
+            ccBranch.update();
 			
-			try {
-				//Activity.create( null, ccBranch.getPVob(), true, "CCReplay: " + commit.getKey(), ccBranch.getInputSnapshotView().getViewRoot() );
-                //TODO: 2.0 What is the 'in' stream value here?
-                Activity.create(null, null, ccBranch.getPVob(), true, "CCReplay: " + commit.getKey(), null, ccBranch.getInputSnapshotView().getViewRoot());
+			try {                
+                String activityName = "CCReplay: " + commit.getKey();
+                logger.fine("Creating activity: "+activityName); 
+				Activity.create(
+                        "id_"+commit.getKey(), 
+                        ccBranch.getInputStream(),
+                        ccBranch.getPVob(),
+                        true,
+                        activityName,
+                        activityName,
+                        ccBranch.getInputSnapshotView().getViewRoot() );
 			} catch (UnableToCreateEntityException | UCMEntityNotFoundException | UnableToGetEntityException | UnableToInitializeEntityException e1) {
-				logger.error( "ClearCase Activity could not be created: " + e1.getMessage() );
+				logger.log(Level.SEVERE, "ClearCase Activity could not be created", e1);
 				return false;
 			}
-
-			
-			/* Checkout component */
-			/* TODO Is this needed? */
-			/*
-			try {
-				Version.checkOut( ccBranch.getDevelopmentPath(), ccBranch.getInputPath() );
-			} catch (UCMException e1) {
-				logger.error( "ClearCase could not checkout path " + ccBranch.getDevelopmentPath() + ": " + e1.getMessage() );
-				return false;
-			}
-			*/
 			
 			return true;
 		}
@@ -124,23 +100,11 @@ public class ClearCaseReplay extends AbstractReplay {
 			
 			for( ChangeSetElement cse : cs ) {
 				File file = getChangeSetFile( cse );
-				logger.debug( "File(" + cse.getStatus() + "): " + file );
+				logger.fine( "File(" + cse.getStatus() + "): " + file );
 				
 				Version version = null;
 				
 				switch( cse.getStatus() ) {
-                    
-                    case DELETED:
-                        try {
-                            version = getFile( file, file.isDirectory() );
-                            version.removeName();
-                            //version.removeVersion();
-                            removeEmptyDirectories( file.getParentFile() );
-                        } catch (Exception e1) {
-                            logger.error( "ClearCase could not remove name: " + e1.getMessage() );
-                            success = false;
-                        }
-                        break;
 
                     case CREATED:
                         try {
@@ -148,7 +112,7 @@ public class ClearCaseReplay extends AbstractReplay {
                             version.getFile().createNewFile();
                         } catch (IOException e1) {
                             logger.warning( "Could not create file: " + e1.getMessage() );
-                            /* Continue anyway */
+
                         }
                     case CHANGED:
                         if( cse.getStatus().equals( Status.CHANGED ) ) {
@@ -168,16 +132,16 @@ public class ClearCaseReplay extends AbstractReplay {
 
                         } catch (FileNotFoundException e) {
                             success = false;
-                            logger.error( "Could not write to file(" + version.getFile().getAbsolutePath() + "): " + e );
+                            logger.log(Level.SEVERE, "File not found: "+ version.getFile().getAbsolutePath(), e );
                         } catch (IOException e) {
                             success = false;
-                            logger.error( "Could not write to file(" + version.getFile().getAbsolutePath() + "): " + e );
+                            logger.log(Level.SEVERE, "Could not write to file(" + version.getFile().getAbsolutePath() + ")", e);
                         } finally {
                             try {
-                                in.close();
-                                out.close();
+                                if(in != null) in.close();
+                                if(out != null) out.close();
                             } catch (Exception e) {
-                                logger.warning( "Could not close files: " + e.getMessage() );
+                                logger.fine("Unable to close in and output streams");
                             }
 
                         }
@@ -195,7 +159,7 @@ public class ClearCaseReplay extends AbstractReplay {
                         getFile( file.getParentFile(), true );
 
                         try {
-                            logger.debug( "MOVING: " + version.getVersion() );
+                            logger.fine( "MOVING: " + version.getVersion() );
                             version.moveFile( file );
                         } catch( UnableToLoadEntityException | CleartoolException e ) {
                             logger.warning( "Could not rename file" );
@@ -213,15 +177,13 @@ public class ClearCaseReplay extends AbstractReplay {
 		}
 		
 		protected void removeEmptyDirectories( File d ) {			
-			logger.debug( d + " has " + d.list().length + " elements" );
+			logger.fine( d + " has " + d.list().length + " elements" );
 			while( d.list().length == 0 ) {
 				try {
 					Version.removeName( d, ccBranch.getInputSnapshotView().getViewRoot() );
-					//Version.removeVersion( d, ccBranch.getSnapshotView().GetViewRoot() );
 				} catch (Exception e) {
 					logger.warning( "Could not remove version " + d );
-				}
-				
+				}				
 				d = d.getParentFile();
 			}
 		}
@@ -234,7 +196,7 @@ public class ClearCaseReplay extends AbstractReplay {
 				in = new FileInputStream( src );
 				out = new FileOutputStream( dst );
 				
-				logger.debug( "Writing..." );
+				logger.fine( "Writing..." );
 				
 			    byte[] buf = new byte[1024];
 			    int len;
@@ -242,16 +204,14 @@ public class ClearCaseReplay extends AbstractReplay {
 			        out.write(buf, 0, len);
 			    }
 			    
-			    logger.debug( "... Done" );
+			    logger.fine( "... Done" );
 
-			} catch (FileNotFoundException e) {
-				logger.error( "Could not write to file(" + dst + "): " + e );
 			} catch (IOException e) {
-				logger.error( "Could not write to file(" + dst + "): " + e );
+				logger.log(Level.SEVERE, "Could not write to file(" + dst + ")", e);
 			} finally {
 				try {
-					in.close();
-					out.close();
+					if(in != null) in.close();
+					if(out != null) out.close();
 				} catch (IOException e) {
 					logger.warning( "Could not close files: " + e.getMessage() );
 				}
@@ -259,8 +219,7 @@ public class ClearCaseReplay extends AbstractReplay {
 			}
 		}
 		
-		protected Version getFile( File file, boolean mkdir )  {
-			logger.debug( "GETFILE: " + file );
+		protected Version getFile( File file, boolean mkdir )  {			
 			Version version = null;
 			/* TODO Determine whether the file exists or not */
             boolean underSourceControl = false;
@@ -268,14 +227,14 @@ public class ClearCaseReplay extends AbstractReplay {
             try {
                 underSourceControl = Version.isUnderSourceControl( file, ccBranch.getInputSnapshotView().getViewRoot() );
             } catch (CleartoolException ex) {
-                logger.error( String.format( "Unable to determine if file %s is under source control", file.getAbsolutePath() ) );
+                logger.fine( String.format( "Unable to determine if file %s is under source control", file.getAbsolutePath() ) );
             }
 			
 			if( !file.exists() || !underSourceControl ) {
 				try {
 					version = Version.create( file, mkdir, ccBranch.getInputSnapshotView() );
 				} catch (CleartoolException | IOException | UnableToCreateEntityException | UCMEntityNotFoundException | UnableToGetEntityException | UnableToLoadEntityException | UnableToInitializeEntityException e1) {
-					logger.error( "ClearCase could not create version: " + e1.getMessage() );
+					logger.log(Level.WARNING, "ClearCase could not create version", e1 );
 				}
 			} else {
 				try {
@@ -283,7 +242,7 @@ public class ClearCaseReplay extends AbstractReplay {
 					version.setView( ccBranch.getInputSnapshotView() );
 					version.checkOut();
 				} catch (IOException | CleartoolException | UnableToLoadEntityException | UCMEntityNotFoundException | UnableToInitializeEntityException e1) {
-					logger.error( "ClearCase could not get version: " + e1.getMessage() );
+					logger.log(Level.WARNING, "ClearCase could not get version ", e1 );
 				}
 			}
 			
@@ -292,24 +251,23 @@ public class ClearCaseReplay extends AbstractReplay {
 		
         @Override
 		public boolean commit() {
-			logger.debug( "Committing ClearCase baseline" );
+			logger.fine( "Committing ClearCase baseline" );
 
 			try {
 				List<File> files = Version.getUncheckedIn( ccBranch.getInputPath() );
 				for( File f : files ) {
-					logger.debug( "Checking in " + f );
+					logger.fine( "Checking in " + f );
 					try {
 						Version.checkIn( f, false, ccBranch.getInputPath() );
 					} catch( Exception e ) {
-						logger.debug( "Unable to checkin " + f );
+						logger.fine( "Unable to checkin " + f );
 						/* No op */
 					}
 				}
 			} catch( Exception e ) {
-				logger.error( e.getMessage() );
+				logger.log(Level.SEVERE, "Unable to commit clearcase baseline", e);
 				
 			}
-
 			String baselineName = ClearcaseReplayListener.runSelectBaselineName( commit );
 
 			try {
@@ -320,7 +278,7 @@ public class ClearCaseReplay extends AbstractReplay {
                 logger.info( "No new baseline created, nothing changed" );
                 return false;                
 			} catch( UnableToInitializeEntityException | UnableToCreateEntityException e1 ) {
-                logger.error( "ClearCase could not create baseline: " + e1.getMessage() );
+                logger.log(Level.SEVERE, "ClearCase could not create baseline", e1);
                 return false;
 				
 			}

@@ -35,11 +35,7 @@ public class ClearCaseCommit extends AbstractCommit {
 		this.ccbranch = branch;
 		this.baseline = baseline;
 	}
-	
-	public void instantiate( Baseline baseline, AbstractBranch branch, int number ) {
-		
-	}
-
+    
     @Override
 	public void load() {
 		LoadImpl load = new LoadImpl();
@@ -69,9 +65,9 @@ public class ClearCaseCommit extends AbstractCommit {
 				ClearCaseCommit.this.author = baseline.getUser();
 				ClearCaseCommit.this.committer = baseline.getUser();
 				ClearCaseCommit.this.authorDate = baseline.getDate();
-				ClearCaseCommit.this.committerDate = baseline.getDate();
+				ClearCaseCommit.this.setCommitterDate(baseline.getDate());
 	
-				ClearCaseCommit.this.title = ( baseline.getComment() != null ? baseline.getComment() : baseline.getFullyQualifiedName() );
+				ClearCaseCommit.this.title = baseline.getFullyQualifiedName();
                 
                 //This one has been replaced with diffbl
 				//ChangeSet2 changeset = ChangeSet2.getChangeSet( baseline, null, ccbranch.getOuputSnapshotView().getViewRoot() );

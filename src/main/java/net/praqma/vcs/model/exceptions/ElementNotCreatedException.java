@@ -6,7 +6,7 @@ public class ElementNotCreatedException extends ElementException {
 
 	
 	public ElementNotCreatedException() {
-		super();
+		super("Some elements were not created");
 	}
 	
 	public ElementNotCreatedException(String s) {

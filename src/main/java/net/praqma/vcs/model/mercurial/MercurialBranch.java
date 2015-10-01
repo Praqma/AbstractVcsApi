@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 import net.praqma.vcs.VersionControlSystems;
 import net.praqma.vcs.model.AbstractBranch;
@@ -38,7 +39,7 @@ public class MercurialBranch extends AbstractBranch {
 			initialize(false);
 		} catch (ElementDoesNotExistException e) {
 			/* This shouldn't be possible */
-			logger.fatal( "False shouldn't throw exist exceptions!!!" );
+			logger.warning( "False shouldn't throw exist exceptions!!!" );
 		}
 	}
 	
@@ -78,7 +79,7 @@ public class MercurialBranch extends AbstractBranch {
 		try {
 			return Mercurial.branchExists( this.name, localRepositoryPath );
 		} catch (MercurialException e) {
-			logger.warning( "Branch " + name + " at " + localRepositoryPath + " could not be queried: " + e.getMessage() );
+			logger.log(Level.WARNING, String.format("Branch %s at %s could not be queried", name, localRepositoryPath), e);
 			return false;
 		}
 	}
@@ -93,12 +94,12 @@ public class MercurialBranch extends AbstractBranch {
 
 			/* Try to switch branch */
 			try {
-				logger.debug( "Switching to branch " + MercurialBranch.this.name );
+				logger.fine(String.format("Switching to branch " + MercurialBranch.this.name ));
 				Mercurial.changeBranch( MercurialBranch.this.name, localRepositoryPath );
 			} catch( MercurialException e ) {
 				/* Try to create the branch */
 				try {
-					logger.debug( name + " does not exist, let's create it" );
+					logger.fine(String.format("%s does not exist, let's crete it",name));
 					Mercurial.createBranch( name, localRepositoryPath );
 				} catch( MercurialException e2 ) {
 					logger.warning( "Could not create branch " + name );
@@ -131,11 +132,11 @@ public class MercurialBranch extends AbstractBranch {
 	public class UpdateImpl extends Update {
         @Override
 		public boolean update() {
-			logger.debug( "Mercurial: perform checkout" );
+			logger.fine( "Mercurial: perform checkout" );
 			
 			/* No need for updating if there's no parent */
 			if( parent == null ) {
-				logger.debug( "No parent given, nothing to check out" );
+				logger.fine( "No parent given, nothing to check out" );
 				return false;
 			} else {
 				try {
@@ -155,7 +156,7 @@ public class MercurialBranch extends AbstractBranch {
 	public void checkoutCommit( AbstractCommit commit ) {
 		this.currentCommit = commit;
 		try {
-			logger.debug( "Checking out " + commit.getTitle() );
+			logger.fine( "Checking out " + commit.getTitle() );
 			Mercurial.checkoutCommit( commit.getKey(), localRepositoryPath );
 		} catch (MercurialException e) {
 			System.err.println( "Could not checkout commit" );
@@ -175,29 +176,30 @@ public class MercurialBranch extends AbstractBranch {
 	
 	@Override
 	public List<AbstractCommit> getCommits( boolean load, Date offset ) {
-		logger.info( "Getting Mercurial commits for branch " + name );
+		logger.info(String.format("Getting Mercurial commits for branch %s", name ));
 		
-		List<String> cs = null;
+		List<String> cs = new ArrayList<>();
 		try {
 			cs = Mercurial.getCommitHashes( offset, null, localRepositoryPath.getAbsoluteFile() );
 		} catch (MercurialException e) {
 			logger.warning( "Could not get hashes" );
 		}
 		
-		List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
-		
-		for( int i = 0 ; i < cs.size() ; i++ ) {
+		List<AbstractCommit> c = new ArrayList<>();
+		int csSize = cs.size();
+        
+		for( int i = 0 ; i < csSize ; i++ ) {
 			MercurialCommit commit = new MercurialCommit( cs.get( i ), MercurialBranch.this, i );
 			if( load ) {
 				commit.load();
 			}
 			
-			commits.add( commit );
+			c.add( commit );
 		}
 		
 		System.out.println( " Done" );
 		
-		return commits;
+		return c;
 	}
 
 	@Override
@@ -205,7 +207,7 @@ public class MercurialBranch extends AbstractBranch {
 		return true;
 	}
 	
-	
+	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append( "Mercurial branch\n" );

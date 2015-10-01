@@ -4,6 +4,7 @@
     <artifactId>ava</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>AbstractVcsApi</name>
+
 	
     <developers>
         <developer>
@@ -11,10 +12,6 @@
             <name>Praqma Josra</name>
         </developer>
     </developers>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
     <distributionManagement>
         <repository>
@@ -41,6 +38,7 @@
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
+
                 </configuration>
             </plugin>
 

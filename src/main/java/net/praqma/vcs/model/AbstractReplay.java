@@ -2,8 +2,7 @@ package net.praqma.vcs.model;
 
 import java.io.File;
 import java.util.List;
-
-import net.praqma.util.debug.Logger;
+import java.util.logging.Logger;
 import net.praqma.vcs.model.exceptions.OperationNotImplementedException;
 import net.praqma.vcs.model.exceptions.UnableToReplayException;
 import net.praqma.vcs.model.extensions.ReplayListener;
@@ -15,7 +14,7 @@ public abstract class AbstractReplay {
 	 */
 	protected AbstractBranch branch;
 	
-	protected Logger logger = Logger.getLogger();
+	protected static final Logger logger = Logger.getLogger(AbstractReplay.class.getName());
 	
 	public AbstractReplay( AbstractBranch branch ) {
 		this.branch = branch;
@@ -44,6 +43,7 @@ public abstract class AbstractReplay {
 		
 		if( status ) {
 			if( replay.commit() ) {
+                logger.fine("Replay: Trigger commit created listener");
 				ReplayListener.runCommitCreatedListener( this, replay.getCommit() );
 			}
 		}
@@ -53,7 +53,7 @@ public abstract class AbstractReplay {
 		ReplayListener.runPostReplayListener( this, replay.getCommit(), status );
 	}
 	
-	protected abstract class Replay{
+	protected abstract class Replay {
 		protected AbstractCommit commit;
 		
 		public Replay( AbstractCommit commit ) {
@@ -61,12 +61,12 @@ public abstract class AbstractReplay {
 		}
 		
 		public boolean setup() {
-			logger.debug( "Abstract replay setup" );
+			logger.fine( "Abstract replay setup" );
 			return true;
 		}
 		
 		public boolean replay() {
-			logger.debug( "Abstract replay" );
+			logger.fine( "Abstract replay" );
 			return true;
 		}
 		
@@ -77,7 +77,7 @@ public abstract class AbstractReplay {
 		 */
 		public boolean cleanRename( File file ) {
 			if( file.exists() ) {
-				logger.debug( "The file still lives, let's kill it" );
+				logger.fine( "The file still lives, let's kill it" );
 				try {
 					file.delete();
 					return true;
@@ -92,7 +92,7 @@ public abstract class AbstractReplay {
 		public abstract boolean commit();
 		
 		public boolean cleanup( boolean status ) {
-			logger.debug( "Abstract replay cleanup: " + status );
+			logger.fine(String.format("Abstract replay cleanup: %s", status));
 			return true;
 		}
 		

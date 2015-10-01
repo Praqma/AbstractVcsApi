@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 import net.praqma.vcs.VersionControlSystems;
 import net.praqma.vcs.model.AbstractBranch;
@@ -15,7 +16,7 @@ import net.praqma.vcs.model.exceptions.ElementNotCreatedException;
 import net.praqma.vcs.model.git.api.Git;
 import net.praqma.vcs.model.git.exceptions.GitException;
 
-public class GitBranch extends AbstractBranch{
+public class GitBranch extends AbstractBranch {
 	
 	protected String defaultBranch = "master";
 	
@@ -39,7 +40,7 @@ public class GitBranch extends AbstractBranch{
 			initialize(false);
 		} catch (ElementDoesNotExistException e) {
 			/* This shouldn't be possible */
-			logger.fatal( "False shouldn't throw exist exceptions!!!" );
+			logger.fine( "False shouldn't throw exist exceptions!!!" );
 		}
 	}
 	
@@ -94,11 +95,15 @@ public class GitBranch extends AbstractBranch{
 
 			/* Try to switch branch */
 			try {
-				logger.debug( "Switching to branch " + GitBranch.this.name );
-				Git.changeBranch( GitBranch.this.name, localRepositoryPath );
+				logger.fine( String.format("Switching to branch %s",GitBranch.this.name));
+                
+                if(!Git.branchExists(name, localRepositoryPath)) {
+                    Git.changeBranchAndCreate(name, localRepositoryPath);
+                } else {
+                    Git.changeBranch( GitBranch.this.name, localRepositoryPath );
+                }				
 			} catch( GitException e ) {
-				/* TODO Should we just fall back to the default branch? */
-				logger.warning( "The branch " + GitBranch.this.name + " does not seem to exist" );
+				logger.log(Level.WARNING, String.format("The branch %s does not seem to exist and could not be created", GitBranch.this.name), e);                        
 				throw new ElementDoesNotExistException( "The branch " + GitBranch.this.name + " does not seem to exist" );
 			}
 			
@@ -107,12 +112,13 @@ public class GitBranch extends AbstractBranch{
 				
 				
 				try { /* to add remote */
+                    
 					Git.addRemote( parent.getName(), parent.getLocation(), localRepositoryPath );
 				} catch (ElementAlreadyExistsException e1) {
 					if( get ) {
 						throw e1;
 					} else {
-						logger.debug( e1.getMessage() );
+						logger.warning(e1.getMessage() );
 					}
 				} catch (GitException e) {
 					throw new ElementNotCreatedException( "Could not initialize Git branch" );
@@ -122,13 +128,13 @@ public class GitBranch extends AbstractBranch{
 					Git.fetch( localRepositoryPath );
 					Git.checkoutRemoteBranch( name, parent.getName() + "/" + name, localRepositoryPath );
 				} catch( GitException e ) {
-					logger.warning( "Could not initialize Git branch " + name + " from remote " + parent.getName() + ": " + e.getMessage() );
+					logger.log(Level.WARNING, String.format("Could not initialize Git branch %s from remote %s ",name, parent.getName()), e);
 					throw new ElementNotCreatedException( "Could not initialize Git branch: " + e.getMessage() );
 				} catch (ElementAlreadyExistsException e) {
 					if( get ) {
 						throw e;
 					} else {
-						logger.debug( e.getMessage() );
+						logger.warning( e.getMessage() );
 					}
 				}
 				
@@ -153,9 +159,9 @@ public class GitBranch extends AbstractBranch{
 	
 	public class UpdateImpl extends Update {
 
-
+        @Override
 		public boolean update() {
-			logger.debug( "GIT: perform checkout" );
+			logger.fine( "Git perform checkout" );
 			
 			if( parent == null ) {
 				logger.info( "No parent given, nothing to check out" );
@@ -163,8 +169,7 @@ public class GitBranch extends AbstractBranch{
 			}
 			
 			try {
-				Git.pull( parent.getLocation(), name, localRepositoryPath );
-				//Git.checkoutRemoteBranch( name, parent.getName() + "/" + name, localRepositoryPath );
+				Git.pull( parent.getLocation(), name, localRepositoryPath );				
 			} catch (GitException e) {
 				System.err.println( "Could not pull git branch" );
 				logger.warning( "Could not pull git branch" );
@@ -179,7 +184,7 @@ public class GitBranch extends AbstractBranch{
 	public void checkoutCommit( AbstractCommit commit ) {
 		this.currentCommit = commit;
 		try {
-			logger.debug( "Checking out " + commit.getTitle() );
+			logger.fine(String.format("Checking out %s", commit.getTitle()));
 			Git.checkoutCommit( commit.getKey(), localRepositoryPath );
 		} catch (GitException e) {
 			System.err.println( "Could not checkout commit" );
@@ -201,27 +206,26 @@ public class GitBranch extends AbstractBranch{
 	public List<AbstractCommit> getCommits( boolean load, Date offset ) {
 		logger.info( "Getting git commits for branch " + name );
 		
-		List<String> cs = null;
+		List<String> cs = new ArrayList<>();
 		try {
 			cs = Git.getCommitHashes( offset, null, localRepositoryPath.getAbsoluteFile() );
 		} catch (GitException e) {
-			logger.warning( "Could not get hashes" );
+			logger.log(Level.SEVERE, "Could not get hashes" );
 		}
 		
-		List<AbstractCommit> commits = new ArrayList<AbstractCommit>();
+		List<AbstractCommit> c = new ArrayList<>();
+        int csSize = cs.size();
 		
-		for( int i = 0 ; i < cs.size() ; i++ ) {
+		for( int i = 0 ; i < csSize; i++ ) {
 			GitCommit commit = new GitCommit( cs.get( i ), GitBranch.this, i );
 			if( load ) {
 				commit.load();
 			}
 			
-			commits.add( commit );
+			c.add( commit );
 		}
-		
-		System.out.println( " Done" );
-		
-		return commits;
+	
+		return c;
 	}
 
 	@Override

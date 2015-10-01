@@ -13,7 +13,8 @@ public class GitConfigurationReader extends AbstractConfigurationReader {
 	public GitConfigurationReader() {
 		super();
 	}
-	
+    
+	@Override
 	public AbstractConfiguration getTypeConfiguration( Element element ) throws ConfigurationException {
 		
 		String path = getFirstElement( element, "path" ).getTextContent();
