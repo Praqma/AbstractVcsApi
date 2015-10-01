@@ -1,10 +1,11 @@
 package net.praqma.vcs.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import net.praqma.vcs.model.extensions.CommitLoadListener;
 
-public abstract class AbstractCommit implements Comparable<AbstractCommit> {
+public abstract class AbstractCommit implements Comparable<AbstractCommit>, Serializable {
 	
 	protected String key;
 	protected String parentKey;
