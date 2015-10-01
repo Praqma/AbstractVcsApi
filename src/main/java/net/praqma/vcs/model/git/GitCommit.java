@@ -15,7 +15,7 @@ import net.praqma.vcs.util.CommandLine;
 
 public class GitCommit extends AbstractCommit {
 
-	private Logger logger = Logger.getLogger();
+	private transient Logger logger = Logger.getLogger();
 	
 	public GitCommit( String key, AbstractBranch branch ) {
 		super(key, branch);

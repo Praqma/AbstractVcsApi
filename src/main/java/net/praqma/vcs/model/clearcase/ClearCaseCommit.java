@@ -15,7 +15,7 @@ import net.praqma.vcs.model.ChangeSetElement.Status;
 
 public class ClearCaseCommit extends AbstractCommit {
 	
-	private Logger logger = Logger.getLogger();
+	private transient Logger logger = Logger.getLogger();
 	protected Baseline baseline;
 	protected ClearCaseBranch ccbranch;
 
