@@ -101,8 +101,7 @@ public class GitBranch extends AbstractBranch{
 			} catch( GitException e ) {
 				/* TODO Should we just fall back to the default branch? */
                 logger.warning(e.getMessage());
-				logger.warning( "The branch " + GitBranch.this.name + " does not seem to exist" );
-                GitBranch.create(localRepositoryPath, name, parent);                
+				logger.warning( "The branch " + GitBranch.this.name + " does not seem to exist" );              
 				throw new ElementDoesNotExistException( "The branch " + GitBranch.this.name + " does not seem to exist" );
 			}
 			
