@@ -4,4 +4,4 @@ maintainer: MadsNielsen
 
 # AbstractVcsApi
 
-Used in Config Rotator
+Used in vcs-bridge-plugin
